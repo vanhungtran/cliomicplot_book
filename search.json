@@ -1,0 +1,624 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Clinical and Omics Data Visualization in R",
+    "section": "",
+    "text": "Welcome\ncliomicplot produces publication-ready clinical and multi-omics figures in R with a formula grammar and pre-configured journal styles. This handbook explains how to use the package for clinical trial reporting, high-dimensional omics profiling, systems biology network coupling, and multi-panel journal composite assembly.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#package-scope",
+    "href": "index.html#package-scope",
+    "title": "Clinical and Omics Data Visualization in R",
+    "section": "Package Scope",
+    "text": "Package Scope\nThe package addresses three visual bottlenecks in biomedical data science:\n\nClinical Trial Visualizations: Kaplan-Meier curves with aligned risk tables, competing risks cumulative incidence, hazard ratio forest plots, and oncology patient response trajectories (RECIST waterfall and swimmer plots).\nHigh-Throughput Omics: Volcano plots with biomarker callout boxes, differential expression contrast matrices, gene set enrichment running scores, microbiome GWAS Manhattan plots, and taxonomic abundance bubble matrices.\nSystems Biology & Multi-Network Coupling: Cross-condition module comparison, comparative multi-group network graphs, modular circular networks coupled with peripheral environmental heatmaps, module preservation testing (Z_{\\text{summary}}), and topological attack simulations.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "Clinical and Omics Data Visualization in R",
+    "section": "Installation",
+    "text": "Installation\nInstall cliomicplot from GitHub:\n# install.packages(\"remotes\")\nremotes::install_github(\"vanhungtran/cliomicplot\")\nVerify the installation:\n\n\nCode\nlibrary(cliomicplot)\npackageVersion(\"cliomicplot\")\n\n\n[1] '0.1.5'",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#structure-of-this-handbook",
+    "href": "index.html#structure-of-this-handbook",
+    "title": "Clinical and Omics Data Visualization in R",
+    "section": "Structure of This Handbook",
+    "text": "Structure of This Handbook\n\nPart I — Graphic Grammar and Design System: The unified cliplot() formula syntax, theme resolvers, and journal styling presets conforming to AI4SciFig publication gates.\nPart II — Clinical Trials and Survival Analysis: Time-to-event curves, subgroup treatment effects, oncology response tracking, and minimally clinically important difference (MCID) modeling.\nPart III — High-Dimensional Omics Visualizations: Volcano plots, pathway enrichment running scores, microbiome GWAS Manhattan architectures, and taxonomic dyad sharing.\nPart IV — Systems Biology and Coupled Multi-Network Architectures: Cross-network module overlap (RF, Jaccard), multi-group network layouts across 8 journal styles, multi-domain environmental coupling across 7 presets, module preservation, and permutation testing.\nPart V — Publication Composites and Applied Case Studies: Figure assembly with patchwork and reproducible workflows for atopic dermatitis and immuno-oncology.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#reproducibility-setup",
+    "href": "index.html#reproducibility-setup",
+    "title": "Clinical and Omics Data Visualization in R",
+    "section": "Reproducibility Setup",
+    "text": "Reproducibility Setup\nAll code chunks in this book execute in a standard R environment with fixed random seeds.\n\n\nCode\nlibrary(cliomicplot)\nlibrary(ggplot2)\nset.seed(42)",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "01-grammar-and-api.html",
+    "href": "01-grammar-and-api.html",
+    "title": "1  Graphic Grammar and Core API",
+    "section": "",
+    "text": "1.1 Formula Syntax\ncliplot() provides a single entry point for generating biomedical visualizations through a formula syntax. This chapter details the formula grammar, the parameter system (clipar), and the type dispatch architecture.\ncliplot() accepts standard R formulas mapping variables to visual roles:",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
+    ]
+  },
+  {
+    "objectID": "01-grammar-and-api.html#formula-syntax",
+    "href": "01-grammar-and-api.html#formula-syntax",
+    "title": "1  Graphic Grammar and Core API",
+    "section": "",
+    "text": "y ~ x: Bivariate plots (boxplots, scatter plots, violin plots, ROC curves).\ny ~ x | facet: Conditioned plots faceted across biological subgroups or clinical trial cohorts.\nSurv(time, event) ~ arm: Time-to-event outcomes with survival curves, risk tables, and hazard ratios.\n~ x: Univariate distributions (histograms, density estimates, rank-abundance curves).\n\n# General syntax\np &lt;- cliplot(\n  formula = Value ~ Biomarker,\n  data    = clinical_data,\n  type    = \"boxplot\",\n  preset  = \"nature\"\n)",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
+    ]
+  },
+  {
+    "objectID": "01-grammar-and-api.html#function-dispatch-and-plot-types",
+    "href": "01-grammar-and-api.html#function-dispatch-and-plot-types",
+    "title": "1  Graphic Grammar and Core API",
+    "section": "1.2 Function Dispatch and Plot Types",
+    "text": "1.2 Function Dispatch and Plot Types\nThe type argument selects the geometry and statistical layer. It accepts either character aliases or typed constructor functions:\n\n\nCode\nlibrary(cliomicplot)\nlibrary(ggplot2)\n\n# Generate reproducible clinical cohort\nset.seed(42)\ndf_cohort &lt;- data.frame(\n  Biomarker = factor(rep(c(\"Control\", \"Mild_AD\", \"Severe_AD\"), each = 40)),\n  IL13_pg_ml = c(rnorm(40, 4.2, 1.1), rnorm(40, 8.5, 1.8), rnorm(40, 15.2, 2.9)),\n  Age_Group  = factor(rep(c(\"Pediatric\", \"Adult\"), 60))\n)\n\n# Direct character specification\np_box &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data   = df_cohort,\n  type   = \"boxplot\",\n  preset = \"nature\",\n  title  = \"Serum IL-13 by Clinical Severity\"\n)\np_box\n\n\n\n\n\n\n\n\n\n\n1.2.1 Typed Constructor Functions\nConstructor functions configure geometry-specific options with autocomplete support:\n\n\nCode\np_viol &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data  = df_cohort,\n  type  = type_violin(add_boxplot = TRUE, trim = FALSE),\n  theme = \"lancet\"\n)\np_viol",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
+    ]
+  },
+  {
+    "objectID": "01-grammar-and-api.html#the-parameter-object-clipar",
+    "href": "01-grammar-and-api.html#the-parameter-object-clipar",
+    "title": "1  Graphic Grammar and Core API",
+    "section": "1.3 The Parameter Object: clipar()",
+    "text": "1.3 The Parameter Object: clipar()\nclipar() sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:\n\n\nCode\npars &lt;- clipar(\n  point_size  = 2.2,\n  line_width  = 0.9,\n  alpha       = 0.75,\n  font_size   = 10\n)\n\np_custom &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data   = df_cohort,\n  type   = \"beeswarm\",\n  params = pars,\n  preset = \"science\"\n)\np_custom",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
+    ]
+  },
+  {
+    "objectID": "01-grammar-and-api.html#plot-composition-and-layer-addition",
+    "href": "01-grammar-and-api.html#plot-composition-and-layer-addition",
+    "title": "1  Graphic Grammar and Core API",
+    "section": "1.4 Plot Composition and Layer Addition",
+    "text": "1.4 Plot Composition and Layer Addition\ncliplot() objects are ggplot2 instances. You can extend them using the standard + operator or the cliplot_add() helper:\n\n\nCode\np_final &lt;- p_box +\n  geom_hline(yintercept = 10, linetype = \"dashed\", color = \"#B22222\", linewidth = 0.6) +\n  annotate(\"text\", x = 1.2, y = 10.8, label = \"Diagnostic Threshold (10 pg/mL)\",\n           size = 2.8, color = \"#B22222\", fontface = \"bold\")\np_final",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
+    ]
+  },
+  {
+    "objectID": "02-journal-themes-and-scifig.html",
+    "href": "02-journal-themes-and-scifig.html",
+    "title": "2  Journal Themes and Publication Quality Gates",
+    "section": "",
+    "text": "2.1 Journal Themes Overview\nScientific journals impose strict typographic, dimensional, and contrast guidelines on submitted figures. cliomicplot provides journal theme presets and an automated verification gate (cli_scifig_qa) enforcing submission rules.\nclitheme() implements aesthetic profiles matched to target journals:\nCode\nlibrary(cliomicplot)\nlibrary(ggplot2)\n\nset.seed(101)\ndemo_df &lt;- data.frame(\n  Biomarker = factor(rep(c(\"Placebo\", \"Biologic_Low\", \"Biologic_High\"), each = 25)),\n  Response  = c(rnorm(25, 20, 5), rnorm(25, 45, 6), rnorm(25, 78, 8))\n)\n\np_nat &lt;- cliplot(Response ~ Biomarker, data = demo_df, type = \"boxplot\", preset = \"nature\", title = \"Nature Style\")\np_lan &lt;- cliplot(Response ~ Biomarker, data = demo_df, type = \"boxplot\", preset = \"lancet\", title = \"Lancet Style\")\n\np_nat\n\n\n\n\n\n\n\n\n\nCode\np_lan",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Journal Themes and Publication Quality Gates</span>"
+    ]
+  },
+  {
+    "objectID": "02-journal-themes-and-scifig.html#journal-themes-overview",
+    "href": "02-journal-themes-and-scifig.html#journal-themes-overview",
+    "title": "2  Journal Themes and Publication Quality Gates",
+    "section": "",
+    "text": "Preset\nJournal / Style\nPrimary Palette\nKey Typography & Grid\n\n\n\n\nnature\nNature, Nature Medicine\nSlate Blue, Orange, Cyan\nHelvetica/Arial, crisp border, no major grid\n\n\nscience\nScience, Sci Transl Med\nJewel Navy, Crimson, Emerald\nHigh-contrast jewel tones, clean serif/sans\n\n\ncell\nCell, Immunity, Neuron\nObsidian Dark, Neon, Magenta\nVivid palettes, dark and light variants\n\n\nlancet\nThe Lancet\nEditorial Cyan, Navy, Grey\nThin strokes, minimal framing, serif title\n\n\nnejm\nN Engl J Med\nClassic Crimson, Navy, Amber\nClassic editorial layout, clean axes\n\n\nscifig\nUniversal Fig4papers\nColorblind-safe palettes\nStrict font floor \\ge 5.0 pt, no stroke overlap",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Journal Themes and Publication Quality Gates</span>"
+    ]
+  },
+  {
+    "objectID": "02-journal-themes-and-scifig.html#journal-dimension-specifications-cli_journal_size",
+    "href": "02-journal-themes-and-scifig.html#journal-dimension-specifications-cli_journal_size",
+    "title": "2  Journal Themes and Publication Quality Gates",
+    "section": "2.2 Journal Dimension Specifications: cli_journal_size()",
+    "text": "2.2 Journal Dimension Specifications: cli_journal_size()\ncli_journal_size() calculates exact figure dimensions in millimeters and inches:\n\n\nCode\n# Dimensions for Nature double-column\nsize_nature_double &lt;- cli_journal_size(journal = \"nature\", column = \"double\")\nsize_nature_double\n\n\n$journal\n[1] \"nature\"\n\n$column\n[1] \"double\"\n\n$width_mm\n[1] 183\n\n$height_mm\n[1] 146.4\n\n$width_in\n[1] 7.204724\n\n$height_in\n[1] 5.76378\n\n$max_height_mm\n[1] 170\n\n\nCode\n# Dimensions for Science single-column\nsize_science_single &lt;- cli_journal_size(journal = \"science\", column = \"single\")\nsize_science_single\n\n\n$journal\n[1] \"science\"\n\n$column\n[1] \"single\"\n\n$width_mm\n[1] 90\n\n$height_mm\n[1] 72\n\n$width_in\n[1] 3.543307\n\n$height_in\n[1] 2.834646\n\n$max_height_mm\n[1] 230",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Journal Themes and Publication Quality Gates</span>"
+    ]
+  },
+  {
+    "objectID": "02-journal-themes-and-scifig.html#the-ai4scifig-quality-assurance-gate-cli_scifig_qa",
+    "href": "02-journal-themes-and-scifig.html#the-ai4scifig-quality-assurance-gate-cli_scifig_qa",
+    "title": "2  Journal Themes and Publication Quality Gates",
+    "section": "2.3 The AI4SciFig Quality Assurance Gate: cli_scifig_qa()",
+    "text": "2.3 The AI4SciFig Quality Assurance Gate: cli_scifig_qa()\ncli_scifig_qa() inspects a plot object and flags publication non-compliances:\n\nText elements below the font floor (\\le 5.0 pt).\nMissing axis labels or clipped tick marks.\nLow-contrast color pairings.\nElement clipping beyond the plot border.\n\n\n\nCode\n# Run QA verification on plot\nqa_report &lt;- cli_scifig_qa(p_nat, journal = \"nature\", column = \"double\")\nqa_report\n\n\n\n=== SciFig QA Journal Compliance Report ===\nJournal: NATURE | Column: double\n--------------------------------------------------------------------------------\n[PASS]   Physical Width         : 183.0 mm (Target: 183.0 mm)        \n         Rule: NATURE double-column specification\n[PASS]   Physical Height        : 146.4 mm (Max: 170.0 mm)           \n         Rule: NATURE printable page boundary\n[PASS]   Font Size Floor        : Default theme hierarchy used (&gt;= 5.0 pt)\n         Rule: NATURE font-floor specification\n[PASS]   Stroke Width Floor     : Spine/edge widths adhere to standard presets\n         Rule: NATURE hairline-floor specification\n[PASS]   Zero Sign Suppression  : Zero sign suppression verified (no negative zeros)\n         Rule: SciFig reporting gate: zero sign suppression\n[PASS]   Color Accessibility    : High-contrast anchored palettes with neutral midpoint\n         Rule: Nature Publishing Group / Wong (2011) CVD standard\n--------------------------------------------------------------------------------\nVerdict: PASSED - All gates comply with publisher standards.\n\n\nPlots configured with scifig = TRUE apply these constraints automatically.",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Journal Themes and Publication Quality Gates</span>"
+    ]
+  },
+  {
+    "objectID": "03-survival-analysis.html",
+    "href": "03-survival-analysis.html",
+    "title": "3  Survival Analysis and Time-to-Event Graphics",
+    "section": "",
+    "text": "3.1 Kaplan-Meier Curves: type = \"km\"\nTime-to-event outcomes require specialized visual conventions. cliplot() implements Kaplan-Meier survival curves with aligned risk tables and Fine-Gray cumulative incidence curves for competing risks.\ncliplot(Surv(time, event) ~ arm, data, type = \"km\") estimates the survival function \\hat{S}(t):\n\\hat{S}(t) = \\prod_{t_i \\le t} \\left(1 - \\frac{d_i}{n_i}\\right)\nwhere d_i is the number of events and n_i is the number of individuals at risk at time t_i.\nCode\nlibrary(cliomicplot)\nlibrary(survival)\n\nset.seed(42)\nn &lt;- 120\nsurv_df &lt;- data.frame(\n  time   = rexp(n, rate = c(rep(0.03, 60), rep(0.06, 60))),\n  status = sample(c(0, 1), n, replace = TRUE, prob = c(0.2, 0.8)),\n  arm    = factor(rep(c(\"Targeted Therapy\", \"Standard of Care\"), each = 60))\n)\n\np_km &lt;- cliplot(\n  Surv(time, status) ~ arm,\n  data   = surv_df,\n  type   = \"km\",\n  preset = \"nature\",\n  title  = \"Overall Survival: Targeted Therapy vs Standard of Care\"\n)\np_km",
+    "crumbs": [
+      "Part II — Clinical Trials and Survival Analysis",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Survival Analysis and Time-to-Event Graphics</span>"
+    ]
+  },
+  {
+    "objectID": "03-survival-analysis.html#kaplan-meier-curves-type-km",
+    "href": "03-survival-analysis.html#kaplan-meier-curves-type-km",
+    "title": "3  Survival Analysis and Time-to-Event Graphics",
+    "section": "",
+    "text": "3.1.1 Risk Tables and Median Survival\nThe constructor type_km() configures numbers-at-risk tables and median survival crosshairs:\np_km_custom &lt;- cliplot(\n  Surv(time, status) ~ arm,\n  data = surv_df,\n  type = type_km(\n    show_risk_table = TRUE,\n    show_median     = TRUE,\n    show_p          = TRUE,\n    conf_int        = TRUE\n  ),\n  preset = \"lancet\"\n)",
+    "crumbs": [
+      "Part II — Clinical Trials and Survival Analysis",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Survival Analysis and Time-to-Event Graphics</span>"
+    ]
+  },
+  {
+    "objectID": "03-survival-analysis.html#competing-risks-cumulative-incidence-type-ci",
+    "href": "03-survival-analysis.html#competing-risks-cumulative-incidence-type-ci",
+    "title": "3  Survival Analysis and Time-to-Event Graphics",
+    "section": "3.2 Competing Risks Cumulative Incidence: type = \"ci\"",
+    "text": "3.2 Competing Risks Cumulative Incidence: type = \"ci\"\nWhen competing events preclude the primary outcome (such as non-disease mortality in cancer trials), standard Kaplan-Meier estimates overestimate cumulative incidence. The subdistribution cumulative incidence function F_k(t) (Fine & Gray, 1999) accounts for competing causes:\nF_k(t) = P(T \\le t, C = k) = \\int_0^t S(u-) d\\Lambda_k(u)\n\n\nCode\nset.seed(88)\nci_df &lt;- data.frame(\n  time   = runif(100, 1, 36),\n  event  = sample(0:2, 100, replace = TRUE, prob = c(0.25, 0.50, 0.25)), # 0=Censor, 1=Relapse, 2=Non-Relapse Death\n  arm    = factor(rep(c(\"Regimen A\", \"Regimen B\"), each = 50))\n)\n\np_ci &lt;- cliplot(\n  Surv(time, event) ~ arm,\n  data   = ci_df,\n  type   = type_km(cumulative_incidence = TRUE, risk_table = FALSE),\n  preset = \"science\",\n  title  = \"Cumulative Incidence of Relapse with Competing Mortality\"\n)\np_ci",
+    "crumbs": [
+      "Part II — Clinical Trials and Survival Analysis",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Survival Analysis and Time-to-Event Graphics</span>"
+    ]
+  },
+  {
+    "objectID": "04-treatment-effects.html",
+    "href": "04-treatment-effects.html",
+    "title": "4  Treatment Effects and Subgroup Forest Plots",
+    "section": "",
+    "text": "4.1 The Forest Plot Grammar: type = \"forest\"\nForest plots summarize treatment effects and evaluate consistency across patient subgroups in randomized controlled trials and meta-analyses. cliomicplot formats forest plots with tabular columns, logarithmic axes, and summary diamonds.\nIn clinical studies, treatment effect sizes (Hazard Ratios \\text{HR}, Odds Ratios \\text{OR}, or Relative Risks \\text{RR}) are displayed on a logarithmic scale with 95% confidence intervals:\n\\log(\\widehat{\\text{HR}}) \\pm 1.96 \\times \\text{SE}(\\log(\\widehat{\\text{HR}}))\nCode\nlibrary(cliomicplot)\n\n# Reproducible clinical subgroup dataset\nsubgroup_df &lt;- data.frame(\n  Variable = c(\"Overall Population\", \"Age &lt; 65\", \"Age &gt;= 65\", \n               \"Female\", \"Male\", \"Stage III\", \"Stage IV\"),\n  HR       = c(0.68, 0.62, 0.76, 0.65, 0.71, 0.58, 0.79),\n  CI_low   = c(0.54, 0.45, 0.55, 0.48, 0.53, 0.41, 0.59),\n  CI_high  = c(0.85, 0.84, 1.04, 0.88, 0.95, 0.82, 1.06),\n  P        = c(0.001, 0.003, 0.082, 0.006, 0.021, 0.002, 0.120)\n)\n\np_forest &lt;- cliplot(\n  HR ~ Variable,\n  data   = subgroup_df,\n  type   = type_forest(\n    ref_line    = TRUE,\n    ref_val     = 1.0,\n    log_scale   = TRUE,\n    sort        = TRUE,\n    stripe      = TRUE,\n    show_values = TRUE\n  ),\n  preset = \"nature\",\n  title  = \"Hazard Ratios for Progression-Free Survival Across Subgroups\"\n)\np_forest",
+    "crumbs": [
+      "Part II — Clinical Trials and Survival Analysis",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Treatment Effects and Subgroup Forest Plots</span>"
+    ]
+  },
+  {
+    "objectID": "04-treatment-effects.html#subgroup-dissection-and-interaction-tests",
+    "href": "04-treatment-effects.html#subgroup-dissection-and-interaction-tests",
+    "title": "4  Treatment Effects and Subgroup Forest Plots",
+    "section": "4.2 Subgroup Dissection and Interaction Tests",
+    "text": "4.2 Subgroup Dissection and Interaction Tests\nThe type_forest() constructor formats summary diamonds for pooled effects and aligns tabular annotations with plot points:\n\nref_line = 1.0: Displays the dashed line of null effect.\nlog_scale = TRUE: Equalizes the geometric distance for \\text{HR} = 0.5 and \\text{HR} = 2.0.\ndiamond_rows: Highlights the overall population with a pooled diamond.",
+    "crumbs": [
+      "Part II — Clinical Trials and Survival Analysis",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Treatment Effects and Subgroup Forest Plots</span>"
+    ]
+  },
+  {
+    "objectID": "05-oncology-trajectories.html",
+    "href": "05-oncology-trajectories.html",
+    "title": "5  Oncology Trajectories: Waterfall and Swimmer Plots",
+    "section": "",
+    "text": "5.1 RECIST 1.1 Waterfall Plots: type = \"waterfall\"\nEvaluating patient responses in oncology trials requires tracking both magnitude of tumor shrinkage (RECIST 1.1) and duration of response over time. cliomicplot provides waterfall, swimmer, and longitudinal trajectory visualizations.\nWaterfall plots rank individual patients by the maximum percentage change in target lesion sum of longest diameters from baseline:\n\\Delta\\% = \\frac{\\text{SLD}_{\\text{post}} - \\text{SLD}_{\\text{baseline}}}{\\text{SLD}_{\\text{baseline}}} \\times 100\nStandard RECIST 1.1 thresholds define response categories: - Partial Response (PR): \\Delta\\% \\le -30\\% - Progressive Disease (PD): \\Delta\\% \\ge +20\\% - Stable Disease (SD): Between -30\\% and +20\\%\nCode\nlibrary(cliomicplot)\n\nset.seed(42)\nn_pat &lt;- 50\npat_ids &lt;- paste0(\"PT-\", sprintf(\"%03d\", 1:n_pat))\nshrinkage &lt;- sort(rnorm(n_pat, mean = -15, sd = 35), decreasing = TRUE)\nresponse &lt;- ifelse(shrinkage &lt;= -30, \"PR\",\n            ifelse(shrinkage &gt;= 20, \"PD\", \"SD\"))\n\nwf_df &lt;- data.frame(\n  Patient  = factor(pat_ids, levels = pat_ids),\n  Change   = shrinkage,\n  Response = factor(response, levels = c(\"PD\", \"SD\", \"PR\"))\n)\n\np_wf &lt;- cliplot(\n  Change ~ Patient,\n  data   = wf_df,\n  type   = type_waterfall(\n    response_thresholds = c(\"PD\" = 20, \"PR\" = -30),\n    bar_width           = 0.72\n  ),\n  preset = \"nature\",\n  title  = \"Best Percentage Change in Target Lesion Size from Baseline\"\n)\np_wf",
+    "crumbs": [
+      "Part II — Clinical Trials and Survival Analysis",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Oncology Trajectories: Waterfall and Swimmer Plots</span>"
+    ]
+  },
+  {
+    "objectID": "05-oncology-trajectories.html#swimmer-plots-type-swimmer",
+    "href": "05-oncology-trajectories.html#swimmer-plots-type-swimmer",
+    "title": "5  Oncology Trajectories: Waterfall and Swimmer Plots",
+    "section": "5.2 Swimmer Plots: type = \"swimmer\"",
+    "text": "5.2 Swimmer Plots: type = \"swimmer\"\nSwimmer plots display the time on therapy for each patient, marked with milestones (time to first response, progression, or ongoing treatment):\n\n\nCode\nset.seed(123)\nn_s &lt;- 20\nswim_df &lt;- data.frame(\n  Patient  = factor(paste0(\"PT-\", sprintf(\"%02d\", 1:n_s))),\n  Months   = sort(runif(n_s, 3, 24)),\n  Ongoing  = sample(c(TRUE, FALSE), n_s, replace = TRUE, prob = c(0.4, 0.6)),\n  Response = sample(c(\"Complete Response\", \"Partial Response\", \"Stable Disease\"), n_s, replace = TRUE)\n)\n\np_swim &lt;- cliplot(\n  Months ~ Patient,\n  data   = swim_df,\n  type   = type_swimmer(\n    ongoing       = \"Ongoing\",\n    bar_fill      = \"Response\",\n    show_duration = TRUE,\n    bar_linewidth = 4.0\n  ),\n  preset = \"lancet\",\n  title  = \"Duration of Response and Treatment Exposure\"\n)\np_swim",
+    "crumbs": [
+      "Part II — Clinical Trials and Survival Analysis",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Oncology Trajectories: Waterfall and Swimmer Plots</span>"
+    ]
+  },
+  {
+    "objectID": "06-biomarkers-and-mcid.html",
+    "href": "06-biomarkers-and-mcid.html",
+    "title": "6  Longitudinal Biomarkers and Clinical Meaningfulness (MCID)",
+    "section": "",
+    "text": "6.1 Multi-Protein Longitudinal Timecourses: type = \"timecourse\"\nStatistical significance in biomarker changes does not automatically establish clinical benefit. This chapter covers multi-protein longitudinal timecourses and Minimally Clinically Important Difference (MCID) visualizations.\nMonitoring multiple proteins across treatment cycles reveals pharmacodynamic kinetics:\nCode\nlibrary(cliomicplot)\nlibrary(ggplot2)\n\nset.seed(42)\ntime_pts &lt;- c(\"Baseline\", \"Week 2\", \"Week 4\", \"Week 8\", \"Week 12\")\nproteins &lt;- c(\"IL-13\", \"IL-22\", \"CCL17\", \"S100A9\")\n\ntc_df &lt;- expand.grid(\n  Time    = factor(time_pts, levels = time_pts),\n  Protein = proteins\n)\ntc_df$Abundance &lt;- c(\n  # IL-13\n  4.5, 3.8, 2.9, 1.8, 1.4,\n  # IL-22\n  3.2, 3.0, 2.4, 1.6, 1.2,\n  # CCL17\n  6.8, 5.1, 3.4, 2.2, 1.8,\n  # S100A9\n  5.4, 4.9, 4.0, 3.1, 2.7\n)\n\np_tc &lt;- cliplot(\n  Abundance ~ Time | Protein,\n  data   = tc_df,\n  type   = \"timecourse\",\n  preset = \"nature\",\n  title  = \"Pharmacodynamic Suppression of Serum Inflammatory Biomarkers\"\n)\np_tc",
+    "crumbs": [
+      "Part II — Clinical Trials and Survival Analysis",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Longitudinal Biomarkers and Clinical Meaningfulness (MCID)</span>"
+    ]
+  },
+  {
+    "objectID": "06-biomarkers-and-mcid.html#minimally-clinically-important-difference-type-mcid",
+    "href": "06-biomarkers-and-mcid.html#minimally-clinically-important-difference-type-mcid",
+    "title": "6  Longitudinal Biomarkers and Clinical Meaningfulness (MCID)",
+    "section": "6.2 Minimally Clinically Important Difference: type = \"mcid\"",
+    "text": "6.2 Minimally Clinically Important Difference: type = \"mcid\"\nThe Minimally Clinically Important Difference (MCID) defines the smallest score change patients perceive as beneficial (e.g., a 4-point drop on the SCORAD scale or 0.5 standard deviation change):\n\\text{Responder} = \\mathbb{I}(\\Delta \\text{Score}_i \\ge \\text{MCID})\n\n\nCode\nmcid_df &lt;- data.frame(\n  Endpoint = c(\"SCORAD Total (Biologic)\", \"Pruritus NRS (Topical)\",\n               \"EASI-75 (Biologic)\", \"POEM Score (Biologic)\",\n               \"DLQI Quality of Life (Placebo)\"),\n  Estimate = c(8.5, 3.4, 11.2, 4.2, 1.8),\n  MCID     = c(5.0, 2.0,  8.0, 3.0, 4.0),\n  N        = c(520, 380,  510, 240, 190),\n  Category = c(\"Biologic Exceeding MCID\", \"Topical Exceeding MCID\",\n               \"Biologic Exceeding MCID\", \"Biologic Exceeding MCID\",\n               \"Placebo Below MCID\")\n)\n\np_mcid &lt;- cliplot(\n  Estimate ~ Endpoint,\n  data   = mcid_df,\n  type   = type_mcid(\n    mcid          = \"MCID\",\n    n_treated     = \"N\",\n    category      = \"Category\",\n    sort_by_ratio = TRUE\n  ),\n  preset = \"lancet\",\n  title  = \"Minimal Clinically Important Difference (MCID) Evaluation\",\n  xlab   = \"Absolute Clinical Estimate (|estimate|)\"\n)\np_mcid",
+    "crumbs": [
+      "Part II — Clinical Trials and Survival Analysis",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Longitudinal Biomarkers and Clinical Meaningfulness (MCID)</span>"
+    ]
+  },
+  {
+    "objectID": "07-differential-expression.html",
+    "href": "07-differential-expression.html",
+    "title": "7  Differential Expression: Volcano Plots and DEG Contrasts",
+    "section": "",
+    "text": "7.1 Volcano Plots: type = \"volcano\"\nHigh-throughput transcriptomics and proteomics evaluate thousands of features simultaneously. Volcano plots and contrast matrices map effect size (\\log_2\\text{FC}) against statistical significance (-\\log_{10}P).\nA volcano plot places \\log_2(\\text{Fold Change}) on the horizontal axis and -\\log_{10}(P\\text{-value}) or -\\log_{10}(\\text{FDR}) on the vertical axis:\n\\text{Significance Quadrants}: \\begin{cases}\n\\text{Up-regulated}: & \\log_2\\text{FC} \\ge \\tau_{\\text{FC}} \\quad \\text{and} \\quad -\\log_{10}(P) \\ge \\tau_P \\\\\n\\text{Down-regulated}: & \\log_2\\text{FC} \\le -\\tau_{\\text{FC}} \\quad \\text{and} \\quad -\\log_{10}(P) \\ge \\tau_P \\\\\n\\text{Non-significant}: & \\text{otherwise}\n\\end{cases}\nCode\nlibrary(cliomicplot)\n\n# Generate reproducible transcriptomics dataset\nset.seed(42)\nn_genes &lt;- 1200\nlog2fc &lt;- rnorm(n_genes, mean = 0, sd = 1.2)\npvals  &lt;- runif(n_genes, 0, 1)^3 # Skew toward smaller p-values\ngene_ids &lt;- paste0(\"Gene_\", 1:n_genes)\n\n# Inject significant key biomarkers\nkey_markers &lt;- c(\"IL13\", \"IL4R\", \"S100A7\", \"CCL18\", \"FLG\", \"LOR\")\nlog2fc[1:6] &lt;- c(3.2, 2.8, 4.1, 3.5, -3.8, -3.1)\npvals[1:6]  &lt;- c(1e-12, 1e-9, 1e-15, 1e-11, 1e-14, 1e-10)\ngene_ids[1:6] &lt;- key_markers\n\nvolcano_df &lt;- data.frame(\n  Gene   = gene_ids,\n  log2FC = log2fc,\n  pValue = pvals\n)\n\np_volc &lt;- cliplot(\n  pValue ~ log2FC,\n  data   = volcano_df,\n  type   = type_volcano(\n    fc_cutoff   = 1.5,\n    pval_cutoff = 0.01,\n    label_genes = key_markers\n  ),\n  preset = \"nature\",\n  title  = \"Transcriptomic Signature: Atopic Dermatitis Lesional vs Healthy Skin\"\n)\np_volc",
+    "crumbs": [
+      "Part III — High-Dimensional Omics Visualizations",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Differential Expression: Volcano Plots and DEG Contrasts</span>"
+    ]
+  },
+  {
+    "objectID": "07-differential-expression.html#deg-contrast-matrices-type-deg_compare",
+    "href": "07-differential-expression.html#deg-contrast-matrices-type-deg_compare",
+    "title": "7  Differential Expression: Volcano Plots and DEG Contrasts",
+    "section": "7.2 DEG Contrast Matrices: type = \"deg_compare\"",
+    "text": "7.2 DEG Contrast Matrices: type = \"deg_compare\"\nComparing differential expression across two distinct diseases or cohorts (e.g., AD vs HC compared against PSO vs HC) identifies shared versus disease-specific molecular pathways:\n\n\nCode\ncompare_df &lt;- data.frame(\n  Gene    = gene_ids[1:300],\n  FC_AD   = log2fc[1:300],\n  FC_PSO  = log2fc[1:300] * 0.7 + rnorm(300, 0, 0.8)\n)\n\np_deg &lt;- cliplot(\n  FC_PSO ~ FC_AD,\n  data   = compare_df,\n  type   = \"deg_compare\",\n  preset = \"science\",\n  title  = \"Cross-Disease Transcriptomic Concordance: AD vs Psoriasis\"\n)\np_deg",
+    "crumbs": [
+      "Part III — High-Dimensional Omics Visualizations",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Differential Expression: Volcano Plots and DEG Contrasts</span>"
+    ]
+  },
+  {
+    "objectID": "08-pathway-enrichment.html",
+    "href": "08-pathway-enrichment.html",
+    "title": "8  Pathway Enrichment: GSEA Running Enrichment Score Plots",
+    "section": "",
+    "text": "8.1 Mathematical Formulation of GSEA\nGene Set Enrichment Analysis (Subramanian et al., PNAS 2005) evaluates whether an a priori defined gene set S shows cumulative enrichment at the extremes of a ranked gene list L. cliomicplot renders three-tiered GSEA figures.\nGenes in L = \\{g_1, g_2, \\dots, g_N\\} are ranked by differential expression metric r(g_j). The running enrichment score P_{\\text{hit}}(S, i) walks down the ranked list:\nP_{\\text{hit}}(S, i) = \\sum_{g_j \\in S, j \\le i} \\frac{|r_j|^p}{N_R}, \\quad N_R = \\sum_{g_j \\in S} |r_j|^p\nP_{\\text{miss}}(S, i) = \\sum_{g_j \\notin S, j \\le i} \\frac{1}{N - N_H}\nThe Enrichment Score ES(S) is the maximum deviation of P_{\\text{hit}} - P_{\\text{miss}} from zero:\nES(S) = \\arg\\max_{i} |P_{\\text{hit}}(S, i) - P_{\\text{miss}}(S, i)|\nCode\nlibrary(cliomicplot)\n\n# Generate synthetic GSEA pathway enrichment results\nset.seed(42)\npathways &lt;- c(\n  \"Cytokine-Cytokine Receptor Interaction\", \"JAK-STAT Signaling Pathway\",\n  \"Toll-like Receptor Signaling\", \"Th1 and Th2 Cell Differentiation\",\n  \"Chemokine Signaling Pathway\", \"NF-kappa B Signaling\",\n  \"IL-17 Signaling Pathway\", \"Antigen Processing and Presentation\",\n  \"T Cell Receptor Signaling\", \"B Cell Receptor Signaling\",\n  \"Natural Killer Cell Mediated Cytotoxicity\", \"Apoptosis\",\n  \"Fatty Acid Metabolism\", \"Steroid Biosynthesis\", \"Keratinization\"\n)\n\ngsea_df &lt;- data.frame(\n  Term = pathways,\n  NES  = c(2.65, 2.38, 2.15, 2.08, 1.95, 1.88, 1.72, 1.65, 1.45, 1.25, 0.95, 0.82, -1.65, -1.98, -2.45),\n  FDR  = c(1e-5, 2e-5, 8e-5, 1e-4, 3e-4, 5e-4, 1e-3, 2e-3, 5e-3, 0.015, 0.045, 0.082, 0.002, 0.0005, 0.0001)\n)\n\np_gsea &lt;- cliplot(\n  gsea_df,\n  type     = \"gsea\",\n  top_term = 15,\n  theme    = \"nature\",\n  title    = \"Pathway Enrichment: Normalized Enrichment Score (NES) Across Inflammatory Cascades\"\n)\np_gsea",
+    "crumbs": [
+      "Part III — High-Dimensional Omics Visualizations",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Pathway Enrichment: GSEA Running Enrichment Score Plots</span>"
+    ]
+  },
+  {
+    "objectID": "08-pathway-enrichment.html#structure-of-the-three-tiered-layout",
+    "href": "08-pathway-enrichment.html#structure-of-the-three-tiered-layout",
+    "title": "8  Pathway Enrichment: GSEA Running Enrichment Score Plots",
+    "section": "8.2 Structure of the Three-Tiered Layout",
+    "text": "8.2 Structure of the Three-Tiered Layout\n\nTop Panel: Running enrichment score curve tracing P_{\\text{hit}} - P_{\\text{miss}}, indicating peak ES and leading edge subset.\nMiddle Panel: Vertical barcode lines marking gene positions of set S within ranked list L.\nBottom Panel: Continuous ranked statistic distribution with a shaded zero baseline.",
+    "crumbs": [
+      "Part III — High-Dimensional Omics Visualizations",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Pathway Enrichment: GSEA Running Enrichment Score Plots</span>"
+    ]
+  },
+  {
+    "objectID": "09-genomics-and-mgwas.html",
+    "href": "09-genomics-and-mgwas.html",
+    "title": "9  Statistical Genetics and Microbiome GWAS (mGWAS)",
+    "section": "",
+    "text": "9.1 Manhattan Plots: type = \"manhattan\"\nGenome-Wide Association Studies (GWAS) and Microbiome-GWAS (mGWAS) scan genetic variants across chromosomes for associations with clinical traits or microbial taxon abundances. cliomicplot provides Manhattan and dual-trait Miami plots.\nManhattan plots position genomic variants across chromosomes on the horizontal axis and -\\log_{10}(P\\text{-value}) on the vertical axis. The standard genome-wide significance threshold is P \\le 5 \\times 10^{-8} (-\\log_{10}P \\ge 7.30), derived from Bonferroni correction over \\approx 10^6 independent tests:\n\\tau_{\\text{GWAS}} = -\\log_{10}(5 \\times 10^{-8}) \\approx 7.30\nCode\nlibrary(cliomicplot)\n\nset.seed(42)\nmgwas_df &lt;- data.frame(\n  pos  = seq(2000, 400000, by = 2500),\n  qval = runif(160, 0.02, 1.0),\n  gene = \"\",\n  stringsAsFactors = FALSE\n)\n\n# Insert significant microbial variant associations\nhit_positions &lt;- c(22, 68, 114, 142)\nmgwas_df$qval[hit_positions] &lt;- c(3.2e-5, 8.4e-6, 4.1e-7, 1.9e-5)\nmgwas_df$gene[hit_positions] &lt;- c(\"agrA\", \"mecA\", \"tsst-1\", \"ebpS\")\n\np_man &lt;- cliplot(\n  qval ~ pos,\n  data = mgwas_df,\n  type = type_manhattan(\n    threshold  = 0.01,\n    label_col  = \"gene\",\n    point_size = 1.4,\n    xlab       = \"Staphylococcus aureus Genome Position (bp)\",\n    ylab       = expression(-log[10]~italic(q))\n  ),\n  title = \"Microbial GWAS: Bacterial Variants Associated with Eczema Severity\"\n)\np_man",
+    "crumbs": [
+      "Part III — High-Dimensional Omics Visualizations",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Statistical Genetics and Microbiome GWAS (mGWAS)</span>"
+    ]
+  },
+  {
+    "objectID": "09-genomics-and-mgwas.html#mirrored-miami-plots",
+    "href": "09-genomics-and-mgwas.html#mirrored-miami-plots",
+    "title": "9  Statistical Genetics and Microbiome GWAS (mGWAS)",
+    "section": "9.2 Mirrored Miami Plots",
+    "text": "9.2 Mirrored Miami Plots\nIn cross-trait studies, a Miami plot mirrors two traits back-to-back (e.g., Atopic Dermatitis risk alleles plotted upright, Serum IgE levels inverted) to identify shared pleiotropic loci.",
+    "crumbs": [
+      "Part III — High-Dimensional Omics Visualizations",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Statistical Genetics and Microbiome GWAS (mGWAS)</span>"
+    ]
+  },
+  {
+    "objectID": "10-microbiome-and-dyad-sharing.html",
+    "href": "10-microbiome-and-dyad-sharing.html",
+    "title": "10  Microbiome Abundance and Dyad Sharing Visualizations",
+    "section": "",
+    "text": "10.1 Bubble Matrices: type = \"bubble_matrix\"\nMicrobiome profiling requires visualizing relative abundances across taxonomic ranks and tracking shared strain transmission across clinical dyads. This chapter covers bubble matrices and circular dyad sharing plots.\nBubble matrices encode two data dimensions simultaneously: circle area represents mean relative abundance, while fill color represents fold change, prevalence, or statistical significance:\nCode\nlibrary(cliomicplot)\n\nset.seed(42)\nspecies &lt;- c(\"S. aureus\", \"S. epidermidis\", \"C. acnes\",\n             \"M. restricta\", \"S. hominis\", \"L. crispatus\")\ncomparisons &lt;- c(\"Lesional vs HC\", \"Non-Lesional vs HC\", \"Lesional vs Non-Lesional\")\n\nda_df &lt;- expand.grid(Species = species, Comparison = comparisons, stringsAsFactors = FALSE)\nda_df$log2FC &lt;- c(3.2, -1.8, -0.4, 1.2, -2.1, -0.2,\n                  0.8, -0.9, -0.1, 0.4, -1.0,  0.1,\n                  2.4, -0.9, -0.3, 0.8, -1.1, -0.3)\nda_df$qval &lt;- c(1.2e-6, 4.5e-4, 0.42, 0.012, 8.1e-5, 0.65,\n                0.08,   0.03,   0.85, 0.31,  0.02,   0.78,\n                5.4e-5, 0.04,   0.55, 0.06,  0.03,   0.51)\n\np_bubble &lt;- cliplot(\n  Species ~ Comparison,\n  data = da_df,\n  type = type_bubble_matrix(\n    size_col = \"qval\",\n    fill_col = \"log2FC\",\n    min_size = 2.0,\n    max_size = 7.0,\n    palette  = \"nature\"\n  ),\n  title = \"Differential Cutaneous Bacterial Abundance Across Clinical Contrasts\"\n)\np_bubble",
+    "crumbs": [
+      "Part III — High-Dimensional Omics Visualizations",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Microbiome Abundance and Dyad Sharing Visualizations</span>"
+    ]
+  },
+  {
+    "objectID": "10-microbiome-and-dyad-sharing.html#circular-dyad-sharing-type-sharing_heatmap",
+    "href": "10-microbiome-and-dyad-sharing.html#circular-dyad-sharing-type-sharing_heatmap",
+    "title": "10  Microbiome Abundance and Dyad Sharing Visualizations",
+    "section": "10.2 Circular Dyad Sharing: type = \"sharing_heatmap\"",
+    "text": "10.2 Circular Dyad Sharing: type = \"sharing_heatmap\"\nCircular dyad sharing maps strain transmission between paired individuals (such as mother-infant dyads or twin pairs) or between coupled anatomical compartments:\n\n\nCode\nset.seed(42)\ndyads &lt;- paste0(\"Dyad \", sprintf(\"%02d\", 1:12))\ntaxa  &lt;- c(\"S. epidermidis ST2\", \"S. epidermidis ST5\", \"S. hominis ST1\",\n           \"C. acnes IA\", \"C. acnes II\", \"M. restricta ST4\")\n\ndyad_data &lt;- expand.grid(Taxon = taxa, Dyad = dyads, stringsAsFactors = FALSE)\ndyad_data$Transmission &lt;- ifelse(\n  runif(nrow(dyad_data)) &gt; 0.44, \"Shared (Transmitted)\", \"Not shared\"\n)\n\np_share &lt;- cliplot(\n  Taxon ~ Dyad,\n  data   = dyad_data,\n  type   = type_sharing_heatmap(\n    status_col     = \"Transmission\",\n    shared_color   = \"#E64B35\",\n    unshared_color = \"#EDF1F7\",\n    legend_title   = \"Dyad Status\"\n  ),\n  preset = \"nature\",\n  title  = \"Vertical Mother-Infant Strain Transmission at 12 Months\"\n)\np_share",
+    "crumbs": [
+      "Part III — High-Dimensional Omics Visualizations",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Microbiome Abundance and Dyad Sharing Visualizations</span>"
+    ]
+  },
+  {
+    "objectID": "11-cross-condition-networks.html",
+    "href": "11-cross-condition-networks.html",
+    "title": "11  Cross-Condition Network Module Comparison",
+    "section": "",
+    "text": "11.1 Mathematical Formulation of Module Overlap\nComparing biological co-occurrence networks between healthy and diseased states requires evaluating whether functional modules share feature composition. cliomicplot calculates hypergeometric overlap and Representation Factors (RF) through type_module_compare().\nGiven a background universe of N total features, module M_1 from Condition 1 containing |M_1| features, and module M_2 from Condition 2 containing |M_2| features, the overlap count is k = |M_1 \\cap M_2|.",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Cross-Condition Network Module Comparison</span>"
+    ]
+  },
+  {
+    "objectID": "11-cross-condition-networks.html#mathematical-formulation-of-module-overlap",
+    "href": "11-cross-condition-networks.html#mathematical-formulation-of-module-overlap",
+    "title": "11  Cross-Condition Network Module Comparison",
+    "section": "",
+    "text": "11.1.1 Jaccard Similarity Index\nThe Jaccard index measures the proportion of shared features relative to the union:\nJ(M_1, M_2) = \\frac{|M_1 \\cap M_2|}{|M_1 \\cup M_2|} = \\frac{k}{|M_1| + |M_2| - k}\n\n\n11.1.2 Representation Factor (RF)\nThe Representation Factor quantifies whether the observed overlap exceeds what is expected by chance (RF &gt; 1.0 indicates enrichment, RF &lt; 1.0 indicates depletion):\nRF = \\frac{|M_1 \\cap M_2|}{\\mathbb{E}[|M_1 \\cap M_2|]} = \\frac{k}{\\frac{|M_1| \\cdot |M_2|}{N}} = \\frac{k \\cdot N}{|M_1| \\cdot |M_2|}\n\n\n11.1.3 Hypergeometric Overlap Significance\nThe probability of observing k or more shared features by random chance is calculated from the hypergeometric distribution:\nP(X \\ge k) = \\sum_{x=k}^{\\min(|M_1|, |M_2|)} \\frac{\\binom{|M_2|}{x} \\binom{N - |M_2|}{|M_1| - x}}{\\binom{N}{|M_1|}}",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Cross-Condition Network Module Comparison</span>"
+    ]
+  },
+  {
+    "objectID": "11-cross-condition-networks.html#visualizing-module-overlap-with-type_module_compare",
+    "href": "11-cross-condition-networks.html#visualizing-module-overlap-with-type_module_compare",
+    "title": "11  Cross-Condition Network Module Comparison",
+    "section": "11.2 Visualizing Module Overlap with type_module_compare",
+    "text": "11.2 Visualizing Module Overlap with type_module_compare\ncliplot() accepts either node-level cluster assignments or precomputed overlap matrices:\n\n\nCode\nlibrary(cliomicplot)\n\n# Reproducible node-level community assignments across discovery and replication networks\nset.seed(42)\nn_features &lt;- 90\nfeatures &lt;- paste0(\"Taxon_\", 1:n_features)\nnet1_mods &lt;- sample(c(\"M1_Barrier\", \"M2_Inflammation\", \"M3_Sebum\"), n_features, replace = TRUE)\nnet2_mods &lt;- net1_mods\n# Rewire 30% of features in replication network\nrewired_idx &lt;- sample(1:n_features, 27)\nnet2_mods[rewired_idx] &lt;- sample(c(\"ModA_Th2\", \"ModB_Stratum\", \"ModC_Lipid\"), 27, replace = TRUE)\n\ndf_nodes &lt;- data.frame(\n  Feature     = features,\n  Discovery   = net1_mods,\n  Replication = net2_mods\n)\n\np_comp &lt;- cliplot(\n  Replication ~ Discovery,\n  data   = df_nodes,\n  type   = type_module_compare(\n    fill_by        = \"rf\",            # Fill by Representation Factor\n    show_stars     = TRUE,            # Display significance asterisks\n    show_totals    = TRUE,            # Display marginal totals\n    total_universe = 120              # Universe size N\n  ),\n  preset = \"nature\",\n  title  = \"Cross-Network Module Preservation: Discovery vs Replication\"\n)\np_comp\n\n\n\n\n\n\n\n\n\nSignificant overlaps (P &lt; 0.001, ***) identify conserved biological functional units that persist despite phenotypic transitions.",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Cross-Condition Network Module Comparison</span>"
+    ]
+  },
+  {
+    "objectID": "12-topological-network-styles.html",
+    "href": "12-topological-network-styles.html",
+    "title": "12  Multi-Group Comparative Networks Across 8 Journal Styles",
+    "section": "",
+    "text": "12.1 The 8 Topological Layout Styles\nVisualizing topological differences across multiple conditions requires layout algorithms that distinguish intra-network connections from cross-network alignments. cliplot_cross_network_graph() implements 8 distinct journal layout presets.",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Multi-Group Comparative Networks Across 8 Journal Styles</span>"
+    ]
+  },
+  {
+    "objectID": "12-topological-network-styles.html#the-8-topological-layout-styles",
+    "href": "12-topological-network-styles.html#the-8-topological-layout-styles",
+    "title": "12  Multi-Group Comparative Networks Across 8 Journal Styles",
+    "section": "",
+    "text": "Preset\nLayout Architecture\nTarget Application\nVisual Characteristics\n\n\n\n\nforce\nForce-directed Fruchterman-Reingold\nOrganic community clustering\nSpring-embedded repulsion, edge-weighted bundling\n\n\nhierarchical\nStratified flow / tree\nUpstream/downstream causal pathways\nLinear vertical/horizontal flow across tiers\n\n\nbipartite\nDual parallel vertical axes\nHost-microbe or Drug-target pairing\nTwo opposing columns with cross-links between them\n\n\nradial\nCentral hub-and-spoke\nKeystone taxa / master regulator analysis\nCentral keystone circle with peripheral satellites\n\n\nlancet\nLancet minimal editorial\nHigh-impact clinical journals\nMuted grey palette, ultra-clean monochrome framing\n\n\nconcentric\nConcentric circular orbital rings\nMulti-layered molecular hierarchy\nDashed orbital guide tracks, radial alignment\n\n\nbipolar\nOpposing magnetic dipolar fields\nCase vs Control topological rewiring\nPolar coordinate layout with divergent magnetic poles\n\n\nscience\nJewel-toned Science palette\nScience, Science Advances\nSapphire Navy, Ruby Crimson, Emerald, Amethyst",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Multi-Group Comparative Networks Across 8 Journal Styles</span>"
+    ]
+  },
+  {
+    "objectID": "12-topological-network-styles.html#node-level-cross-network-graph",
+    "href": "12-topological-network-styles.html#node-level-cross-network-graph",
+    "title": "12  Multi-Group Comparative Networks Across 8 Journal Styles",
+    "section": "12.2 Node-Level Cross-Network Graph",
+    "text": "12.2 Node-Level Cross-Network Graph\n\n\nCode\nlibrary(cliomicplot)\n\n# Generate reproducible cross-network graph data\ndemo_net &lt;- generate_demo_cross_network()\n\n# Style 1: Force-directed Nature style\np_force &lt;- cliplot_cross_network_graph(\n  nodes       = demo_net$nodes,\n  edges       = demo_net$edges,\n  cross_edges = demo_net$cross_edges,\n  level       = \"node\",\n  preset      = \"nature\",\n  scifig      = TRUE,\n  title       = \"Cross-Network Topological Architecture (Nature Style)\"\n)\np_force\n\n\n\n\n\n\n\n\n\n\n12.2.1 Style 6: Concentric Orbital Ring Architecture\n\n\nCode\np_conc &lt;- cliplot_cross_network_graph(\n  nodes       = demo_net$nodes,\n  edges       = demo_net$edges,\n  cross_edges = demo_net$cross_edges,\n  level       = \"node\",\n  preset      = \"concentric\",\n  scifig      = TRUE,\n  title       = \"Concentric Circular Multi-Ring Architecture\"\n)\np_conc\n\n\n\n\n\n\n\n\n\n\n\n12.2.2 Style 7: Bipolar Magnetic Dipole Layout\n\n\nCode\np_bip &lt;- cliplot_cross_network_graph(\n  nodes       = demo_net$nodes,\n  edges       = demo_net$edges,\n  cross_edges = demo_net$cross_edges,\n  level       = \"node\",\n  preset      = \"bipolar\",\n  scifig      = TRUE,\n  title       = \"Bipolar Differential Co-Occurrence Network\"\n)\np_bip\n\n\n\n\n\n\n\n\n\n\n\n12.2.3 Style 8: Science Jewel-Toned Palette\n\n\nCode\np_sci &lt;- cliplot_cross_network_graph(\n  nodes       = demo_net$nodes,\n  edges       = demo_net$edges,\n  cross_edges = demo_net$cross_edges,\n  level       = \"node\",\n  preset      = \"science\",\n  scifig      = TRUE,\n  title       = \"Jewel-Toned Comparative Network Architecture (Science Style)\"\n)\np_sci",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Multi-Group Comparative Networks Across 8 Journal Styles</span>"
+    ]
+  },
+  {
+    "objectID": "13-coupled-environmental-networks.html",
+    "href": "13-coupled-environmental-networks.html",
+    "title": "13  Central Networks Coupled with Multi-Domain Environmental Heatmaps",
+    "section": "",
+    "text": "13.1 Architecture and Visual Coordinate System\nComplex biological communities do not function in isolation; they respond to environmental drivers, clinical phenotypes, and host tissue states. cliplot_env_network() integrates a central co-occurrence network with peripheral correlation heatmaps across 7 styling presets.\nThe layout integrates three distinct analytical layers on a unified coordinate system conforming to Fig4papers publication rules:",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Central Networks Coupled with Multi-Domain Environmental Heatmaps</span>"
+    ]
+  },
+  {
+    "objectID": "13-coupled-environmental-networks.html#architecture-and-visual-coordinate-system",
+    "href": "13-coupled-environmental-networks.html#architecture-and-visual-coordinate-system",
+    "title": "13  Central Networks Coupled with Multi-Domain Environmental Heatmaps",
+    "section": "",
+    "text": "Central Modular Network (r \\le 2.80): Displays functional modules with radial exclusion boundaries and bold opaque badges (M1: Core, M2: Barrier, etc.) eliminating text-stroke collisions.\nFour Corner Triangular Heatmaps: Displays pairwise intra-domain correlations with significance asterisks (*P &lt; 0.05, **P &lt; 0.01, ***P &lt; 0.001) and 78° angled outer labels. Diagonal self-correlations (r = 1.0) remain unstarred.\nAnnular Inter-Domain Connecting Links: Originates from indicator badges in the annular corridor (r \\approx 3.38) and connects to the central network perimeter (r \\approx 2.74). Color indicates direction (red for positive, cyan for negative) and linewidth indicates statistical significance (-\\log_{10}P).",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Central Networks Coupled with Multi-Domain Environmental Heatmaps</span>"
+    ]
+  },
+  {
+    "objectID": "13-coupled-environmental-networks.html#the-7-environmental-coupling-styles",
+    "href": "13-coupled-environmental-networks.html#the-7-environmental-coupling-styles",
+    "title": "13  Central Networks Coupled with Multi-Domain Environmental Heatmaps",
+    "section": "13.2 The 7 Environmental Coupling Styles",
+    "text": "13.2 The 7 Environmental Coupling Styles\n\n\n\n\n\n\n\n\n\nPreset\nCentral Network\nPeripheral Domains\nPalette Aesthetics\n\n\n\n\nclinical / nature\nMulti-module microbiome\nBiophysical, Severity, Cytokines, Exposome\nNature Slate Blue, Crimson, Amber\n\n\nseasonal\nSeasonal succession\nSpring, Summer, Autumn, Winter\nFlora Green, Solar Amber, Rust, Frost Blue\n\n\ndark\nLuminescent multi-omics\n4 Multi-omics layers\nObsidian background, neon cyan & magenta\n\n\nlancet\nClinical epidemiology\nClinical trials exposome\nMuted greys, thin editorial strokes\n\n\nmulti_tissue\nMulti-tissue axis\nEpidermis, Dermis, Serum, Gut\nTerracotta, Cerulean, Amethyst, Forest\n\n\ncircadian\nDiurnal oscillations\nDawn (06:00), Midday (12:00), Dusk (18:00), Midnight (24:00)\nDawn Rose, Noon Gold, Dusk Indigo, Midnight Navy\n\n\nbipolar\nDifferential coupling\nHealthy vs Disease contrasts\nPolar divergent Crimson vs Deep Blue",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Central Networks Coupled with Multi-Domain Environmental Heatmaps</span>"
+    ]
+  },
+  {
+    "objectID": "13-coupled-environmental-networks.html#examples",
+    "href": "13-coupled-environmental-networks.html#examples",
+    "title": "13  Central Networks Coupled with Multi-Domain Environmental Heatmaps",
+    "section": "13.3 Examples",
+    "text": "13.3 Examples\n\n13.3.1 Style 1: Clinical Phenotype Domains (Nature Style)\n\n\nCode\nlibrary(cliomicplot)\n\np_env_clin &lt;- cliplot_env_network(\n  title              = \"Central Microbial Network Coupled with Multi-Domain Clinical Drivers\",\n  show_values        = TRUE,\n  show_domain_labels = TRUE,\n  value_digits       = 2,\n  compact            = TRUE,\n  preset             = \"nature\",\n  scifig             = TRUE\n)\np_env_clin\n\n\n\n\n\n\n\n\n\n\n\n13.3.2 Style 2: Four-Season Environmental Succession\n\n\nCode\np_env_seas &lt;- cliplot_env_network(\n  title              = \"Seasonal Environmental Succession Coupled with Microbial Network\",\n  show_values        = TRUE,\n  show_domain_labels = TRUE,\n  value_digits       = 2,\n  compact            = TRUE,\n  preset             = \"seasonal\",\n  scifig             = TRUE\n)\np_env_seas\n\n\n\n\n\n\n\n\n\n\n\n13.3.3 Style 5: Multi-Tissue Axis Coupling\n\n\nCode\np_env_mt &lt;- cliplot_env_network(\n  title              = \"Multi-Tissue Systemic Coupling (Epidermis, Dermis, Serum, Gut)\",\n  show_values        = TRUE,\n  show_domain_labels = TRUE,\n  value_digits       = 2,\n  compact            = TRUE,\n  preset             = \"multi_tissue\",\n  scifig             = TRUE\n)\np_env_mt",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Central Networks Coupled with Multi-Domain Environmental Heatmaps</span>"
+    ]
+  },
+  {
+    "objectID": "14-preservation-and-robustness.html",
+    "href": "14-preservation-and-robustness.html",
+    "title": "14  Module Preservation and Targeted Attack Robustness",
+    "section": "",
+    "text": "14.1 Module Preservation Statistics (Z_{\\text{summary}})\nAssessing biological network changes between health and disease requires testing whether module structures persist and whether the network withstands random loss or targeted hub disruption.\ncli_module_preservation() evaluates whether module density and intramodular hub rank are preserved between reference and test conditions under permutation testing (Langfelder et al., PLoS Comput Biol 2011).",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Module Preservation and Targeted Attack Robustness</span>"
+    ]
+  },
+  {
+    "objectID": "14-preservation-and-robustness.html#module-preservation-statistics-z_textsummary",
+    "href": "14-preservation-and-robustness.html#module-preservation-statistics-z_textsummary",
+    "title": "14  Module Preservation and Targeted Attack Robustness",
+    "section": "",
+    "text": "14.1.1 Mathematical Definition of Z_{\\text{summary}}\nThe composite preservation statistic Z_{\\text{summary}} aggregates density and connectivity preservation metrics over B permutations:\nZ_{\\text{summary}} = \\frac{Z_{\\text{density}} + Z_{\\text{connectivity}}}{2}\nwhere Z_{\\text{density}} evaluates whether features within module q maintain elevated mutual correlation and clustering in the test condition:\nZ_{\\text{density}} = \\frac{Z_{\\text{mean\\_adj}} + Z_{\\text{mean\\_k}} + Z_{\\text{cluster\\_coef}} + Z_{\\text{density\\_raw}}}{4}\nand Z_{\\text{connectivity}} evaluates whether intramodular hub feature rankings are conserved between reference and test networks:\nZ_{\\text{connectivity}} = \\frac{Z_{\\text{kIM}} + Z_{\\text{kME}}}{2}, \\quad Z = \\frac{\\text{obs} - \\mu_{\\text{perm}}}{\\sigma_{\\text{perm}}}\n\nPreservation Thresholds:\n\nZ &lt; 2 (dashed red line): No statistical evidence of module preservation.\n2 \\le Z \\le 10 (dashed orange line): Moderate module preservation.\nZ &gt; 10 (dashed green line): Strong, statistically significant module preservation.\n\n\n\n\nCode\nlibrary(cliomicplot)\n\ndemo_omics &lt;- cli_demo_vitality_multiomics(n_samples = 35, n_features = 60, seed = 42)\n\npres_stats &lt;- cli_module_preservation(\n  ref_data    = demo_omics$ref_expr,\n  test_data   = demo_omics$test_expr,\n  ref_modules = demo_omics$modules,\n  n_perm      = 100,\n  seed        = 42\n)\n\ncliplot_module_preservation(\n  pres_stats,\n  title = \"Cross-Network Module Preservation: WT Reference vs KO Test\"\n)",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Module Preservation and Targeted Attack Robustness</span>"
+    ]
+  },
+  {
+    "objectID": "14-preservation-and-robustness.html#network-robustness-and-targeted-attack-simulation",
+    "href": "14-preservation-and-robustness.html#network-robustness-and-targeted-attack-simulation",
+    "title": "14  Module Preservation and Targeted Attack Robustness",
+    "section": "14.2 Network Robustness and Targeted Attack Simulation",
+    "text": "14.2 Network Robustness and Targeted Attack Simulation\ncli_network_robustness() simulates progressive network degradation under random node loss versus targeted attacks on high-degree hub nodes. cliplot_network_robustness() displays natural connectivity decay curves.\n\n14.2.1 Mathematical Formulation of Natural Connectivity\nNatural connectivity \\bar{\\lambda} derives from the spectrum of the network adjacency matrix A and reflects the redundancy of alternative paths between all node pairs (Wu et al., IEEE Trans Reliab 2012):\n\\bar{\\lambda} = \\ln \\left( \\frac{1}{N} \\sum_{i=1}^N e^{\\lambda_i} \\right)\nwhere \\lambda_1 \\ge \\lambda_2 \\ge \\dots \\ge \\lambda_N are the eigenvalues of A. Natural connectivity strictly decreases monotonically as edges and nodes are removed, quantifying alternate path redundancy and topological stability.\nThe competitive-to-cooperative edge balance is evaluated as:\nR_{\\pm} = \\frac{E_{-}}{E_{+}}\n\n\nCode\nrob_stats &lt;- cli_network_robustness(\n  networks     = demo_omics$networks,\n  attack       = c(\"random\", \"degree\"),\n  rm_fractions = seq(0.05, 0.85, by = 0.05),\n  n_perm       = 20,\n  metric       = \"natural_connectivity\",\n  seed         = 42\n)\n\ncliplot_network_robustness(\n  rob_stats,\n  title = \"Network Robustness Under Progressive Node Removal\"\n)",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Module Preservation and Targeted Attack Robustness</span>"
+    ]
+  },
+  {
+    "objectID": "15-empirical-linkage-and-permutations.html",
+    "href": "15-empirical-linkage-and-permutations.html",
+    "title": "15  Empirical Linkage Engines and Permutation Testing",
+    "section": "",
+    "text": "15.1 Automated Empirical Linkage: cli_calc_env_links()\nEstablishing connections between high-dimensional omics matrices and external clinical indicators requires automated statistical estimation. cliomicplot provides cli_calc_env_links() for module-trait correlation tests and cli_network_permutation() for non-parametric topological difference testing.\ncli_calc_env_links() extracts module eigengenes (the first principal component of each module via singular value decomposition) or standardized mean abundances, tests bivariate correlations against environmental or clinical variables, and applies Benjamini-Hochberg FDR correction.\nCode\nlibrary(cliomicplot)\n\ndemo_omics &lt;- cli_demo_vitality_multiomics(n_samples = 35, n_features = 60, seed = 42)\n\n# Named list of environmental and clinical indicators\nenv_domains &lt;- list(\n  Clinical = demo_omics$env_data[, 1:3],\n  Exposome = demo_omics$env_data[, 4:6]\n)\n\n# Automated empirical calculation and visualization\np_auto_env &lt;- cliplot_env_network(\n  comm_data          = demo_omics$ref_expr,\n  env_data           = env_domains,\n  modules            = demo_omics$modules,\n  title              = \"Empirical Omics-Environment Linkage via Module Eigengenes\",\n  show_values        = TRUE,\n  show_domain_labels = TRUE,\n  preset             = \"nature\",\n  scifig             = TRUE\n)\np_auto_env",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Empirical Linkage Engines and Permutation Testing</span>"
+    ]
+  },
+  {
+    "objectID": "15-empirical-linkage-and-permutations.html#permutation-hypothesis-testing-for-cross-network-differences-cli_network_permutation",
+    "href": "15-empirical-linkage-and-permutations.html#permutation-hypothesis-testing-for-cross-network-differences-cli_network_permutation",
+    "title": "15  Empirical Linkage Engines and Permutation Testing",
+    "section": "15.2 Permutation Hypothesis Testing for Cross-Network Differences: cli_network_permutation()",
+    "text": "15.2 Permutation Hypothesis Testing for Cross-Network Differences: cli_network_permutation()\ncli_network_permutation() tests whether global topological properties differ between experimental conditions. The function shuffles group assignments B times, re-estimates correlation networks on each permuted sample, and computes two-sided empirical P-values:\nP_{\\text{perm}} = \\frac{1 + \\sum_{b=1}^B \\mathbb{I}(|\\Delta^{(b)}| \\ge |\\Delta^{\\text{obs}}|)}{B + 1}\nThe tested metrics are edge density, natural connectivity \\bar{\\lambda}, negative-to-positive edge ratio R_{\\pm}, mean degree, and clustering coefficient.\n\n\nCode\n# Stack reference and test samples\ncomm_combined &lt;- rbind(demo_omics$ref_expr, demo_omics$test_expr)\ngroup_combined &lt;- rep(c(\"Reference_WT\", \"Perturbed_KO\"),\n                      c(nrow(demo_omics$ref_expr), nrow(demo_omics$test_expr)))\n\nperm_res &lt;- cli_network_permutation(\n  comm_data  = comm_combined,\n  group      = group_combined,\n  ref_group  = \"Reference_WT\",\n  test_group = \"Perturbed_KO\",\n  cor_method = \"spearman\",\n  cor_cutoff = 0.35,\n  p_cutoff   = 0.05,\n  n_perm     = 49,\n  seed       = 42\n)\nprint(perm_res)\n\n\n\n=================================================================\n cliomicplot: Cross-Network Permutation Test\n Reference (Reference_WT) vs Comparison (Perturbed_KO)\n Number of Permutations: 49\n=================================================================\n                  metric ref_val test_val delta_obs perm_mean perm_se p_perm\n            Edge Density  0.2429   0.0537   -0.1893   -0.0055  0.0466   0.02\n    Natural Connectivity 11.4561   1.5315   -9.9246   -0.4676  3.0455   0.02\n Negative/Positive Ratio  0.0750   0.4179    0.3429    0.0210  0.1019   0.02\n             Mean Degree 14.3333   3.1667  -11.1667   -0.3238  2.7517   0.02\n  Clustering Coefficient  0.7343   0.1210   -0.6134   -0.0383  0.1583   0.02\n-----------------------------------------------------------------\n Note: Two-sided empirical p-value: (1 + sum(|delta_null| &gt;= |delta_obs|)) / (B + 1)",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Empirical Linkage Engines and Permutation Testing</span>"
+    ]
+  },
+  {
+    "objectID": "15-empirical-linkage-and-permutations.html#mantel-and-partial-mantel-tests-cli_mantel",
+    "href": "15-empirical-linkage-and-permutations.html#mantel-and-partial-mantel-tests-cli_mantel",
+    "title": "15  Empirical Linkage Engines and Permutation Testing",
+    "section": "15.3 Mantel and Partial Mantel Tests: cli_mantel()",
+    "text": "15.3 Mantel and Partial Mantel Tests: cli_mantel()\ncli_mantel() evaluates matrix correlation between community dissimilarity (Bray-Curtis) and clinical distance (Euclidean):\n\n\nCode\nmantel_out &lt;- cli_mantel(\n  comm_data   = demo_omics$ref_expr,\n  env_data    = demo_omics$env_data[, 1:4],\n  dist_comm   = \"bray\",\n  dist_env    = \"euclidean\",\n  n_perm      = 99,\n  by_variable = TRUE\n)\nknitr::kable(mantel_out, digits = 3, caption = \"Mantel Matrix Correlations\")\n\n\n\nMantel Matrix Correlations\n\n\nvariable\nstatistic\npvalue\nmethod\npadj\nsignif\n\n\n\n\npH\n0.038\n0.76\nMantel\n0.760\n\n\n\nHumdepth\n0.069\n0.42\nMantel\n0.713\n\n\n\nBaresoil\n-0.048\n0.57\nMantel\n0.713\n\n\n\nMo\n0.040\n0.56\nMantel\n0.713\n\n\n\nAll_Variables\n0.052\n0.57\nMantel\n0.713",
+    "crumbs": [
+      "Part IV — Systems Biology and Coupled Multi-Network Architectures",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Empirical Linkage Engines and Permutation Testing</span>"
+    ]
+  },
+  {
+    "objectID": "16-assembling-composites.html",
+    "href": "16-assembling-composites.html",
+    "title": "16  Assembling Multi-Panel Publication Composites",
+    "section": "",
+    "text": "16.1 The Double-Column Layout Standard\nIn peer-reviewed publications, individual analyses are assembled into unified, multi-panel composite figures. This chapter explains how to construct double-column figures conforming to Nature and Science standards using patchwork.\nLeading journals specify standard column widths: - Single-Column: 89.0 mm (3.5 in) - 1.5-Column: 120.0\\text{--}140.0 mm (4.7\\text{--}5.5 in) - Double-Column: 183.0 mm (7.2 in)\npatchwork combines separate ggplot2 instances while aligning plot axes and standardizing panel tags ((a), (b), (c)).",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Assembling Multi-Panel Publication Composites</span>"
+    ]
+  },
+  {
+    "objectID": "16-assembling-composites.html#assembling-a-3-panel-systems-biology-composite",
+    "href": "16-assembling-composites.html#assembling-a-3-panel-systems-biology-composite",
+    "title": "16  Assembling Multi-Panel Publication Composites",
+    "section": "16.2 Assembling a 3-Panel Systems Biology Composite",
+    "text": "16.2 Assembling a 3-Panel Systems Biology Composite\n\n\nCode\nlibrary(cliomicplot)\nlibrary(ggplot2)\nlibrary(patchwork)\n\n# Panel A: Node-level cross-network topology\ndemo_net &lt;- generate_demo_cross_network()\np_a &lt;- cliplot_cross_network_graph(\n  nodes       = demo_net$nodes,\n  edges       = demo_net$edges,\n  cross_edges = demo_net$cross_edges,\n  level       = \"node\",\n  preset      = \"nature\",\n  scifig      = TRUE,\n  title       = \"Cross-Network Modular Architecture\"\n)\n\n# Panel B: Module comparison overlap matrix\ndf_nodes &lt;- data.frame(\n  Feature     = paste0(\"Taxon_\", 1:60),\n  Discovery   = sample(c(\"M1_Barrier\", \"M2_Inflammation\", \"M3_Sebum\"), 60, replace = TRUE),\n  Replication = sample(c(\"ModA_Th2\", \"ModB_Stratum\", \"ModC_Lipid\"), 60, replace = TRUE)\n)\np_b &lt;- cliplot(\n  Replication ~ Discovery,\n  data   = df_nodes,\n  type   = type_module_compare(fill_by = \"jaccard\", show_stars = TRUE),\n  preset = \"nature\",\n  title  = \"Cross-Network Module Overlap\"\n)\n\n# Panel C: Coupled environmental network\np_c &lt;- cliplot_env_network(\n  title              = \"Multi-Domain Environmental Coupling\",\n  show_values        = TRUE,\n  show_domain_labels = TRUE,\n  compact            = TRUE,\n  preset             = \"nature\",\n  scifig             = TRUE\n)\n\n# Assemble using patchwork: Left column (A over B), Right column (C)\np_composite &lt;- (p_a / p_b) | p_c\np_composite &lt;- p_composite +\n  plot_layout(widths = c(1.0, 1.25)) +\n  plot_annotation(\n    tag_levels = \"a\",\n    tag_prefix = \"(\",\n    tag_suffix = \")\",\n    theme      = theme(\n      plot.tag = element_text(size = 9, face = \"bold\", family = \"sans\")\n    )\n  )\n\np_composite",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Assembling Multi-Panel Publication Composites</span>"
+    ]
+  },
+  {
+    "objectID": "17-case-study-atopic-dermatitis.html",
+    "href": "17-case-study-atopic-dermatitis.html",
+    "title": "17  Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis",
+    "section": "",
+    "text": "17.1 Clinical Background\nAtopic Dermatitis (AD) involves epidermal barrier disruption, Type 2 immune polarization (IL-4/IL-13), and cutaneous Staphylococcus aureus colonization. This case study demonstrates an end-to-end analytical workflow combining transcriptomics, serum biomarkers, and microbial networks.\nPatients present with varying disease severity evaluated by the SCORAD (Scoring Atopic Dermatitis) index. Transcriptomic profiling of lesional skin demonstrates upregulation of IL13, IL4R, CCL18, and S100A7, with concurrent downregulation of structural barrier genes FLG and LOR.",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis</span>"
+    ]
+  },
+  {
+    "objectID": "17-case-study-atopic-dermatitis.html#step-1-transcriptomic-signature-volcano-plot",
+    "href": "17-case-study-atopic-dermatitis.html#step-1-transcriptomic-signature-volcano-plot",
+    "title": "17  Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis",
+    "section": "17.2 Step 1: Transcriptomic Signature (Volcano Plot)",
+    "text": "17.2 Step 1: Transcriptomic Signature (Volcano Plot)\n\n\nCode\nlibrary(cliomicplot)\n\nset.seed(101)\nn_genes &lt;- 800\nad_volc_df &lt;- data.frame(\n  Gene   = paste0(\"Gene_\", 1:n_genes),\n  log2FC = rnorm(n_genes, 0, 1.3),\n  pValue = runif(n_genes, 0, 1)^3\n)\n\n# Insert defined AD biomarkers\nkey_markers &lt;- c(\"IL13\", \"IL4R\", \"CCL18\", \"S100A7\", \"FLG\", \"LOR\")\nad_volc_df$log2FC[1:6] &lt;- c(3.4, 2.9, 3.8, 4.2, -3.9, -3.2)\nad_volc_df$pValue[1:6] &lt;- c(1e-12, 1e-9, 1e-11, 1e-15, 1e-14, 1e-10)\nad_volc_df$Gene[1:6]   &lt;- key_markers\n\np_volc &lt;- cliplot(\n  pValue ~ log2FC,\n  data   = ad_volc_df,\n  type   = type_volcano(\n    fc_cutoff   = 1.5,\n    pval_cutoff = 0.01,\n    label_genes = key_markers\n  ),\n  preset = \"nature\",\n  title  = \"Transcriptomic Signature: AD Lesional vs Healthy Controls\"\n)\np_volc",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis</span>"
+    ]
+  },
+  {
+    "objectID": "17-case-study-atopic-dermatitis.html#step-2-serum-biomarker-stratification-across-severity-tiers",
+    "href": "17-case-study-atopic-dermatitis.html#step-2-serum-biomarker-stratification-across-severity-tiers",
+    "title": "17  Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis",
+    "section": "17.3 Step 2: Serum Biomarker Stratification Across Severity Tiers",
+    "text": "17.3 Step 2: Serum Biomarker Stratification Across Severity Tiers\nSerum IL-13 and CCL17 levels correlate with objective SCORAD tiers:\n\n\nCode\nset.seed(42)\nscorad_df &lt;- data.frame(\n  Severity = factor(rep(c(\"Mild (SCORAD &lt; 25)\", \"Moderate (25-50)\", \"Severe (&gt; 50)\"), each = 30),\n                    levels = c(\"Mild (SCORAD &lt; 25)\", \"Moderate (25-50)\", \"Severe (&gt; 50)\")),\n  CCL17    = c(rnorm(30, 250, 45), rnorm(30, 680, 120), rnorm(30, 1850, 310))\n)\n\np_box &lt;- cliplot(\n  CCL17 ~ Severity,\n  data   = scorad_df,\n  type   = \"boxplot\",\n  preset = \"nature\",\n  title  = \"Serum CCL17 Levels Stratified by Objective SCORAD Tiers\"\n)\np_box",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis</span>"
+    ]
+  },
+  {
+    "objectID": "17-case-study-atopic-dermatitis.html#step-3-cutaneous-dysbiosis-and-environmental-coupling",
+    "href": "17-case-study-atopic-dermatitis.html#step-3-cutaneous-dysbiosis-and-environmental-coupling",
+    "title": "17  Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis",
+    "section": "17.4 Step 3: Cutaneous Dysbiosis and Environmental Coupling",
+    "text": "17.4 Step 3: Cutaneous Dysbiosis and Environmental Coupling\nCoupling cutaneous microbial abundance with transepidermal water loss (TEWL), SCORAD, and environmental humidity:\n\n\nCode\np_env &lt;- cliplot_env_network(\n  title              = \"Cutaneous Microbiome Coupling with Biophysical Barrier and Clinical Drivers\",\n  show_values        = TRUE,\n  show_domain_labels = TRUE,\n  compact            = TRUE,\n  preset             = \"clinical\",\n  scifig             = TRUE\n)\np_env",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis</span>"
+    ]
+  },
+  {
+    "objectID": "18-case-study-cancer-immunotherapy.html",
+    "href": "18-case-study-cancer-immunotherapy.html",
+    "title": "18  Case Study: Immuno-Oncology Biomarkers and Trial Endpoints",
+    "section": "",
+    "text": "18.1 Clinical Trial Background\nImmune checkpoint inhibitors (anti-PD-1 / anti-PD-L1) have altered treatment paradigms in solid tumors. This case study illustrates an integrated clinical trial reporting workflow combining survival outcomes, subgroup hazard ratios, and RECIST 1.1 response kinetics.\nIn a randomized Phase III trial evaluating anti-PD-1 immunotherapy versus standard chemotherapy in advanced non-small cell lung cancer, primary endpoints include Overall Survival (OS) and Objective Response Rate (ORR). Key predictive biomarkers include tumor PD-L1 Tumor Proportion Score (TPS: &lt;1\\%, 1\\text{--}49\\%, \\ge 50\\%).",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Case Study: Immuno-Oncology Biomarkers and Trial Endpoints</span>"
+    ]
+  },
+  {
+    "objectID": "18-case-study-cancer-immunotherapy.html#step-1-overall-survival-kaplan-meier-with-aligned-risk-table",
+    "href": "18-case-study-cancer-immunotherapy.html#step-1-overall-survival-kaplan-meier-with-aligned-risk-table",
+    "title": "18  Case Study: Immuno-Oncology Biomarkers and Trial Endpoints",
+    "section": "18.2 Step 1: Overall Survival (Kaplan-Meier with Aligned Risk Table)",
+    "text": "18.2 Step 1: Overall Survival (Kaplan-Meier with Aligned Risk Table)\n\n\nCode\nlibrary(cliomicplot)\nlibrary(survival)\n\nset.seed(88)\nn &lt;- 160\nio_surv &lt;- data.frame(\n  time   = rexp(n, rate = c(rep(0.035, 80), rep(0.065, 80))),\n  status = sample(c(0, 1), n, replace = TRUE, prob = c(0.2, 0.8)),\n  arm    = factor(rep(c(\"Anti-PD-1 Monotherapy\", \"Chemotherapy\"), each = 80))\n)\n\np_km &lt;- cliplot(\n  Surv(time, status) ~ arm,\n  data   = io_surv,\n  type   = \"km\",\n  preset = \"nature\",\n  title  = \"Overall Survival: Anti-PD-1 Immunotherapy vs Standard Chemotherapy\"\n)\np_km",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Case Study: Immuno-Oncology Biomarkers and Trial Endpoints</span>"
+    ]
+  },
+  {
+    "objectID": "18-case-study-cancer-immunotherapy.html#step-2-treatment-consistency-across-pd-l1-subgroups-forest-plot",
+    "href": "18-case-study-cancer-immunotherapy.html#step-2-treatment-consistency-across-pd-l1-subgroups-forest-plot",
+    "title": "18  Case Study: Immuno-Oncology Biomarkers and Trial Endpoints",
+    "section": "18.3 Step 2: Treatment Consistency Across PD-L1 Subgroups (Forest Plot)",
+    "text": "18.3 Step 2: Treatment Consistency Across PD-L1 Subgroups (Forest Plot)\n\n\nCode\nio_subgroups &lt;- data.frame(\n  Variable = c(\"Overall Intention-to-Treat\", \"PD-L1 TPS &gt;= 50%\", \"PD-L1 TPS 1-49%\", \"PD-L1 TPS &lt; 1%\"),\n  HR       = c(0.68, 0.49, 0.72, 0.91),\n  CI_low   = c(0.55, 0.36, 0.54, 0.71),\n  CI_high  = c(0.84, 0.67, 0.96, 1.16)\n)\n\np_forest &lt;- cliplot(\n  HR ~ Variable,\n  data   = io_subgroups,\n  type   = type_forest(\n    ref_line    = TRUE,\n    ref_val     = 1.0,\n    log_scale   = TRUE,\n    sort        = TRUE,\n    stripe      = TRUE,\n    show_values = TRUE\n  ),\n  preset = \"lancet\",\n  title  = \"Hazard Ratios for Overall Survival by PD-L1 Expression Status\"\n)\np_forest",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Case Study: Immuno-Oncology Biomarkers and Trial Endpoints</span>"
+    ]
+  },
+  {
+    "objectID": "18-case-study-cancer-immunotherapy.html#step-3-tumor-burden-kinetics-waterfall-plot",
+    "href": "18-case-study-cancer-immunotherapy.html#step-3-tumor-burden-kinetics-waterfall-plot",
+    "title": "18  Case Study: Immuno-Oncology Biomarkers and Trial Endpoints",
+    "section": "18.4 Step 3: Tumor Burden Kinetics (Waterfall Plot)",
+    "text": "18.4 Step 3: Tumor Burden Kinetics (Waterfall Plot)\n\n\nCode\nset.seed(42)\nn_eval &lt;- 45\npat_ids &lt;- paste0(\"PT-\", sprintf(\"%03d\", 1:n_eval))\nchanges &lt;- sort(rnorm(n_eval, mean = -22, sd = 38), decreasing = TRUE)\n\nwf_io &lt;- data.frame(\n  Patient = factor(pat_ids, levels = pat_ids),\n  Change  = changes\n)\n\np_wf &lt;- cliplot(\n  Change ~ Patient,\n  data   = wf_io,\n  type   = type_waterfall(\n    response_thresholds = c(\"PD\" = 20, \"PR\" = -30),\n    bar_width           = 0.72\n  ),\n  preset = \"science\",\n  title  = \"Best Percentage Change in Target Lesion Sum of Longest Diameters\"\n)\np_wf",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Case Study: Immuno-Oncology Biomarkers and Trial Endpoints</span>"
+    ]
+  }
+]
