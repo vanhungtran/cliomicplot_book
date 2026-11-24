@@ -46,6 +46,10 @@ if ($remote -contains "origin") {
     Write-Host "Step 4: Pushing to remote origin/master..." -ForegroundColor Yellow
     git push origin master
     Write-Host "[SUCCESS] Pushed to origin master." -ForegroundColor Green
+
+    Write-Host "Step 5: Updating gh-pages branch..." -ForegroundColor Yellow
+    git subtree push --prefix docs origin gh-pages
+    Write-Host "[SUCCESS] Pushed docs to gh-pages branch." -ForegroundColor Green
 } else {
     Write-Host "[NOTE] No git remote 'origin' found." -ForegroundColor Yellow
     Write-Host "To link and push to GitHub, run:" -ForegroundColor White
