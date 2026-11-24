@@ -377,13 +377,16 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#architecture-and-visual-coordinate-system" id="toc-architecture-and-visual-coordinate-system" class="nav-link active" data-scroll-target="#architecture-and-visual-coordinate-system"><span class="header-section-number">13.1</span> Architecture and Visual Coordinate System</a></li>
-  <li><a href="#the-7-environmental-coupling-styles" id="toc-the-7-environmental-coupling-styles" class="nav-link" data-scroll-target="#the-7-environmental-coupling-styles"><span class="header-section-number">13.2</span> The 7 Environmental Coupling Styles</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples"><span class="header-section-number">13.3</span> Examples</a>
+  <li><a href="#architecture-and-coordinate-system" id="toc-architecture-and-coordinate-system" class="nav-link active" data-scroll-target="#architecture-and-coordinate-system"><span class="header-section-number">13.1</span> Architecture and Coordinate System</a></li>
+  <li><a href="#layered-grammar-of-graphics" id="toc-layered-grammar-of-graphics" class="nav-link" data-scroll-target="#layered-grammar-of-graphics"><span class="header-section-number">13.2</span> Layered Grammar of Graphics</a>
   <ul class="collapse">
-  <li><a href="#style-1-clinical-phenotype-domains-nature-style" id="toc-style-1-clinical-phenotype-domains-nature-style" class="nav-link" data-scroll-target="#style-1-clinical-phenotype-domains-nature-style"><span class="header-section-number">13.3.1</span> Style 1: Clinical Phenotype Domains (Nature Style)</a></li>
-  <li><a href="#style-2-four-season-environmental-succession" id="toc-style-2-four-season-environmental-succession" class="nav-link" data-scroll-target="#style-2-four-season-environmental-succession"><span class="header-section-number">13.3.2</span> Style 2: Four-Season Environmental Succession</a></li>
-  <li><a href="#style-5-multi-tissue-axis-coupling" id="toc-style-5-multi-tissue-axis-coupling" class="nav-link" data-scroll-target="#style-5-multi-tissue-axis-coupling"><span class="header-section-number">13.3.3</span> Style 5: Multi-Tissue Axis Coupling</a></li>
+  <li><a href="#composing-with-the-operator" id="toc-composing-with-the-operator" class="nav-link" data-scroll-target="#composing-with-the-operator"><span class="header-section-number">13.2.1</span> Composing with the <code>+</code> Operator</a></li>
+  <li><a href="#s3-plot-dispatch" id="toc-s3-plot-dispatch" class="nav-link" data-scroll-target="#s3-plot-dispatch"><span class="header-section-number">13.2.2</span> S3 Plot Dispatch</a></li>
+  </ul></li>
+  <li><a href="#formula-interface" id="toc-formula-interface" class="nav-link" data-scroll-target="#formula-interface"><span class="header-section-number">13.3</span> Formula Interface</a></li>
+  <li><a href="#the-7-publisher-style-presets" id="toc-the-7-publisher-style-presets" class="nav-link" data-scroll-target="#the-7-publisher-style-presets"><span class="header-section-number">13.4</span> The 7 Publisher Style Presets</a>
+  <ul class="collapse">
+  <li><a href="#preset-examples" id="toc-preset-examples" class="nav-link" data-scroll-target="#preset-examples"><span class="header-section-number">13.4.1</span> Preset Examples</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/13-coupled-environmental-networks.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -410,18 +413,129 @@ window.Quarto = {
 </header>
 
 
-<p>Complex biological communities do not function in isolation; they respond to environmental drivers, clinical phenotypes, and host tissue states. <code>cliplot_env_network()</code> integrates a central co-occurrence network with peripheral correlation heatmaps across 7 styling presets.</p>
-<section id="architecture-and-visual-coordinate-system" class="level2" data-number="13.1">
-<h2 data-number="13.1" class="anchored" data-anchor-id="architecture-and-visual-coordinate-system"><span class="header-section-number">13.1</span> Architecture and Visual Coordinate System</h2>
-<p>The layout integrates three distinct analytical layers on a unified coordinate system conforming to Fig4papers publication rules:</p>
+<p><code>cliomicplot</code> provides a composable Grammar of Graphics layer system to couple central modular co-occurrence networks with peripheral multi-domain correlation heatmaps.</p>
+<section id="architecture-and-coordinate-system" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="architecture-and-coordinate-system"><span class="header-section-number">13.1</span> Architecture and Coordinate System</h2>
+<p>The layout operates on a unified Cartesian coordinate system centered at <span class="math inline">(0, 0)</span> spanning <span class="math inline">[-7.4, 7.4]</span> on both axes:</p>
 <ol type="1">
-<li><strong>Central Modular Network (<span class="math inline">r \le 2.80</span>)</strong>: Displays functional modules with radial exclusion boundaries and bold opaque badges (<code>M1: Core</code>, <code>M2: Barrier</code>, etc.) eliminating text-stroke collisions.</li>
-<li><strong>Four Corner Triangular Heatmaps</strong>: Displays pairwise intra-domain correlations with significance asterisks (<span class="math inline">*P &lt; 0.05</span>, <span class="math inline">**P &lt; 0.01</span>, <span class="math inline">***P &lt; 0.001</span>) and 78° angled outer labels. Diagonal self-correlations (<span class="math inline">r = 1.0</span>) remain unstarred.</li>
-<li><strong>Annular Inter-Domain Connecting Links</strong>: Originates from indicator badges in the annular corridor (<span class="math inline">r \approx 3.38</span>) and connects to the central network perimeter (<span class="math inline">r \approx 2.74</span>). Color indicates direction (red for positive, cyan for negative) and linewidth indicates statistical significance (<span class="math inline">-\log_{10}P</span>).</li>
+<li><strong>Central Network Ring (<span class="math inline">r \le 2.80</span>)</strong>: Contains modular network nodes, intra-module edge connections, cluster hulls, and radial module badges.</li>
+<li><strong>Annular Link Corridor (<span class="math inline">2.80 &lt; r &lt; 4.0</span>)</strong>: Separates the central network perimeter from the peripheral heatmaps. Outer boundary dots mark <span class="math inline">r \approx 3.38</span>.</li>
+<li><strong>Corner Triangular Heatmaps</strong>: Four triangular correlation heatmaps occupy the corners. Diagonal indicator points connect via curved segments to central modules.</li>
+<li><strong>Inter-Domain Links</strong>: Curved lines originate from peripheral indicators and connect to central module perimeters. Line width scales with statistical significance (<span class="math inline">-\log_{10}P</span>), and color denotes correlation direction.</li>
 </ol>
 </section>
-<section id="the-7-environmental-coupling-styles" class="level2" data-number="13.2">
-<h2 data-number="13.2" class="anchored" data-anchor-id="the-7-environmental-coupling-styles"><span class="header-section-number">13.2</span> The 7 Environmental Coupling Styles</h2>
+<section id="layered-grammar-of-graphics" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="layered-grammar-of-graphics"><span class="header-section-number">13.2</span> Layered Grammar of Graphics</h2>
+<p>The grammar separates coordinate computation from geometry rendering:</p>
+<ul>
+<li><code>cli_env_network_data()</code>: Computes spatial layouts, node positions, intra-module edges, cluster convex hulls, triangular heatmap coordinates, and link trajectories. Returns an S3 object of class <code>cli_env_network_data</code>.</li>
+<li><code>geom_env_boundary()</code>: Draws the circular boundary ring at <span class="math inline">r = 2.80</span> and the outer concentric dots at <span class="math inline">r \approx 3.38</span>.</li>
+<li><code>geom_env_central_network()</code>: Draws central intra-module edges, cluster convex hulls, node glyphs (shape 16 fill-only), and module label badges.</li>
+<li><code>geom_env_corner_heatmaps()</code>: Draws triangular correlation tiles, significance asterisks or correlation values, diagonal connector points, 78° angled variable labels, and domain titles.</li>
+<li><code>geom_env_links()</code>: Draws curved inter-domain connecting lines weighted by significance and direction.</li>
+<li><code>coord_env_network()</code>: Enforces a 1:1 circular aspect ratio with standard viewport boundaries (<code>xlim = c(-7.4, 7.4), ylim = c(-7.4, 7.4)</code>).</li>
+<li><code>theme_env_network()</code>: Removes Cartesian grid lines and axis ticks while positioning a multi-tier publication legend.</li>
+</ul>
+<section id="composing-with-the-operator" class="level3" data-number="13.2.1">
+<h3 data-number="13.2.1" class="anchored" data-anchor-id="composing-with-the-operator"><span class="header-section-number">13.2.1</span> Composing with the <code>+</code> Operator</h3>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Generate grammatical data object</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">cli_env_network_data</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">show_values =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Assemble plot layer by layer</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>p_grammar <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_env_boundary</span>(<span class="at">data =</span> d) <span class="sc">+</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_env_central_network</span>(<span class="at">data =</span> d) <span class="sc">+</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_env_corner_heatmaps</span>(<span class="at">data =</span> d) <span class="sc">+</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_env_links</span>(<span class="at">data =</span> d) <span class="sc">+</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_env_network</span>() <span class="sc">+</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_env_network</span>(<span class="at">preset =</span> <span class="st">"nature"</span>) <span class="sc">+</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Layer-by-Layer Grammar Assembly (Nature Preset)"</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>p_grammar</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="13-coupled-environmental-networks_files/figure-html/grammar-demo-1.png" class="img-fluid figure-img" width="2550"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="s3-plot-dispatch" class="level3" data-number="13.2.2">
+<h3 data-number="13.2.2" class="anchored" data-anchor-id="s3-plot-dispatch"><span class="header-section-number">13.2.2</span> S3 Plot Dispatch</h3>
+<p>The <code>cli_env_network_data</code> S3 object supports direct plotting:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>d_circ <span class="ot">&lt;-</span> <span class="fu">cli_env_network_data</span>(<span class="at">preset =</span> <span class="st">"circadian"</span>, <span class="at">show_values =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(d_circ)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="13-coupled-environmental-networks_files/figure-html/s3-demo-1.png" class="img-fluid figure-img" width="2550"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="formula-interface" class="level2" data-number="13.3">
+<h2 data-number="13.3" class="anchored" data-anchor-id="formula-interface"><span class="header-section-number">13.3</span> Formula Interface</h2>
+<p>You can call <code>cliplot()</code> using formula syntax <code>env_data ~ comm_data</code>:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Community abundance matrix: 20 samples, 7 taxa</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>comm <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rpois</span>(<span class="dv">140</span>, <span class="at">lambda =</span> <span class="dv">12</span>), <span class="at">nrow =</span> <span class="dv">20</span>, <span class="at">ncol =</span> <span class="dv">7</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">paste0</span>(<span class="st">"S"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>), <span class="fu">paste0</span>(<span class="st">"Taxon_"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>)))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Environmental correlation matrices for 4 domains</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>make_cor <span class="ot">&lt;-</span> <span class="cf">function</span>(vars) {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">length</span>(vars)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(p <span class="sc">*</span> p, <span class="fl">0.2</span>, <span class="fl">0.8</span>), p, p)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diag</span>(m) <span class="ot">&lt;-</span> <span class="fl">1.0</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  m[<span class="fu">lower.tri</span>(m)] <span class="ot">&lt;-</span> <span class="fu">t</span>(m)[<span class="fu">lower.tri</span>(m)]</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dimnames</span>(m) <span class="ot">&lt;-</span> <span class="fu">list</span>(vars, vars)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  m</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>env_domains <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Biophysical"</span> <span class="ot">=</span> <span class="fu">make_cor</span>(<span class="fu">c</span>(<span class="st">"pH"</span>, <span class="st">"Moisture"</span>, <span class="st">"Organic_C"</span>)),</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Nutrients"</span>   <span class="ot">=</span> <span class="fu">make_cor</span>(<span class="fu">c</span>(<span class="st">"Nitrogen"</span>, <span class="st">"Phosphorus"</span>, <span class="st">"Potassium"</span>)),</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Trace_Metals"</span><span class="ot">=</span> <span class="fu">make_cor</span>(<span class="fu">c</span>(<span class="st">"Zinc"</span>, <span class="st">"Copper"</span>, <span class="st">"Iron"</span>)),</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Climate"</span>     <span class="ot">=</span> <span class="fu">make_cor</span>(<span class="fu">c</span>(<span class="st">"Temp"</span>, <span class="st">"Rainfall"</span>, <span class="st">"Humidity"</span>))</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co"># One-line formula dispatch</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>p_formula <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  env_domains <span class="sc">~</span> comm,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="st">"env_network"</span>,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"clinical"</span>,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Formula Dispatch: env_domains ~ comm_abundance"</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>p_formula</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="13-coupled-environmental-networks_files/figure-html/formula-demo-1.png" class="img-fluid figure-img" width="2550"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-7-publisher-style-presets" class="level2" data-number="13.4">
+<h2 data-number="13.4" class="anchored" data-anchor-id="the-7-publisher-style-presets"><span class="header-section-number">13.4</span> The 7 Publisher Style Presets</h2>
+<p>The package provides 7 styling presets for different journal and biological contexts:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -482,51 +596,23 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-</section>
-<section id="examples" class="level2" data-number="13.3">
-<h2 data-number="13.3" class="anchored" data-anchor-id="examples"><span class="header-section-number">13.3</span> Examples</h2>
-<section id="style-1-clinical-phenotype-domains-nature-style" class="level3" data-number="13.3.1">
-<h3 data-number="13.3.1" class="anchored" data-anchor-id="style-1-clinical-phenotype-domains-nature-style"><span class="header-section-number">13.3.1</span> Style 1: Clinical Phenotype Domains (Nature Style)</h3>
+<section id="preset-examples" class="level3" data-number="13.4.1">
+<h3 data-number="13.4.1" class="anchored" data-anchor-id="preset-examples"><span class="header-section-number">13.4.1</span> Preset Examples</h3>
+<section id="seasonal-environmental-succession" class="level4">
+<h4 class="anchored" data-anchor-id="seasonal-environmental-succession">Seasonal Environmental Succession</h4>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>p_env_clin <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Central Microbial Network Coupled with Multi-Domain Clinical Drivers"</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">value_digits       =</span> <span class="dv">2</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"nature"</span>,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>p_env_clin</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="13-coupled-environmental-networks_files/figure-html/env-clinical-demo-1.png" class="img-fluid figure-img" width="2550"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="style-2-four-season-environmental-succession" class="level3" data-number="13.3.2">
-<h3 data-number="13.3.2" class="anchored" data-anchor-id="style-2-four-season-environmental-succession"><span class="header-section-number">13.3.2</span> Style 2: Four-Season Environmental Succession</h3>
-<div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>p_env_seas <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Seasonal Environmental Succession Coupled with Microbial Network"</span>,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value_digits       =</span> <span class="dv">2</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"seasonal"</span>,</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>p_env_seas</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p_env_seas <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Seasonal Environmental Succession Coupled with Microbial Network"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value_digits       =</span> <span class="dv">2</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"seasonal"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>p_env_seas</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -537,21 +623,21 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="style-5-multi-tissue-axis-coupling" class="level3" data-number="13.3.3">
-<h3 data-number="13.3.3" class="anchored" data-anchor-id="style-5-multi-tissue-axis-coupling"><span class="header-section-number">13.3.3</span> Style 5: Multi-Tissue Axis Coupling</h3>
+<section id="multi-tissue-axis-coupling" class="level4">
+<h4 class="anchored" data-anchor-id="multi-tissue-axis-coupling">Multi-Tissue Axis Coupling</h4>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>p_env_mt <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Multi-Tissue Systemic Coupling (Epidermis, Dermis, Serum, Gut)"</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value_digits       =</span> <span class="dv">2</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"multi_tissue"</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>p_env_mt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p_env_mt <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Multi-Tissue Systemic Coupling (Epidermis, Dermis, Serum, Gut)"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value_digits       =</span> <span class="dv">2</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"multi_tissue"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>p_env_mt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -561,10 +647,36 @@ window.Quarto = {
 </div>
 </div>
 </div>
+</section>
+<section id="bipolar-contrasts" class="level4">
+<h4 class="anchored" data-anchor-id="bipolar-contrasts">Bipolar Contrasts</h4>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>p_env_bip <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Bipolar Divergent Coupling (Cohort A vs Cohort B)"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">value_digits       =</span> <span class="dv">2</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"bipolar"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>p_env_bip</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="13-coupled-environmental-networks_files/figure-html/env-bipolar-demo-1.png" class="img-fluid figure-img" width="2550"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 <!-- -->
 
+</section>
 </section>
 </section>
 
@@ -1039,78 +1151,159 @@ window.Quarto = {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Central Networks Coupled with Multi-Domain Environmental Heatmaps</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>Complex biological communities do not function in isolation; they respond to environmental drivers, clinical phenotypes, and host tissue states. <span class="in">`cliplot_env_network()`</span> integrates a central co-occurrence network with peripheral correlation heatmaps across 7 styling presets.</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Architecture and Visual Coordinate System</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>The layout integrates three distinct analytical layers on a unified coordinate system conforming to Fig4papers publication rules:</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Central Modular Network ($r \le 2.80$)**: Displays functional modules with radial exclusion boundaries and bold opaque badges (<span class="in">`M1: Core`</span>, <span class="in">`M2: Barrier`</span>, etc.) eliminating text-stroke collisions.</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Four Corner Triangular Heatmaps**: Displays pairwise intra-domain correlations with significance asterisks ($*P &lt; 0.05$, $**P &lt; 0.01$, $***P &lt; 0.001$) and 78° angled outer labels. Diagonal self-correlations ($r = 1.0$) remain unstarred.</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Annular Inter-Domain Connecting Links**: Originates from indicator badges in the annular corridor ($r \approx 3.38$) and connects to the central network perimeter ($r \approx 2.74$). Color indicates direction (red for positive, cyan for negative) and linewidth indicates statistical significance ($-\log_{10}P$).</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## The 7 Environmental Coupling Styles</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Preset <span class="pp">|</span> Central Network <span class="pp">|</span> Peripheral Domains <span class="pp">|</span> Palette Aesthetics <span class="pp">|</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|:---|:---|</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`clinical`</span> / <span class="in">`nature`</span><span class="pp">|</span> Multi-module microbiome <span class="pp">|</span> Biophysical, Severity, Cytokines, Exposome <span class="pp">|</span> Nature Slate Blue, Crimson, Amber <span class="pp">|</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`seasonal`</span> <span class="pp">|</span> Seasonal succession <span class="pp">|</span> Spring, Summer, Autumn, Winter <span class="pp">|</span> Flora Green, Solar Amber, Rust, Frost Blue <span class="pp">|</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`dark`</span> <span class="pp">|</span> Luminescent multi-omics<span class="pp">|</span> 4 Multi-omics layers <span class="pp">|</span> Obsidian background, neon cyan &amp; magenta <span class="pp">|</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`lancet`</span> <span class="pp">|</span> Clinical epidemiology <span class="pp">|</span> Clinical trials exposome <span class="pp">|</span> Muted greys, thin editorial strokes <span class="pp">|</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`multi_tissue`</span> <span class="pp">|</span> Multi-tissue axis <span class="pp">|</span> Epidermis, Dermis, Serum, Gut <span class="pp">|</span> Terracotta, Cerulean, Amethyst, Forest <span class="pp">|</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`circadian`</span> <span class="pp">|</span> Diurnal oscillations <span class="pp">|</span> Dawn (06:00), Midday (12:00), Dusk (18:00), Midnight (24:00) <span class="pp">|</span> Dawn Rose, Noon Gold, Dusk Indigo, Midnight Navy <span class="pp">|</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`bipolar`</span> <span class="pp">|</span> Differential coupling <span class="pp">|</span> Healthy vs Disease contrasts <span class="pp">|</span> Polar divergent Crimson vs Deep Blue <span class="pp">|</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="fu">## Examples</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="fu">### Style 1: Clinical Phenotype Domains (Nature Style)</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="in">```{r env-clinical-demo, fig.width=8.5, fig.height=8.5}</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>p_env_clin <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Central Microbial Network Coupled with Multi-Domain Clinical Drivers"</span>,</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">value_digits       =</span> <span class="dv">2</span>,</span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"nature"</span>,</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>p_env_clin</span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="fu">### Style 2: Four-Season Environmental Succession</span></span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="in">```{r env-seasonal-demo, fig.width=8.5, fig.height=8.5}</span></span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>p_env_seas <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Seasonal Environmental Succession Coupled with Microbial Network"</span>,</span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">value_digits       =</span> <span class="dv">2</span>,</span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"seasonal"</span>,</span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>p_env_seas</span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="fu">### Style 5: Multi-Tissue Axis Coupling</span></span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{r env-multitissue-demo, fig.width=8.5, fig.height=8.5}</span></span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>p_env_mt <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Multi-Tissue Systemic Coupling (Epidermis, Dermis, Serum, Gut)"</span>,</span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">value_digits       =</span> <span class="dv">2</span>,</span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"multi_tissue"</span>,</span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>p_env_mt</span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Central Networks Coupled with Multi-Domain Environmental Heatmaps</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="in">`cliomicplot`</span> provides a composable Grammar of Graphics layer system to couple central modular co-occurrence networks with peripheral multi-domain correlation heatmaps.</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Architecture and Coordinate System</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>The layout operates on a unified Cartesian coordinate system centered at $(0, 0)$ spanning $<span class="co">[</span><span class="ot">-7.4, 7.4</span><span class="co">]</span>$ on both axes:</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Central Network Ring ($r \le 2.80$)**: Contains modular network nodes, intra-module edge connections, cluster hulls, and radial module badges.</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Annular Link Corridor ($2.80 &lt; r &lt; 4.0$)**: Separates the central network perimeter from the peripheral heatmaps. Outer boundary dots mark $r \approx 3.38$.</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Corner Triangular Heatmaps**: Four triangular correlation heatmaps occupy the corners. Diagonal indicator points connect via curved segments to central modules.</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Inter-Domain Links**: Curved lines originate from peripheral indicators and connect to central module perimeters. Line width scales with statistical significance ($-\log_{10}P$), and color denotes correlation direction.</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Layered Grammar of Graphics</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>The grammar separates coordinate computation from geometry rendering:</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`cli_env_network_data()`</span>: Computes spatial layouts, node positions, intra-module edges, cluster convex hulls, triangular heatmap coordinates, and link trajectories. Returns an S3 object of class <span class="in">`cli_env_network_data`</span>.</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`geom_env_boundary()`</span>: Draws the circular boundary ring at $r = 2.80$ and the outer concentric dots at $r \approx 3.38$.</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`geom_env_central_network()`</span>: Draws central intra-module edges, cluster convex hulls, node glyphs (shape 16 fill-only), and module label badges.</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`geom_env_corner_heatmaps()`</span>: Draws triangular correlation tiles, significance asterisks or correlation values, diagonal connector points, 78° angled variable labels, and domain titles.</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`geom_env_links()`</span>: Draws curved inter-domain connecting lines weighted by significance and direction.</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`coord_env_network()`</span>: Enforces a 1:1 circular aspect ratio with standard viewport boundaries (<span class="in">`xlim = c(-7.4, 7.4), ylim = c(-7.4, 7.4)`</span>).</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`theme_env_network()`</span>: Removes Cartesian grid lines and axis ticks while positioning a multi-tier publication legend.</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="fu">### Composing with the `+` Operator</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="in">```{r grammar-demo, fig.width=8.5, fig.height=8.5}</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Generate grammatical data object</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">cli_env_network_data</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">show_values =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Assemble plot layer by layer</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>p_grammar <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_env_boundary</span>(<span class="at">data =</span> d) <span class="sc">+</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_env_central_network</span>(<span class="at">data =</span> d) <span class="sc">+</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_env_corner_heatmaps</span>(<span class="at">data =</span> d) <span class="sc">+</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_env_links</span>(<span class="at">data =</span> d) <span class="sc">+</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_env_network</span>() <span class="sc">+</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_env_network</span>(<span class="at">preset =</span> <span class="st">"nature"</span>) <span class="sc">+</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Layer-by-Layer Grammar Assembly (Nature Preset)"</span>)</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>p_grammar</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="fu">### S3 Plot Dispatch</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>The <span class="in">`cli_env_network_data`</span> S3 object supports direct plotting:</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="in">```{r s3-demo, fig.width=8.5, fig.height=8.5}</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>d_circ <span class="ot">&lt;-</span> <span class="fu">cli_env_network_data</span>(<span class="at">preset =</span> <span class="st">"circadian"</span>, <span class="at">show_values =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(d_circ)</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="fu">## Formula Interface</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>You can call <span class="in">`cliplot()`</span> using formula syntax <span class="in">`env_data ~ comm_data`</span>:</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{r formula-demo, fig.width=8.5, fig.height=8.5}</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Community abundance matrix: 20 samples, 7 taxa</span></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>comm <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rpois</span>(<span class="dv">140</span>, <span class="at">lambda =</span> <span class="dv">12</span>), <span class="at">nrow =</span> <span class="dv">20</span>, <span class="at">ncol =</span> <span class="dv">7</span>,</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>               <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">paste0</span>(<span class="st">"S"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>), <span class="fu">paste0</span>(<span class="st">"Taxon_"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>)))</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a><span class="co"># Environmental correlation matrices for 4 domains</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>make_cor <span class="ot">&lt;-</span> <span class="cf">function</span>(vars) {</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">length</span>(vars)</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(p <span class="sc">*</span> p, <span class="fl">0.2</span>, <span class="fl">0.8</span>), p, p)</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diag</span>(m) <span class="ot">&lt;-</span> <span class="fl">1.0</span></span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>  m[<span class="fu">lower.tri</span>(m)] <span class="ot">&lt;-</span> <span class="fu">t</span>(m)[<span class="fu">lower.tri</span>(m)]</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dimnames</span>(m) <span class="ot">&lt;-</span> <span class="fu">list</span>(vars, vars)</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>  m</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>env_domains <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Biophysical"</span> <span class="ot">=</span> <span class="fu">make_cor</span>(<span class="fu">c</span>(<span class="st">"pH"</span>, <span class="st">"Moisture"</span>, <span class="st">"Organic_C"</span>)),</span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Nutrients"</span>   <span class="ot">=</span> <span class="fu">make_cor</span>(<span class="fu">c</span>(<span class="st">"Nitrogen"</span>, <span class="st">"Phosphorus"</span>, <span class="st">"Potassium"</span>)),</span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Trace_Metals"</span><span class="ot">=</span> <span class="fu">make_cor</span>(<span class="fu">c</span>(<span class="st">"Zinc"</span>, <span class="st">"Copper"</span>, <span class="st">"Iron"</span>)),</span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Climate"</span>     <span class="ot">=</span> <span class="fu">make_cor</span>(<span class="fu">c</span>(<span class="st">"Temp"</span>, <span class="st">"Rainfall"</span>, <span class="st">"Humidity"</span>))</span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a><span class="co"># One-line formula dispatch</span></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>p_formula <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>  env_domains <span class="sc">~</span> comm,</span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="st">"env_network"</span>,</span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"clinical"</span>,</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Formula Dispatch: env_domains ~ comm_abundance"</span></span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>p_formula</span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a><span class="fu">## The 7 Publisher Style Presets</span></span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>The package provides 7 styling presets for different journal and biological contexts:</span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Preset <span class="pp">|</span> Central Network <span class="pp">|</span> Peripheral Domains <span class="pp">|</span> Palette Aesthetics <span class="pp">|</span></span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|:---|:---|</span></span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`clinical`</span> / <span class="in">`nature`</span><span class="pp">|</span> Multi-module microbiome <span class="pp">|</span> Biophysical, Severity, Cytokines, Exposome <span class="pp">|</span> Nature Slate Blue, Crimson, Amber <span class="pp">|</span></span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`seasonal`</span> <span class="pp">|</span> Seasonal succession <span class="pp">|</span> Spring, Summer, Autumn, Winter <span class="pp">|</span> Flora Green, Solar Amber, Rust, Frost Blue <span class="pp">|</span></span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`dark`</span> <span class="pp">|</span> Luminescent multi-omics<span class="pp">|</span> 4 Multi-omics layers <span class="pp">|</span> Obsidian background, neon cyan &amp; magenta <span class="pp">|</span></span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`lancet`</span> <span class="pp">|</span> Clinical epidemiology <span class="pp">|</span> Clinical trials exposome <span class="pp">|</span> Muted greys, thin editorial strokes <span class="pp">|</span></span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`multi_tissue`</span> <span class="pp">|</span> Multi-tissue axis <span class="pp">|</span> Epidermis, Dermis, Serum, Gut <span class="pp">|</span> Terracotta, Cerulean, Amethyst, Forest <span class="pp">|</span></span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`circadian`</span> <span class="pp">|</span> Diurnal oscillations <span class="pp">|</span> Dawn (06:00), Midday (12:00), Dusk (18:00), Midnight (24:00) <span class="pp">|</span> Dawn Rose, Noon Gold, Dusk Indigo, Midnight Navy <span class="pp">|</span></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`bipolar`</span> <span class="pp">|</span> Differential coupling <span class="pp">|</span> Healthy vs Disease contrasts <span class="pp">|</span> Polar divergent Crimson vs Deep Blue <span class="pp">|</span></span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a><span class="fu">### Preset Examples</span></span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Seasonal Environmental Succession</span></span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a><span class="in">```{r env-seasonal-demo, fig.width=8.5, fig.height=8.5}</span></span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>p_env_seas <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Seasonal Environmental Succession Coupled with Microbial Network"</span>,</span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>  <span class="at">value_digits       =</span> <span class="dv">2</span>,</span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"seasonal"</span>,</span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>p_env_seas</span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Multi-Tissue Axis Coupling</span></span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a><span class="in">```{r env-multitissue-demo, fig.width=8.5, fig.height=8.5}</span></span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a>p_env_mt <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Multi-Tissue Systemic Coupling (Epidermis, Dermis, Serum, Gut)"</span>,</span>
+<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a>  <span class="at">value_digits       =</span> <span class="dv">2</span>,</span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"multi_tissue"</span>,</span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a>p_env_mt</span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Bipolar Contrasts</span></span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a><span class="in">```{r env-bipolar-demo, fig.width=8.5, fig.height=8.5}</span></span>
+<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a>p_env_bip <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Bipolar Divergent Coupling (Cohort A vs Cohort B)"</span>,</span>
+<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a>  <span class="at">value_digits       =</span> <span class="dv">2</span>,</span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"bipolar"</span>,</span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
+<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a>p_env_bip</span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
