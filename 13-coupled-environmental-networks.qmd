@@ -1,16 +1,99 @@
 # Central Networks Coupled with Multi-Domain Environmental Heatmaps
 
-Complex biological communities do not function in isolation; they respond to environmental drivers, clinical phenotypes, and host tissue states. `cliplot_env_network()` integrates a central co-occurrence network with peripheral correlation heatmaps across 7 styling presets.
+`cliomicplot` provides a composable Grammar of Graphics layer system to couple central modular co-occurrence networks with peripheral multi-domain correlation heatmaps.
 
-## Architecture and Visual Coordinate System
+## Architecture and Coordinate System
 
-The layout integrates three distinct analytical layers on a unified coordinate system conforming to Fig4papers publication rules:
+The layout operates on a unified Cartesian coordinate system centered at $(0, 0)$ spanning $[-7.4, 7.4]$ on both axes:
 
-1. **Central Modular Network ($r \le 2.80$)**: Displays functional modules with radial exclusion boundaries and bold opaque badges (`M1: Core`, `M2: Barrier`, etc.) eliminating text-stroke collisions.
-2. **Four Corner Triangular Heatmaps**: Displays pairwise intra-domain correlations with significance asterisks ($*P < 0.05$, $**P < 0.01$, $***P < 0.001$) and 78° angled outer labels. Diagonal self-correlations ($r = 1.0$) remain unstarred.
-3. **Annular Inter-Domain Connecting Links**: Originates from indicator badges in the annular corridor ($r \approx 3.38$) and connects to the central network perimeter ($r \approx 2.74$). Color indicates direction (red for positive, cyan for negative) and linewidth indicates statistical significance ($-\log_{10}P$).
+1. **Central Network Ring ($r \le 2.80$)**: Contains modular network nodes, intra-module edge connections, cluster hulls, and radial module badges.
+2. **Annular Link Corridor ($2.80 < r < 4.0$)**: Separates the central network perimeter from the peripheral heatmaps. Outer boundary dots mark $r \approx 3.38$.
+3. **Corner Triangular Heatmaps**: Four triangular correlation heatmaps occupy the corners. Diagonal indicator points connect via curved segments to central modules.
+4. **Inter-Domain Links**: Curved lines originate from peripheral indicators and connect to central module perimeters. Line width scales with statistical significance ($-\log_{10}P$), and color denotes correlation direction.
 
-## The 7 Environmental Coupling Styles
+## Layered Grammar of Graphics
+
+The grammar separates coordinate computation from geometry rendering:
+
+- `cli_env_network_data()`: Computes spatial layouts, node positions, intra-module edges, cluster convex hulls, triangular heatmap coordinates, and link trajectories. Returns an S3 object of class `cli_env_network_data`.
+- `geom_env_boundary()`: Draws the circular boundary ring at $r = 2.80$ and the outer concentric dots at $r \approx 3.38$.
+- `geom_env_central_network()`: Draws central intra-module edges, cluster convex hulls, node glyphs (shape 16 fill-only), and module label badges.
+- `geom_env_corner_heatmaps()`: Draws triangular correlation tiles, significance asterisks or correlation values, diagonal connector points, 78° angled variable labels, and domain titles.
+- `geom_env_links()`: Draws curved inter-domain connecting lines weighted by significance and direction.
+- `coord_env_network()`: Enforces a 1:1 circular aspect ratio with standard viewport boundaries (`xlim = c(-7.4, 7.4), ylim = c(-7.4, 7.4)`).
+- `theme_env_network()`: Removes Cartesian grid lines and axis ticks while positioning a multi-tier publication legend.
+
+### Composing with the `+` Operator
+
+```{r grammar-demo, fig.width=8.5, fig.height=8.5}
+library(cliomicplot)
+library(ggplot2)
+
+# 1. Generate grammatical data object
+d <- cli_env_network_data(preset = "nature", show_values = TRUE)
+
+# 2. Assemble plot layer by layer
+p_grammar <- ggplot() +
+  geom_env_boundary(data = d) +
+  geom_env_central_network(data = d) +
+  geom_env_corner_heatmaps(data = d) +
+  geom_env_links(data = d) +
+  coord_env_network() +
+  theme_env_network(preset = "nature") +
+  labs(title = "Layer-by-Layer Grammar Assembly (Nature Preset)")
+
+p_grammar
+```
+
+### S3 Plot Dispatch
+
+The `cli_env_network_data` S3 object supports direct plotting:
+
+```{r s3-demo, fig.width=8.5, fig.height=8.5}
+d_circ <- cli_env_network_data(preset = "circadian", show_values = TRUE)
+plot(d_circ)
+```
+
+## Formula Interface
+
+You can call `cliplot()` using formula syntax `env_data ~ comm_data`:
+
+```{r formula-demo, fig.width=8.5, fig.height=8.5}
+set.seed(42)
+# Community abundance matrix: 20 samples, 7 taxa
+comm <- matrix(rpois(140, lambda = 12), nrow = 20, ncol = 7,
+               dimnames = list(paste0("S", 1:20), paste0("Taxon_", 1:7)))
+
+# Environmental correlation matrices for 4 domains
+make_cor <- function(vars) {
+  p <- length(vars)
+  m <- matrix(runif(p * p, 0.2, 0.8), p, p)
+  diag(m) <- 1.0
+  m[lower.tri(m)] <- t(m)[lower.tri(m)]
+  dimnames(m) <- list(vars, vars)
+  m
+}
+
+env_domains <- list(
+  "Biophysical" = make_cor(c("pH", "Moisture", "Organic_C")),
+  "Nutrients"   = make_cor(c("Nitrogen", "Phosphorus", "Potassium")),
+  "Trace_Metals"= make_cor(c("Zinc", "Copper", "Iron")),
+  "Climate"     = make_cor(c("Temp", "Rainfall", "Humidity"))
+)
+
+# One-line formula dispatch
+p_formula <- cliplot(
+  env_domains ~ comm,
+  type   = "env_network",
+  preset = "clinical",
+  title  = "Formula Dispatch: env_domains ~ comm_abundance"
+)
+p_formula
+```
+
+## The 7 Publisher Style Presets
+
+The package provides 7 styling presets for different journal and biological contexts:
 
 | Preset | Central Network | Peripheral Domains | Palette Aesthetics |
 |:---|:---|:---|:---|
@@ -22,26 +105,9 @@ The layout integrates three distinct analytical layers on a unified coordinate s
 | `circadian` | Diurnal oscillations | Dawn (06:00), Midday (12:00), Dusk (18:00), Midnight (24:00) | Dawn Rose, Noon Gold, Dusk Indigo, Midnight Navy |
 | `bipolar` | Differential coupling | Healthy vs Disease contrasts | Polar divergent Crimson vs Deep Blue |
 
-## Examples
+### Preset Examples
 
-### Style 1: Clinical Phenotype Domains (Nature Style)
-
-```{r env-clinical-demo, fig.width=8.5, fig.height=8.5}
-library(cliomicplot)
-
-p_env_clin <- cliplot_env_network(
-  title              = "Central Microbial Network Coupled with Multi-Domain Clinical Drivers",
-  show_values        = TRUE,
-  show_domain_labels = TRUE,
-  value_digits       = 2,
-  compact            = TRUE,
-  preset             = "nature",
-  scifig             = TRUE
-)
-p_env_clin
-```
-
-### Style 2: Four-Season Environmental Succession
+#### Seasonal Environmental Succession
 
 ```{r env-seasonal-demo, fig.width=8.5, fig.height=8.5}
 p_env_seas <- cliplot_env_network(
@@ -56,7 +122,7 @@ p_env_seas <- cliplot_env_network(
 p_env_seas
 ```
 
-### Style 5: Multi-Tissue Axis Coupling
+#### Multi-Tissue Axis Coupling
 
 ```{r env-multitissue-demo, fig.width=8.5, fig.height=8.5}
 p_env_mt <- cliplot_env_network(
@@ -69,4 +135,19 @@ p_env_mt <- cliplot_env_network(
   scifig             = TRUE
 )
 p_env_mt
+```
+
+#### Bipolar Contrasts
+
+```{r env-bipolar-demo, fig.width=8.5, fig.height=8.5}
+p_env_bip <- cliplot_env_network(
+  title              = "Bipolar Divergent Coupling (Cohort A vs Cohort B)",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  value_digits       = 2,
+  compact            = TRUE,
+  preset             = "bipolar",
+  scifig             = TRUE
+)
+p_env_bip
 ```
