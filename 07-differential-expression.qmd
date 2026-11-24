@@ -12,59 +12,140 @@ $$\text{Significance Quadrants}: \begin{cases}
 \text{Non-significant}: & \text{otherwise}
 \end{cases}$$
 
-```{r volcano-demo, fig.width=7.5, fig.height=5.2}
+## Contrast 1: Atopic Dermatitis vs. Control Skin (NCBI GEO GSE121212)
+
+Using the bundled dermatology series dataset (`geo_dermatology_series_de.rds`), we evaluate lesional skin from patients with Atopic Dermatitis (AD) against Healthy Controls (HC):
+
+```{r volcano-ad-demo, fig.width=8.0, fig.height=5.5}
 library(cliomicplot)
+library(ggplot2)
 
-# Generate reproducible transcriptomics dataset
-set.seed(42)
-n_genes <- 1200
-log2fc <- rnorm(n_genes, mean = 0, sd = 1.2)
-pvals  <- runif(n_genes, 0, 1)^3 # Skew toward smaller p-values
-gene_ids <- paste0("Gene_", 1:n_genes)
+data_file <- system.file("extdata", "geo_dermatology_series_de.rds", package = "cliomicplot")
+series <- readRDS(data_file)
 
-# Inject significant key biomarkers
-key_markers <- c("IL13", "IL4R", "S100A7", "CCL18", "FLG", "LOR")
-log2fc[1:6] <- c(3.2, 2.8, 4.1, 3.5, -3.8, -3.1)
-pvals[1:6]  <- c(1e-12, 1e-9, 1e-15, 1e-11, 1e-14, 1e-10)
-gene_ids[1:6] <- key_markers
+# Inspect available contrasts
+names(series)
 
-volcano_df <- data.frame(
-  Gene   = gene_ids,
-  log2FC = log2fc,
-  pValue = pvals
-)
+# AD vs. Healthy Control volcano plot
+ad_labels <- c("SERPINB4", "CCL18", "S100A7", "LCE3A", "SPRR2G", "ALOX15", "GPLD1", "SPTLC3")
 
-p_volc <- cliplot(
-  pValue ~ log2FC,
-  data   = volcano_df,
-  type   = type_volcano(
-    fc_cutoff   = 1.5,
-    pval_cutoff = 0.01,
-    label_genes = key_markers
+p_ad_volc <- cliplot(
+  -log10(padj) ~ log2FC,
+  data = series$ad_vs_hc,
+  type = type_volcano(
+    pval_cutoff  = 0.01,
+    fc_cutoff    = 1.5,
+    point_size   = 1.8,
+    point_alpha  = 0.60,
+    label_genes  = ad_labels,
+    max_overlaps = 25
   ),
-  preset = "nature",
-  title  = "Transcriptomic Signature: Atopic Dermatitis Lesional vs Healthy Skin"
+  palette  = "nature",
+  preset   = "nature",
+  title    = "NCBI GEO GSE121212: Atopic Dermatitis vs. Healthy Skin",
+  subtitle = "Bulk RNA-seq | FDR < 0.01, |log2FC| > 1.50"
 )
-p_volc
+p_ad_volc
 ```
 
-## DEG Contrast Matrices: `type = "deg_compare"`
+Biological observations:
+- Marked upregulation of Epidermal Differentiation Complex (EDC) genes (*LCE3A*, *SPRR2G*, *S100A7*) and Th2 chemokines (*CCL18*, *SERPINB4*).
+- Selective downregulation of ceramide biosynthesis enzymes (*SPTLC3*, $\log_2\text{FC} = -0.57$).
 
-Comparing differential expression across two distinct diseases or cohorts (e.g., AD vs HC compared against PSO vs HC) identifies shared versus disease-specific molecular pathways:
+## Contrast 2: Psoriasis vs. Control Skin (GSE121212)
 
-```{r deg-compare-demo, fig.width=7.5, fig.height=5.2}
-compare_df <- data.frame(
-  Gene    = gene_ids[1:300],
-  FC_AD   = log2fc[1:300],
-  FC_PSO  = log2fc[1:300] * 0.7 + rnorm(300, 0, 0.8)
+Evaluating Psoriasis (PSO) lesions from the same cohort captures the contrasting IL-23/Th17 antimicrobial signature:
+
+```{r volcano-pso-demo, fig.width=8.0, fig.height=5.5}
+pso_labels <- c("DEFB4A", "DEFB4B", "PI3", "S100A8", "S100A9", "SPRR2A", "KRT16", "NOS2")
+
+p_pso_volc <- cliplot(
+  -log10(padj) ~ log2FC,
+  data = series$pso_vs_hc,
+  type = type_volcano(
+    pval_cutoff  = 0.001,
+    fc_cutoff    = 2.0,
+    point_size   = 1.8,
+    point_alpha  = 0.60,
+    up_color     = "#D73027",
+    down_color   = "#2B6CB0",
+    ns_color     = "#C8CCD4",
+    label_genes  = pso_labels,
+    max_overlaps = 25
+  ),
+  preset   = "nature",
+  title    = "NCBI GEO GSE121212: Psoriasis vs. Healthy Skin",
+  subtitle = "Bulk RNA-seq | FDR < 0.001, |log2FC| > 2.00"
 )
+p_pso_volc
+```
 
-p_deg <- cliplot(
-  FC_PSO ~ FC_AD,
-  data   = compare_df,
-  type   = "deg_compare",
-  preset = "science",
-  title  = "Cross-Disease Transcriptomic Concordance: AD vs Psoriasis"
+Key features:
+- Massive induction of beta-defensins: *DEFB4A* ($\log_2\text{FC} = +10.00$, $P_{\text{adj}} = 2.02 \times 10^{-75}$) and *DEFB4B* ($\log_2\text{FC} = +9.49$).
+- Elevated calprotectin subunits (*S100A8*, *S100A9*) and elafin (*PI3*).
+
+## Contrast 3: Head-to-Head Divergence (AD vs. Psoriasis)
+
+Directly contrasting AD against Psoriasis isolates disease-specific markers:
+
+```{r volcano-head-to-head, fig.width=8.0, fig.height=5.5}
+head_labels <- c("ALOX15", "CCL18", "COL6A6", "COL4A4", "NOS2", "DEFB4A", "DEFB4B")
+
+p_head <- cliplot(
+  -log10(padj) ~ log2FC,
+  data = series$ad_vs_pso,
+  type = type_volcano(
+    pval_cutoff  = 0.001,
+    fc_cutoff    = 1.5,
+    point_size   = 1.8,
+    point_alpha  = 0.60,
+    up_color     = "#E64B35",
+    down_color   = "#3C5488",
+    ns_color     = "#C8CCD4",
+    label_genes  = head_labels,
+    max_overlaps = 25
+  ),
+  preset   = "cell",
+  title    = "Head-to-Head Divergence: AD vs. Psoriasis",
+  subtitle = "GSE121212 | Positive = AD Enriched, Negative = Psoriasis Enriched"
 )
-p_deg
+p_head
+```
+
+Selective discrimination:
+- *ALOX15* ($\log_2\text{FC} = +2.72$) and *CCL18* show strong preference for AD.
+- *NOS2* ($\log_2\text{FC} = -6.60$, inducible nitric oxide synthase) and *DEFB4A* are selectively enriched in psoriasis.
+
+## Multi-Contrast 4-Panel Grid
+
+```{r volcano-grid, fig.width=9.0, fig.height=8.5}
+library(patchwork)
+
+p_a <- cliplot(-log10(padj) ~ log2FC, data = series$ad_vs_hc,
+              type = type_volcano(pval_cutoff = 0.01, fc_cutoff = 1.5, point_size = 1.4,
+                                  label_genes = c("SERPINB4", "CCL18", "LCE3A", "SPTLC3"),
+                                  max_overlaps = 15),
+              preset = "nature", title = "AD vs. Healthy")
+
+p_b <- cliplot(-log10(padj) ~ log2FC, data = series$pso_vs_hc,
+              type = type_volcano(pval_cutoff = 0.001, fc_cutoff = 2.0, point_size = 1.4,
+                                  label_genes = c("DEFB4A", "PI3", "S100A8", "NOS2"),
+                                  max_overlaps = 15),
+              preset = "nature", title = "Psoriasis vs. Healthy")
+
+p_c <- cliplot(-log10(padj) ~ log2FC, data = series$ad_vs_pso,
+              type = type_volcano(pval_cutoff = 0.001, fc_cutoff = 1.5, point_size = 1.4,
+                                  label_genes = c("ALOX15", "CCL18", "NOS2", "DEFB4A"),
+                                  max_overlaps = 15),
+              preset = "nature", title = "AD vs. Psoriasis")
+
+p_d <- cliplot(-log10(padj) ~ log2FC, data = series$treatment_meta,
+              type = type_volcano(pval_cutoff = 0.01, fc_cutoff = 0.5, point_size = 1.4,
+                                  label_genes = c("TK1", "AQP3", "TOP2A", "ECT2"),
+                                  max_overlaps = 15),
+              preset = "nature", title = "Treatment Meta-Analysis")
+
+((p_a | p_b) / (p_c | p_d)) +
+  plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = "a")
 ```

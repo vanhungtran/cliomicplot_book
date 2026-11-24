@@ -274,7 +274,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./08-pathway-enrichment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment: GSEA Running Enrichment Score Plots</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment and Multi-Omics Abundance Profiles</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -303,7 +303,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./11-cross-condition-networks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison and Trait Association</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -377,8 +377,8 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#manhattan-plots-type-manhattan" id="toc-manhattan-plots-type-manhattan" class="nav-link active" data-scroll-target="#manhattan-plots-type-manhattan"><span class="header-section-number">9.1</span> Manhattan Plots: <code>type = "manhattan"</code></a></li>
-  <li><a href="#mirrored-miami-plots" id="toc-mirrored-miami-plots" class="nav-link" data-scroll-target="#mirrored-miami-plots"><span class="header-section-number">9.2</span> Mirrored Miami Plots</a></li>
+  <li><a href="#multi-chromosome-human-gwas-p-bp-chr" id="toc-multi-chromosome-human-gwas-p-bp-chr" class="nav-link active" data-scroll-target="#multi-chromosome-human-gwas-p-bp-chr"><span class="header-section-number">9.1</span> Multi-Chromosome Human GWAS: <code>p ~ bp | chr</code></a></li>
+  <li><a href="#microbial-gwas-mgwas-along-bacterial-genomes" id="toc-microbial-gwas-mgwas-along-bacterial-genomes" class="nav-link" data-scroll-target="#microbial-gwas-mgwas-along-bacterial-genomes"><span class="header-section-number">9.2</span> Microbial GWAS (mGWAS) Along Bacterial Genomes</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/09-genomics-and-mgwas.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -404,55 +404,103 @@ window.Quarto = {
 </header>
 
 
-<p>Genome-Wide Association Studies (GWAS) and Microbiome-GWAS (mGWAS) scan genetic variants across chromosomes for associations with clinical traits or microbial taxon abundances. <code>cliomicplot</code> provides Manhattan and dual-trait Miami plots.</p>
-<section id="manhattan-plots-type-manhattan" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="manhattan-plots-type-manhattan"><span class="header-section-number">9.1</span> Manhattan Plots: <code>type = "manhattan"</code></h2>
-<p>Manhattan plots position genomic variants across chromosomes on the horizontal axis and <span class="math inline">-\log_{10}(P\text{-value})</span> on the vertical axis. The standard genome-wide significance threshold is <span class="math inline">P \le 5 \times 10^{-8}</span> (<span class="math inline">-\log_{10}P \ge 7.30</span>), derived from Bonferroni correction over <span class="math inline">\approx 10^6</span> independent tests:</p>
+<p>Genome-Wide Association Studies (GWAS) and Microbial GWAS (mGWAS) evaluate variant associations with clinical phenotypes or microbial traits across chromosomes. <code>cliomicplot</code> provides single-chromosome and multi-chromosome Manhattan architectures.</p>
+<section id="multi-chromosome-human-gwas-p-bp-chr" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="multi-chromosome-human-gwas-p-bp-chr"><span class="header-section-number">9.1</span> Multi-Chromosome Human GWAS: <code>p ~ bp | chr</code></h2>
+<p>In human genetics, variants are distributed across chromosomes 1 through 22. Alternating chromosome colors and standard significance thresholds (<span class="math inline">\tau_{\text{GWAS}} = 5 \times 10^{-8}</span> and suggestive <span class="math inline">1 \times 10^{-5}</span>) mark genome-wide hits:</p>
 <p><span class="math display">\tau_{\text{GWAS}} = -\log_{10}(5 \times 10^{-8}) \approx 7.30</span></p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>mgwas_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">pos  =</span> <span class="fu">seq</span>(<span class="dv">2000</span>, <span class="dv">400000</span>, <span class="at">by =</span> <span class="dv">2500</span>),</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">qval =</span> <span class="fu">runif</span>(<span class="dv">160</span>, <span class="fl">0.02</span>, <span class="fl">1.0</span>),</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">gene =</span> <span class="st">""</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>n_snps <span class="ot">&lt;-</span> <span class="dv">600</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>chroms <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">each =</span> <span class="dv">120</span>), <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>bps <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="fl">1e5</span>, <span class="fl">2e7</span>, <span class="at">length.out =</span> <span class="dv">120</span>), <span class="dv">5</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>pvals <span class="ot">&lt;-</span> <span class="fu">runif</span>(n_snps, <span class="fl">0.001</span>, <span class="fl">1.0</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>snps <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"rs"</span>, <span class="dv">1000</span><span class="sc">:</span>(<span class="dv">1000</span> <span class="sc">+</span> n_snps <span class="sc">-</span> <span class="dv">1</span>))</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert significant microbial variant associations</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>hit_positions <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">68</span>, <span class="dv">114</span>, <span class="dv">142</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>mgwas_df<span class="sc">$</span>qval[hit_positions] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.2e-5</span>, <span class="fl">8.4e-6</span>, <span class="fl">4.1e-7</span>, <span class="fl">1.9e-5</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>mgwas_df<span class="sc">$</span>gene[hit_positions] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"agrA"</span>, <span class="st">"mecA"</span>, <span class="st">"tsst-1"</span>, <span class="st">"ebpS"</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>p_man <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  qval <span class="sc">~</span> pos,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mgwas_df,</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_manhattan</span>(</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold  =</span> <span class="fl">0.01</span>,</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_col  =</span> <span class="st">"gene"</span>,</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size =</span> <span class="fl">1.4</span>,</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlab       =</span> <span class="st">"Staphylococcus aureus Genome Position (bp)"</span>,</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab       =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="fu">italic</span>(q))</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Microbial GWAS: Bacterial Variants Associated with Eczema Severity"</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>p_man</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Inject genome-wide significant lead variants</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>lead_hits <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">45</span>, <span class="dv">185</span>, <span class="dv">312</span>, <span class="dv">450</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>pvals[lead_hits] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">2.1e-9</span>, <span class="fl">4.8e-11</span>, <span class="fl">1.2e-8</span>, <span class="fl">3.5e-10</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>gwas_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">chr =</span> chroms,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">bp  =</span> bps,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">p   =</span> pvals,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">snp =</span> snps</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>p_gwas <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  p <span class="sc">~</span> bp <span class="sc">|</span> chr,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gwas_df,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_manhattan</span>(</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold       =</span> <span class="fl">5e-8</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_hits      =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size      =</span> <span class="fl">1.5</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Genome-Wide Association Study (GWAS)"</span>,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Chromosomal distribution of variant associations with suggestive and genome-wide thresholds"</span>,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Chromosome"</span>,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="fu">italic</span>(P))</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>p_gwas</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="09-genomics-and-mgwas_files/figure-html/manhattan-demo-1.png" class="img-fluid figure-img" width="2400"></p>
+<p><img src="09-genomics-and-mgwas_files/figure-html/manhattan-multi-demo-1.png" class="img-fluid figure-img" width="2550"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="mirrored-miami-plots" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="mirrored-miami-plots"><span class="header-section-number">9.2</span> Mirrored Miami Plots</h2>
-<p>In cross-trait studies, a Miami plot mirrors two traits back-to-back (e.g., Atopic Dermatitis risk alleles plotted upright, Serum IgE levels inverted) to identify shared pleiotropic loci.</p>
+<section id="microbial-gwas-mgwas-along-bacterial-genomes" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="microbial-gwas-mgwas-along-bacterial-genomes"><span class="header-section-number">9.2</span> Microbial GWAS (mGWAS) Along Bacterial Genomes</h2>
+<p>Microbial GWAS evaluates single nucleotide variants along circular bacterial chromosomes (e.g.&nbsp;<em>Staphylococcus aureus</em>, ~2.8 Mb):</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mgwas_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">pos  =</span> <span class="fu">seq</span>(<span class="dv">2000</span>, <span class="dv">400000</span>, <span class="at">by =</span> <span class="dv">2500</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">qval =</span> <span class="fu">runif</span>(<span class="dv">160</span>, <span class="fl">0.02</span>, <span class="fl">1.0</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">gene =</span> <span class="st">""</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert significant virulence and resistance alleles</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>hit_positions <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">68</span>, <span class="dv">114</span>, <span class="dv">142</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>mgwas_df<span class="sc">$</span>qval[hit_positions] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.2e-5</span>, <span class="fl">8.4e-6</span>, <span class="fl">4.1e-7</span>, <span class="fl">1.9e-5</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>mgwas_df<span class="sc">$</span>gene[hit_positions] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"agrA"</span>, <span class="st">"mecA"</span>, <span class="st">"tsst-1"</span>, <span class="st">"ebpS"</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>p_mgwas <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  qval <span class="sc">~</span> pos,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mgwas_df,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_manhattan</span>(</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold  =</span> <span class="fl">0.01</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_col  =</span> <span class="st">"gene"</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size =</span> <span class="fl">1.4</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlab       =</span> <span class="st">"Staphylococcus aureus Genome Position (bp)"</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab       =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="fu">italic</span>(q))</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"science"</span>,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Microbial GWAS: Virulence Variants Associated with Disease Severity"</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>p_mgwas</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-genomics-and-mgwas_files/figure-html/manhattan-bacterial-demo-1.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 <!-- -->
@@ -920,8 +968,8 @@ window.Quarto = {
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./08-pathway-enrichment.html" class="pagination-link" aria-label="Pathway Enrichment: GSEA Running Enrichment Score Plots">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment: GSEA Running Enrichment Score Plots</span></span>
+      <a href="./08-pathway-enrichment.html" class="pagination-link" aria-label="Pathway Enrichment and Multi-Omics Abundance Profiles">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment and Multi-Omics Abundance Profiles</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
@@ -930,50 +978,89 @@ window.Quarto = {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Statistical Genetics and Microbiome GWAS (mGWAS)</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Genome-Wide Association Studies (GWAS) and Microbiome-GWAS (mGWAS) scan genetic variants across chromosomes for associations with clinical traits or microbial taxon abundances. <span class="in">`cliomicplot`</span> provides Manhattan and dual-trait Miami plots.</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Manhattan Plots: `type = "manhattan"`</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>Manhattan plots position genomic variants across chromosomes on the horizontal axis and $-\log_{10}(P\text{-value})$ on the vertical axis. The standard genome-wide significance threshold is $P \le 5 \times 10^{-8}$ ($-\log_{10}P \ge 7.30$), derived from Bonferroni correction over $\approx 10^6$ independent tests:</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>$$\tau_{\text{GWAS}} = -\log_{10}(5 \times 10^{-8}) \approx 7.30$$</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{r manhattan-demo, fig.width=8.0, fig.height=4.2}</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>mgwas_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">pos  =</span> <span class="fu">seq</span>(<span class="dv">2000</span>, <span class="dv">400000</span>, <span class="at">by =</span> <span class="dv">2500</span>),</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">qval =</span> <span class="fu">runif</span>(<span class="dv">160</span>, <span class="fl">0.02</span>, <span class="fl">1.0</span>),</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">gene =</span> <span class="st">""</span>,</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert significant microbial variant associations</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>hit_positions <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">68</span>, <span class="dv">114</span>, <span class="dv">142</span>)</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>mgwas_df<span class="sc">$</span>qval[hit_positions] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.2e-5</span>, <span class="fl">8.4e-6</span>, <span class="fl">4.1e-7</span>, <span class="fl">1.9e-5</span>)</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>mgwas_df<span class="sc">$</span>gene[hit_positions] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"agrA"</span>, <span class="st">"mecA"</span>, <span class="st">"tsst-1"</span>, <span class="st">"ebpS"</span>)</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>p_man <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  qval <span class="sc">~</span> pos,</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mgwas_df,</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_manhattan</span>(</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold  =</span> <span class="fl">0.01</span>,</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_col  =</span> <span class="st">"gene"</span>,</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size =</span> <span class="fl">1.4</span>,</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlab       =</span> <span class="st">"Staphylococcus aureus Genome Position (bp)"</span>,</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab       =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="fu">italic</span>(q))</span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Microbial GWAS: Bacterial Variants Associated with Eczema Severity"</span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>p_man</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Mirrored Miami Plots</span></span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>In cross-trait studies, a Miami plot mirrors two traits back-to-back (e.g., Atopic Dermatitis risk alleles plotted upright, Serum IgE levels inverted) to identify shared pleiotropic loci.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Statistical Genetics and Microbiome GWAS (mGWAS)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>Genome-Wide Association Studies (GWAS) and Microbial GWAS (mGWAS) evaluate variant associations with clinical phenotypes or microbial traits across chromosomes. <span class="in">`cliomicplot`</span> provides single-chromosome and multi-chromosome Manhattan architectures.</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Multi-Chromosome Human GWAS: `p ~ bp | chr`</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>In human genetics, variants are distributed across chromosomes 1 through 22. Alternating chromosome colors and standard significance thresholds ($\tau_{\text{GWAS}} = 5 \times 10^{-8}$ and suggestive $1 \times 10^{-5}$) mark genome-wide hits:</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>$$\tau_{\text{GWAS}} = -\log_{10}(5 \times 10^{-8}) \approx 7.30$$</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{r manhattan-multi-demo, fig.width=8.5, fig.height=4.8}</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>n_snps <span class="ot">&lt;-</span> <span class="dv">600</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>chroms <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">each =</span> <span class="dv">120</span>), <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>bps <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="fl">1e5</span>, <span class="fl">2e7</span>, <span class="at">length.out =</span> <span class="dv">120</span>), <span class="dv">5</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>pvals <span class="ot">&lt;-</span> <span class="fu">runif</span>(n_snps, <span class="fl">0.001</span>, <span class="fl">1.0</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>snps <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"rs"</span>, <span class="dv">1000</span><span class="sc">:</span>(<span class="dv">1000</span> <span class="sc">+</span> n_snps <span class="sc">-</span> <span class="dv">1</span>))</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Inject genome-wide significant lead variants</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>lead_hits <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">45</span>, <span class="dv">185</span>, <span class="dv">312</span>, <span class="dv">450</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>pvals[lead_hits] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">2.1e-9</span>, <span class="fl">4.8e-11</span>, <span class="fl">1.2e-8</span>, <span class="fl">3.5e-10</span>)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>gwas_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">chr =</span> chroms,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">bp  =</span> bps,</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">p   =</span> pvals,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">snp =</span> snps</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>p_gwas <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  p <span class="sc">~</span> bp <span class="sc">|</span> chr,</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gwas_df,</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_manhattan</span>(</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold       =</span> <span class="fl">5e-8</span>,</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_hits      =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size      =</span> <span class="fl">1.5</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Genome-Wide Association Study (GWAS)"</span>,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Chromosomal distribution of variant associations with suggestive and genome-wide thresholds"</span>,</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Chromosome"</span>,</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="fu">italic</span>(P))</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>p_gwas</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## Microbial GWAS (mGWAS) Along Bacterial Genomes</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>Microbial GWAS evaluates single nucleotide variants along circular bacterial chromosomes (e.g. *Staphylococcus aureus*, ~2.8 Mb):</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="in">```{r manhattan-bacterial-demo, fig.width=8.0, fig.height=4.2}</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>mgwas_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">pos  =</span> <span class="fu">seq</span>(<span class="dv">2000</span>, <span class="dv">400000</span>, <span class="at">by =</span> <span class="dv">2500</span>),</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">qval =</span> <span class="fu">runif</span>(<span class="dv">160</span>, <span class="fl">0.02</span>, <span class="fl">1.0</span>),</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">gene =</span> <span class="st">""</span>,</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert significant virulence and resistance alleles</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>hit_positions <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">68</span>, <span class="dv">114</span>, <span class="dv">142</span>)</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>mgwas_df<span class="sc">$</span>qval[hit_positions] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.2e-5</span>, <span class="fl">8.4e-6</span>, <span class="fl">4.1e-7</span>, <span class="fl">1.9e-5</span>)</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>mgwas_df<span class="sc">$</span>gene[hit_positions] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"agrA"</span>, <span class="st">"mecA"</span>, <span class="st">"tsst-1"</span>, <span class="st">"ebpS"</span>)</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>p_mgwas <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>  qval <span class="sc">~</span> pos,</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mgwas_df,</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_manhattan</span>(</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold  =</span> <span class="fl">0.01</span>,</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_col  =</span> <span class="st">"gene"</span>,</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size =</span> <span class="fl">1.4</span>,</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlab       =</span> <span class="st">"Staphylococcus aureus Genome Position (bp)"</span>,</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab       =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="fu">italic</span>(q))</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"science"</span>,</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Microbial GWAS: Virulence Variants Associated with Disease Severity"</span></span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>p_mgwas</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

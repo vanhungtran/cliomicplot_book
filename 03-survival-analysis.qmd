@@ -4,72 +4,73 @@ Time-to-event outcomes require specialized visual conventions. `cliplot()` imple
 
 ## Kaplan-Meier Curves: `type = "km"`
 
-`cliplot(Surv(time, event) ~ arm, data, type = "km")` estimates the survival function $\hat{S}(t)$:
+`cliplot(Surv(time, event) ~ arm, data, type = "km")` estimates the step survival function $\hat{S}(t)$:
 
 $$\hat{S}(t) = \prod_{t_i \le t} \left(1 - \frac{d_i}{n_i}\right)$$
 
 where $d_i$ is the number of events and $n_i$ is the number of individuals at risk at time $t_i$.
 
-```{r km-demo, fig.width=7.5, fig.height=5.2}
+### Overall Survival with Landmark Milestones (NEJM Style)
+
+Reporting overall survival (OS) requires both the step survival function and explicit landmark milestone rates (e.g., 6-month, 1-year, and 2-year survival) with confidence intervals.
+
+```{r km-demo, fig.width=8.0, fig.height=5.8}
 library(cliomicplot)
 library(survival)
+library(ggplot2)
 
-set.seed(42)
-n <- 120
-surv_df <- data.frame(
-  time   = rexp(n, rate = c(rep(0.03, 60), rep(0.06, 60))),
-  status = sample(c(0, 1), n, replace = TRUE, prob = c(0.2, 0.8)),
-  arm    = factor(rep(c("Targeted Therapy", "Standard of Care"), each = 60))
-)
+clitheme("nejm")
 
 p_km <- cliplot(
-  Surv(time, status) ~ arm,
-  data   = surv_df,
-  type   = "km",
-  preset = "nature",
-  title  = "Overall Survival: Targeted Therapy vs Standard of Care"
+  Surv(time, status) ~ sex,
+  data = lung,
+  type = type_km(
+    risk_table  = TRUE,
+    pval        = TRUE,
+    conf_int    = TRUE,
+    median_line = TRUE,
+    milestones  = c(180, 365, 730)
+  ),
+  palette  = "nejm",
+  title    = "Overall Survival Stratified by Sex",
+  subtitle = "NCCTG Lung Cancer Trial (n = 228) with 6-mo, 1-yr, 2-yr Milestones",
+  xlab     = "Time on Study (days)",
+  ylab     = "Survival Probability",
+  legend   = "top"
 )
 p_km
 ```
 
-### Risk Tables and Median Survival
-
-The constructor `type_km()` configures numbers-at-risk tables and median survival crosshairs:
-
-```r
-p_km_custom <- cliplot(
-  Surv(time, status) ~ arm,
-  data = surv_df,
-  type = type_km(
-    show_risk_table = TRUE,
-    show_median     = TRUE,
-    show_p          = TRUE,
-    conf_int        = TRUE
-  ),
-  preset = "lancet"
-)
-```
+Key features of `type_km()`:
+- Landmark milestones annotated directly on curves with percentage estimates and error bars.
+- Aligned numbers-at-risk table matching x-axis tick positions.
+- Dashed drop lines indicating median survival time for each cohort.
 
 ## Competing Risks Cumulative Incidence: `type = "ci"`
 
-When competing events preclude the primary outcome (such as non-disease mortality in cancer trials), standard Kaplan-Meier estimates overestimate cumulative incidence. The subdistribution cumulative incidence function $F_k(t)$ (Fine & Gray, 1999) accounts for competing causes:
+When evaluating disease progression, toxicities, or adverse event rates, clinical journals prefer cumulative incidence curves starting at 0% and climbing toward 100%:
 
 $$F_k(t) = P(T \le t, C = k) = \int_0^t S(u-) d\Lambda_k(u)$$
 
-```{r ci-demo, fig.width=7.5, fig.height=5.0}
-set.seed(88)
-ci_df <- data.frame(
-  time   = runif(100, 1, 36),
-  event  = sample(0:2, 100, replace = TRUE, prob = c(0.25, 0.50, 0.25)), # 0=Censor, 1=Relapse, 2=Non-Relapse Death
-  arm    = factor(rep(c("Regimen A", "Regimen B"), each = 50))
-)
+```{r ci-demo, fig.width=8.0, fig.height=5.8}
+clitheme("lancet")
 
 p_ci <- cliplot(
-  Surv(time, event) ~ arm,
-  data   = ci_df,
-  type   = type_km(cumulative_incidence = TRUE, risk_table = FALSE),
-  preset = "science",
-  title  = "Cumulative Incidence of Relapse with Competing Mortality"
+  Surv(time, status) ~ sex,
+  data = lung,
+  type = type_km(
+    cumulative_incidence = TRUE,
+    risk_table           = TRUE,
+    pval                 = TRUE,
+    conf_int             = TRUE,
+    milestones           = c(180, 365)
+  ),
+  palette  = "lancet",
+  title    = "Cumulative Incidence of Mortality",
+  subtitle = "NCCTG Lung Cohort — Landmark Milestones at 180 and 365 Days",
+  xlab     = "Days Since Enrollment",
+  ylab     = "Cumulative Incidence (%)",
+  legend   = "top"
 )
 p_ci
 ```

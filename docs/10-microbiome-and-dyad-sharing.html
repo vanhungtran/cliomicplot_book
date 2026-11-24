@@ -109,6 +109,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -231,7 +274,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./08-pathway-enrichment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment: GSEA Running Enrichment Score Plots</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment and Multi-Omics Abundance Profiles</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -260,7 +303,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./11-cross-condition-networks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison and Trait Association</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -334,8 +377,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#bubble-matrices-type-bubble_matrix" id="toc-bubble-matrices-type-bubble_matrix" class="nav-link active" data-scroll-target="#bubble-matrices-type-bubble_matrix"><span class="header-section-number">10.1</span> Bubble Matrices: <code>type = "bubble_matrix"</code></a></li>
-  <li><a href="#circular-dyad-sharing-type-sharing_heatmap" id="toc-circular-dyad-sharing-type-sharing_heatmap" class="nav-link" data-scroll-target="#circular-dyad-sharing-type-sharing_heatmap"><span class="header-section-number">10.2</span> Circular Dyad Sharing: <code>type = "sharing_heatmap"</code></a></li>
+  <li><a href="#clinical-severity-stratification-by-host-genetics" id="toc-clinical-severity-stratification-by-host-genetics" class="nav-link active" data-scroll-target="#clinical-severity-stratification-by-host-genetics"><span class="header-section-number">10.1</span> Clinical Severity Stratification by Host Genetics</a></li>
+  <li><a href="#differential-abundance-bubble-matrices-type-bubble_matrix" id="toc-differential-abundance-bubble-matrices-type-bubble_matrix" class="nav-link" data-scroll-target="#differential-abundance-bubble-matrices-type-bubble_matrix"><span class="header-section-number">10.2</span> Differential Abundance Bubble Matrices: <code>type = "bubble_matrix"</code></a></li>
+  <li><a href="#mother-infant-dyad-strain-transmission-heatmap-type-sharing_heatmap" id="toc-mother-infant-dyad-strain-transmission-heatmap-type-sharing_heatmap" class="nav-link" data-scroll-target="#mother-infant-dyad-strain-transmission-heatmap-type-sharing_heatmap"><span class="header-section-number">10.3</span> Mother-Infant Dyad Strain Transmission Heatmap: <code>type = "sharing_heatmap"</code></a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/10-microbiome-and-dyad-sharing.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -361,85 +405,135 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Microbiome profiling requires visualizing relative abundances across taxonomic ranks and tracking shared strain transmission across clinical dyads. This chapter covers bubble matrices and circular dyad sharing plots.</p>
-<section id="bubble-matrices-type-bubble_matrix" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="bubble-matrices-type-bubble_matrix"><span class="header-section-number">10.1</span> Bubble Matrices: <code>type = "bubble_matrix"</code></h2>
-<p>Bubble matrices encode two data dimensions simultaneously: circle area represents mean relative abundance, while fill color represents fold change, prevalence, or statistical significance:</p>
+<p>Microbiome profiling requires visualizing relative abundances across taxonomic ranks and tracking shared strain transmission across clinical dyads. This chapter covers clinical severity stratification by host genetics, differential abundance bubble matrices, and circular dyad sharing heatmaps.</p>
+<section id="clinical-severity-stratification-by-host-genetics" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="clinical-severity-stratification-by-host-genetics"><span class="header-section-number">10.1</span> Clinical Severity Stratification by Host Genetics</h2>
+<p>In cohort studies of atopic dermatitis, host genetic lesions (such as <em>FLG</em> loss-of-function variants) interact with microbial colonization. Here, clinical eczema severity (SCORAD index) is compared across disease subgroups with overlaid patient jitter and rank-sum tests:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. aureus"</span>, <span class="st">"S. epidermidis"</span>, <span class="st">"C. acnes"</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">"M. restricta"</span>, <span class="st">"S. hominis"</span>, <span class="st">"L. crispatus"</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>comparisons <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Lesional vs HC"</span>, <span class="st">"Non-Lesional vs HC"</span>, <span class="st">"Lesional vs Non-Lesional"</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>da_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Species =</span> species, <span class="at">Comparison =</span> comparisons, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>da_df<span class="sc">$</span>log2FC <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.2</span>, <span class="sc">-</span><span class="fl">1.8</span>, <span class="sc">-</span><span class="fl">0.4</span>, <span class="fl">1.2</span>, <span class="sc">-</span><span class="fl">2.1</span>, <span class="sc">-</span><span class="fl">0.2</span>,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">0.8</span>, <span class="sc">-</span><span class="fl">0.9</span>, <span class="sc">-</span><span class="fl">0.1</span>, <span class="fl">0.4</span>, <span class="sc">-</span><span class="fl">1.0</span>,  <span class="fl">0.1</span>,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">2.4</span>, <span class="sc">-</span><span class="fl">0.9</span>, <span class="sc">-</span><span class="fl">0.3</span>, <span class="fl">0.8</span>, <span class="sc">-</span><span class="fl">1.1</span>, <span class="sc">-</span><span class="fl">0.3</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>da_df<span class="sc">$</span>qval <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.2e-6</span>, <span class="fl">4.5e-4</span>, <span class="fl">0.42</span>, <span class="fl">0.012</span>, <span class="fl">8.1e-5</span>, <span class="fl">0.65</span>,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                <span class="fl">0.08</span>,   <span class="fl">0.03</span>,   <span class="fl">0.85</span>, <span class="fl">0.31</span>,  <span class="fl">0.02</span>,   <span class="fl">0.78</span>,</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                <span class="fl">5.4e-5</span>, <span class="fl">0.04</span>,   <span class="fl">0.55</span>, <span class="fl">0.06</span>,  <span class="fl">0.03</span>,   <span class="fl">0.51</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>p_bubble <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  Species <span class="sc">~</span> Comparison,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> da_df,</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_bubble_matrix</span>(</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_col =</span> <span class="st">"qval"</span>,</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_col =</span> <span class="st">"log2FC"</span>,</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_size =</span> <span class="fl">2.0</span>,</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size =</span> <span class="fl">7.0</span>,</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette  =</span> <span class="st">"nature"</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Differential Cutaneous Bacterial Abundance Across Clinical Contrasts"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>cohort_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Subgroup =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Healthy Control"</span>, <span class="st">"AD (FLG Wildtype)"</span>, <span class="st">"AD (FLG Mutant)"</span>), <span class="fu">c</span>(<span class="dv">35</span>, <span class="dv">45</span>, <span class="dv">28</span>)),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Healthy Control"</span>, <span class="st">"AD (FLG Wildtype)"</span>, <span class="st">"AD (FLG Mutant)"</span>)),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">SCORAD =</span> <span class="fu">c</span>(</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(<span class="dv">35</span>, <span class="at">mean =</span> <span class="fl">3.5</span>, <span class="at">sd =</span> <span class="fl">2.0</span>)),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">5</span>, <span class="fu">rnorm</span>(<span class="dv">45</span>, <span class="at">mean =</span> <span class="fl">24.2</span>, <span class="at">sd =</span> <span class="fl">7.5</span>)),</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">12</span>, <span class="fu">rnorm</span>(<span class="dv">28</span>, <span class="at">mean =</span> <span class="fl">38.6</span>, <span class="at">sd =</span> <span class="fl">9.2</span>))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>p_scorad <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  SCORAD <span class="sc">~</span> Subgroup,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> cohort_df,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">by        =</span> <span class="st">"Subgroup"</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="st">"boxplot"</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="st">"nature"</span>,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend    =</span> <span class="st">"none"</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"kruskal.test"</span>,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Clinical SCORAD Severity by Host FLG Genotype"</span>,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Objective SCORAD Index"</span></span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>p_bubble</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>p_scorad</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="10-microbiome-and-dyad-sharing_files/figure-html/bubble-matrix-demo-1.png" class="img-fluid figure-img" width="2400"></p>
+<p><img src="10-microbiome-and-dyad-sharing_files/figure-html/clinical-scorad-1.png" class="img-fluid figure-img" width="2250"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="circular-dyad-sharing-type-sharing_heatmap" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="circular-dyad-sharing-type-sharing_heatmap"><span class="header-section-number">10.2</span> Circular Dyad Sharing: <code>type = "sharing_heatmap"</code></h2>
-<p>Circular dyad sharing maps strain transmission between paired individuals (such as mother-infant dyads or twin pairs) or between coupled anatomical compartments:</p>
+<section id="differential-abundance-bubble-matrices-type-bubble_matrix" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="differential-abundance-bubble-matrices-type-bubble_matrix"><span class="header-section-number">10.2</span> Differential Abundance Bubble Matrices: <code>type = "bubble_matrix"</code></h2>
+<p>Differential abundance tests report both directional effect size (signed <span class="math inline">\log_2\text{FC}</span>) and statistical significance (<span class="math inline">-\log_{10} q</span>). <code>type_bubble_matrix()</code> renders both across anatomical sampling sites and study visits:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>dyads <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Dyad "</span>, <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>))</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>taxa  <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. epidermidis ST2"</span>, <span class="st">"S. epidermidis ST5"</span>, <span class="st">"S. hominis ST1"</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">"C. acnes IA"</span>, <span class="st">"C. acnes II"</span>, <span class="st">"M. restricta ST4"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. aureus"</span>, <span class="st">"S. epidermidis"</span>, <span class="st">"S. hominis"</span>, <span class="st">"C. acnes"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"M. restricta"</span>, <span class="st">"P. melaninogenica"</span>, <span class="st">"V. parvula"</span>, <span class="st">"S. mitis"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>comparisons <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Cheek (T1)"</span>, <span class="st">"Forehead (T1)"</span>, <span class="st">"Antecubital (T1)"</span>, <span class="st">"Antecubital (T3)"</span>)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>dyad_data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Taxon =</span> taxa, <span class="at">Dyad =</span> dyads, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>dyad_data<span class="sc">$</span>Transmission <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">runif</span>(<span class="fu">nrow</span>(dyad_data)) <span class="sc">&gt;</span> <span class="fl">0.44</span>, <span class="st">"Shared (Transmitted)"</span>, <span class="st">"Not shared"</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>p_share <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  Taxon <span class="sc">~</span> Dyad,</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> dyad_data,</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="fu">type_sharing_heatmap</span>(</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">status_col     =</span> <span class="st">"Transmission"</span>,</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">shared_color   =</span> <span class="st">"#E64B35"</span>,</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">unshared_color =</span> <span class="st">"#EDF1F7"</span>,</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend_title   =</span> <span class="st">"Dyad Status"</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Vertical Mother-Infant Strain Transmission at 12 Months"</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>p_share</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>da_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Species =</span> species, <span class="at">Comparison =</span> comparisons, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>da_df<span class="sc">$</span>log2FC <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fl">2.3</span>, <span class="sc">-</span><span class="fl">1.9</span>, <span class="sc">-</span><span class="fl">1.2</span>, <span class="sc">-</span><span class="fl">1.8</span>, <span class="fl">1.4</span>, <span class="fl">2.7</span>, <span class="fl">1.8</span>, <span class="sc">-</span><span class="fl">0.3</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.8</span>, <span class="sc">-</span><span class="fl">2.1</span>, <span class="sc">-</span><span class="fl">0.8</span>, <span class="sc">-</span><span class="fl">1.5</span>, <span class="fl">0.9</span>, <span class="fl">2.0</span>, <span class="fl">1.4</span>, <span class="sc">-</span><span class="fl">0.2</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.1</span>, <span class="sc">-</span><span class="fl">0.7</span>, <span class="sc">-</span><span class="fl">0.3</span>, <span class="sc">-</span><span class="fl">0.8</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">0.8</span>, <span class="sc">-</span><span class="fl">0.1</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fl">2.8</span>, <span class="sc">-</span><span class="fl">2.5</span>, <span class="sc">-</span><span class="fl">1.3</span>, <span class="sc">-</span><span class="fl">2.3</span>, <span class="fl">1.6</span>, <span class="fl">3.1</span>, <span class="fl">2.3</span>, <span class="sc">-</span><span class="fl">0.5</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>da_df<span class="sc">$</span>qval <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.5e-4</span>, <span class="fl">2.8e-3</span>, <span class="fl">0.07</span>, <span class="fl">3.1e-4</span>, <span class="fl">0.02</span>, <span class="fl">3.8e-5</span>, <span class="fl">7.5e-4</span>, <span class="fl">0.65</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fl">7.2e-4</span>, <span class="fl">1.5e-3</span>, <span class="fl">0.11</span>, <span class="fl">1.2e-3</span>, <span class="fl">0.05</span>, <span class="fl">2.8e-4</span>, <span class="fl">1.9e-3</span>, <span class="fl">0.72</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.02</span>,   <span class="fl">0.12</span>,   <span class="fl">0.42</span>, <span class="fl">0.08</span>,   <span class="fl">0.28</span>, <span class="fl">0.03</span>,   <span class="fl">0.10</span>,   <span class="fl">0.88</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fl">2.8e-5</span>, <span class="fl">3.9e-4</span>, <span class="fl">0.01</span>, <span class="fl">9.8e-5</span>, <span class="fl">0.007</span>, <span class="fl">1.5e-5</span>, <span class="fl">4.8e-4</span>, <span class="fl">0.42</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>p_bubble <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  Species <span class="sc">~</span> Comparison,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> da_df,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_bubble_matrix</span>(</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_col =</span> <span class="st">"qval"</span>,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_col =</span> <span class="st">"log2FC"</span>,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_size =</span> <span class="fl">2.0</span>,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size =</span> <span class="fl">7.0</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette  =</span> <span class="st">"nature"</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Cutaneous Metagenomic Differential Abundance"</span>,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Circle size = -log10(q-value); fill color = signed log2(Fold Change)"</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>p_bubble</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="10-microbiome-and-dyad-sharing_files/figure-html/sharing-demo-1.png" class="img-fluid figure-img" width="2250"></p>
+<p><img src="10-microbiome-and-dyad-sharing_files/figure-html/bubble-matrix-demo-1.png" class="img-fluid figure-img" width="2550"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="mother-infant-dyad-strain-transmission-heatmap-type-sharing_heatmap" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="mother-infant-dyad-strain-transmission-heatmap-type-sharing_heatmap"><span class="header-section-number">10.3</span> Mother-Infant Dyad Strain Transmission Heatmap: <code>type = "sharing_heatmap"</code></h2>
+<p>Bacterial vertical transmission and strain persistence across early infancy are evaluated across mother-infant dyads. <code>type_sharing_heatmap()</code> summarizes binary dyad sharing patterns across species:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dyads <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Dyad "</span>, <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">14</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>taxa <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. epidermidis ST2"</span>, <span class="st">"S. epidermidis ST5"</span>, <span class="st">"S. hominis ST1"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">"C. acnes IA"</span>, <span class="st">"C. acnes II"</span>, <span class="st">"M. restricta ST4"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>dyad_data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Taxon =</span> taxa, <span class="at">Dyad =</span> dyads, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>dyad_data<span class="sc">$</span>Transmission <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">runif</span>(<span class="fu">nrow</span>(dyad_data)) <span class="sc">&gt;</span> <span class="fl">0.44</span>, <span class="st">"Shared (Transmitted)"</span>, <span class="st">"Not shared"</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>p_share <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  Taxon <span class="sc">~</span> Dyad,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dyad_data,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_sharing_heatmap</span>(</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">status_col     =</span> <span class="st">"Transmission"</span>,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">shared_label   =</span> <span class="st">"Shared (Transmitted)"</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">shared_color   =</span> <span class="st">"#E64B35"</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">unshared_color =</span> <span class="st">"#EDF1F7"</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend_title   =</span> <span class="st">"Dyad Status"</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Mother-Infant Bacterial Strain Transmission at 12 Months"</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>p_share</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="10-microbiome-and-dyad-sharing_files/figure-html/sharing-demo-1.png" class="img-fluid figure-img" width="2400"></p>
 </figure>
 </div>
 </div>
@@ -916,79 +1010,120 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./11-cross-condition-networks.html" class="pagination-link" aria-label="Cross-Condition Network Module Comparison">
-        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./11-cross-condition-networks.html" class="pagination-link" aria-label="Cross-Condition Network Module Comparison and Trait Association">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison and Trait Association</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Microbiome Abundance and Dyad Sharing Visualizations</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>Microbiome profiling requires visualizing relative abundances across taxonomic ranks and tracking shared strain transmission across clinical dyads. This chapter covers bubble matrices and circular dyad sharing plots.</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bubble Matrices: `type = "bubble_matrix"`</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>Bubble matrices encode two data dimensions simultaneously: circle area represents mean relative abundance, while fill color represents fold change, prevalence, or statistical significance:</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bubble-matrix-demo, fig.width=8.0, fig.height=4.8}</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. aureus"</span>, <span class="st">"S. epidermidis"</span>, <span class="st">"C. acnes"</span>,</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>             <span class="st">"M. restricta"</span>, <span class="st">"S. hominis"</span>, <span class="st">"L. crispatus"</span>)</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>comparisons <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Lesional vs HC"</span>, <span class="st">"Non-Lesional vs HC"</span>, <span class="st">"Lesional vs Non-Lesional"</span>)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>da_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Species =</span> species, <span class="at">Comparison =</span> comparisons, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>da_df<span class="sc">$</span>log2FC <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.2</span>, <span class="sc">-</span><span class="fl">1.8</span>, <span class="sc">-</span><span class="fl">0.4</span>, <span class="fl">1.2</span>, <span class="sc">-</span><span class="fl">2.1</span>, <span class="sc">-</span><span class="fl">0.2</span>,</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">0.8</span>, <span class="sc">-</span><span class="fl">0.9</span>, <span class="sc">-</span><span class="fl">0.1</span>, <span class="fl">0.4</span>, <span class="sc">-</span><span class="fl">1.0</span>,  <span class="fl">0.1</span>,</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">2.4</span>, <span class="sc">-</span><span class="fl">0.9</span>, <span class="sc">-</span><span class="fl">0.3</span>, <span class="fl">0.8</span>, <span class="sc">-</span><span class="fl">1.1</span>, <span class="sc">-</span><span class="fl">0.3</span>)</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>da_df<span class="sc">$</span>qval <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.2e-6</span>, <span class="fl">4.5e-4</span>, <span class="fl">0.42</span>, <span class="fl">0.012</span>, <span class="fl">8.1e-5</span>, <span class="fl">0.65</span>,</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>                <span class="fl">0.08</span>,   <span class="fl">0.03</span>,   <span class="fl">0.85</span>, <span class="fl">0.31</span>,  <span class="fl">0.02</span>,   <span class="fl">0.78</span>,</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>                <span class="fl">5.4e-5</span>, <span class="fl">0.04</span>,   <span class="fl">0.55</span>, <span class="fl">0.06</span>,  <span class="fl">0.03</span>,   <span class="fl">0.51</span>)</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>p_bubble <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  Species <span class="sc">~</span> Comparison,</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> da_df,</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_bubble_matrix</span>(</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_col =</span> <span class="st">"qval"</span>,</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_col =</span> <span class="st">"log2FC"</span>,</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_size =</span> <span class="fl">2.0</span>,</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size =</span> <span class="fl">7.0</span>,</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette  =</span> <span class="st">"nature"</span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Differential Cutaneous Bacterial Abundance Across Clinical Contrasts"</span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>p_bubble</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="fu">## Circular Dyad Sharing: `type = "sharing_heatmap"`</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>Circular dyad sharing maps strain transmission between paired individuals (such as mother-infant dyads or twin pairs) or between coupled anatomical compartments:</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{r sharing-demo, fig.width=7.5, fig.height=4.2}</span></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>dyads <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Dyad "</span>, <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>))</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>taxa  <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. epidermidis ST2"</span>, <span class="st">"S. epidermidis ST5"</span>, <span class="st">"S. hominis ST1"</span>,</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>           <span class="st">"C. acnes IA"</span>, <span class="st">"C. acnes II"</span>, <span class="st">"M. restricta ST4"</span>)</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>dyad_data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Taxon =</span> taxa, <span class="at">Dyad =</span> dyads, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>dyad_data<span class="sc">$</span>Transmission <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">runif</span>(<span class="fu">nrow</span>(dyad_data)) <span class="sc">&gt;</span> <span class="fl">0.44</span>, <span class="st">"Shared (Transmitted)"</span>, <span class="st">"Not shared"</span></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>p_share <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>  Taxon <span class="sc">~</span> Dyad,</span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> dyad_data,</span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="fu">type_sharing_heatmap</span>(</span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    <span class="at">status_col     =</span> <span class="st">"Transmission"</span>,</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">shared_color   =</span> <span class="st">"#E64B35"</span>,</span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">unshared_color =</span> <span class="st">"#EDF1F7"</span>,</span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend_title   =</span> <span class="st">"Dyad Status"</span></span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Vertical Mother-Infant Strain Transmission at 12 Months"</span></span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>p_share</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Microbiome Abundance and Dyad Sharing Visualizations</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>Microbiome profiling requires visualizing relative abundances across taxonomic ranks and tracking shared strain transmission across clinical dyads. This chapter covers clinical severity stratification by host genetics, differential abundance bubble matrices, and circular dyad sharing heatmaps.</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Clinical Severity Stratification by Host Genetics</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>In cohort studies of atopic dermatitis, host genetic lesions (such as *FLG* loss-of-function variants) interact with microbial colonization. Here, clinical eczema severity (SCORAD index) is compared across disease subgroups with overlaid patient jitter and rank-sum tests:</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{r clinical-scorad, fig.width=7.5, fig.height=4.8}</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>cohort_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Subgroup =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Healthy Control"</span>, <span class="st">"AD (FLG Wildtype)"</span>, <span class="st">"AD (FLG Mutant)"</span>), <span class="fu">c</span>(<span class="dv">35</span>, <span class="dv">45</span>, <span class="dv">28</span>)),</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Healthy Control"</span>, <span class="st">"AD (FLG Wildtype)"</span>, <span class="st">"AD (FLG Mutant)"</span>)),</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">SCORAD =</span> <span class="fu">c</span>(</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(<span class="dv">35</span>, <span class="at">mean =</span> <span class="fl">3.5</span>, <span class="at">sd =</span> <span class="fl">2.0</span>)),</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">5</span>, <span class="fu">rnorm</span>(<span class="dv">45</span>, <span class="at">mean =</span> <span class="fl">24.2</span>, <span class="at">sd =</span> <span class="fl">7.5</span>)),</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">12</span>, <span class="fu">rnorm</span>(<span class="dv">28</span>, <span class="at">mean =</span> <span class="fl">38.6</span>, <span class="at">sd =</span> <span class="fl">9.2</span>))</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>p_scorad <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  SCORAD <span class="sc">~</span> Subgroup,</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> cohort_df,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">by        =</span> <span class="st">"Subgroup"</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="st">"boxplot"</span>,</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="st">"nature"</span>,</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend    =</span> <span class="st">"none"</span>,</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"kruskal.test"</span>,</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Clinical SCORAD Severity by Host FLG Genotype"</span>,</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Objective SCORAD Index"</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>p_scorad</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="fu">## Differential Abundance Bubble Matrices: `type = "bubble_matrix"`</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>Differential abundance tests report both directional effect size (signed $\log_2\text{FC}$) and statistical significance ($-\log_{10} q$). <span class="in">`type_bubble_matrix()`</span> renders both across anatomical sampling sites and study visits:</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bubble-matrix-demo, fig.width=8.5, fig.height=5.2}</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. aureus"</span>, <span class="st">"S. epidermidis"</span>, <span class="st">"S. hominis"</span>, <span class="st">"C. acnes"</span>,</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>             <span class="st">"M. restricta"</span>, <span class="st">"P. melaninogenica"</span>, <span class="st">"V. parvula"</span>, <span class="st">"S. mitis"</span>)</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>comparisons <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Cheek (T1)"</span>, <span class="st">"Forehead (T1)"</span>, <span class="st">"Antecubital (T1)"</span>, <span class="st">"Antecubital (T3)"</span>)</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>da_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Species =</span> species, <span class="at">Comparison =</span> comparisons, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>da_df<span class="sc">$</span>log2FC <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>  <span class="fl">2.3</span>, <span class="sc">-</span><span class="fl">1.9</span>, <span class="sc">-</span><span class="fl">1.2</span>, <span class="sc">-</span><span class="fl">1.8</span>, <span class="fl">1.4</span>, <span class="fl">2.7</span>, <span class="fl">1.8</span>, <span class="sc">-</span><span class="fl">0.3</span>,</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.8</span>, <span class="sc">-</span><span class="fl">2.1</span>, <span class="sc">-</span><span class="fl">0.8</span>, <span class="sc">-</span><span class="fl">1.5</span>, <span class="fl">0.9</span>, <span class="fl">2.0</span>, <span class="fl">1.4</span>, <span class="sc">-</span><span class="fl">0.2</span>,</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.1</span>, <span class="sc">-</span><span class="fl">0.7</span>, <span class="sc">-</span><span class="fl">0.3</span>, <span class="sc">-</span><span class="fl">0.8</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">0.8</span>, <span class="sc">-</span><span class="fl">0.1</span>,</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>  <span class="fl">2.8</span>, <span class="sc">-</span><span class="fl">2.5</span>, <span class="sc">-</span><span class="fl">1.3</span>, <span class="sc">-</span><span class="fl">2.3</span>, <span class="fl">1.6</span>, <span class="fl">3.1</span>, <span class="fl">2.3</span>, <span class="sc">-</span><span class="fl">0.5</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>da_df<span class="sc">$</span>qval <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.5e-4</span>, <span class="fl">2.8e-3</span>, <span class="fl">0.07</span>, <span class="fl">3.1e-4</span>, <span class="fl">0.02</span>, <span class="fl">3.8e-5</span>, <span class="fl">7.5e-4</span>, <span class="fl">0.65</span>,</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>  <span class="fl">7.2e-4</span>, <span class="fl">1.5e-3</span>, <span class="fl">0.11</span>, <span class="fl">1.2e-3</span>, <span class="fl">0.05</span>, <span class="fl">2.8e-4</span>, <span class="fl">1.9e-3</span>, <span class="fl">0.72</span>,</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.02</span>,   <span class="fl">0.12</span>,   <span class="fl">0.42</span>, <span class="fl">0.08</span>,   <span class="fl">0.28</span>, <span class="fl">0.03</span>,   <span class="fl">0.10</span>,   <span class="fl">0.88</span>,</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>  <span class="fl">2.8e-5</span>, <span class="fl">3.9e-4</span>, <span class="fl">0.01</span>, <span class="fl">9.8e-5</span>, <span class="fl">0.007</span>, <span class="fl">1.5e-5</span>, <span class="fl">4.8e-4</span>, <span class="fl">0.42</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>p_bubble <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>  Species <span class="sc">~</span> Comparison,</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> da_df,</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_bubble_matrix</span>(</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_col =</span> <span class="st">"qval"</span>,</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_col =</span> <span class="st">"log2FC"</span>,</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_size =</span> <span class="fl">2.0</span>,</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size =</span> <span class="fl">7.0</span>,</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette  =</span> <span class="st">"nature"</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Cutaneous Metagenomic Differential Abundance"</span>,</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Circle size = -log10(q-value); fill color = signed log2(Fold Change)"</span></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>p_bubble</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a><span class="fu">## Mother-Infant Dyad Strain Transmission Heatmap: `type = "sharing_heatmap"`</span></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>Bacterial vertical transmission and strain persistence across early infancy are evaluated across mother-infant dyads. <span class="in">`type_sharing_heatmap()`</span> summarizes binary dyad sharing patterns across species:</span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a><span class="in">```{r sharing-demo, fig.width=8.0, fig.height=4.2}</span></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>dyads <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Dyad "</span>, <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">14</span>))</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>taxa <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. epidermidis ST2"</span>, <span class="st">"S. epidermidis ST5"</span>, <span class="st">"S. hominis ST1"</span>,</span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>          <span class="st">"C. acnes IA"</span>, <span class="st">"C. acnes II"</span>, <span class="st">"M. restricta ST4"</span>)</span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>dyad_data <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Taxon =</span> taxa, <span class="at">Dyad =</span> dyads, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>dyad_data<span class="sc">$</span>Transmission <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(</span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">runif</span>(<span class="fu">nrow</span>(dyad_data)) <span class="sc">&gt;</span> <span class="fl">0.44</span>, <span class="st">"Shared (Transmitted)"</span>, <span class="st">"Not shared"</span></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>p_share <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>  Taxon <span class="sc">~</span> Dyad,</span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dyad_data,</span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_sharing_heatmap</span>(</span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>    <span class="at">status_col     =</span> <span class="st">"Transmission"</span>,</span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">shared_label   =</span> <span class="st">"Shared (Transmitted)"</span>,</span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>    <span class="at">shared_color   =</span> <span class="st">"#E64B35"</span>,</span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>    <span class="at">unshared_color =</span> <span class="st">"#EDF1F7"</span>,</span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend_title   =</span> <span class="st">"Dyad Status"</span></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Mother-Infant Bacterial Strain Transmission at 12 Months"</span></span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>p_share</span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

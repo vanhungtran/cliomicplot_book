@@ -1,24 +1,21 @@
-# Pathway Enrichment: GSEA Running Enrichment Score Plots
+# Pathway Enrichment and Multi-Omics Abundance Profiles
 
-Gene Set Enrichment Analysis (Subramanian et al., *PNAS* 2005) evaluates whether an a priori defined gene set $S$ shows cumulative enrichment at the extremes of a ranked gene list $L$. `cliomicplot` renders three-tiered GSEA figures.
+Pathway enrichment and multi-omics profiling aggregate molecular alterations into functional signatures. This chapter covers Gene Set Enrichment Analysis (GSEA), diamond bubble heatmaps, rank-abundance curves, and longitudinal expression pattern clustering.
 
-## Mathematical Formulation of GSEA
+## Gene Set Enrichment Analysis: `type = "gsea"`
 
-Genes in $L = \{g_1, g_2, \dots, g_N\}$ are ranked by differential expression metric $r(g_j)$. The running enrichment score $P_{\text{hit}}(S, i)$ walks down the ranked list:
+Gene Set Enrichment Analysis (Subramanian et al., *PNAS* 2005) evaluates whether an a priori defined gene set $S$ shows cumulative enrichment at the extremes of a ranked gene list $L$:
 
 $$P_{\text{hit}}(S, i) = \sum_{g_j \in S, j \le i} \frac{|r_j|^p}{N_R}, \quad N_R = \sum_{g_j \in S} |r_j|^p$$
 
 $$P_{\text{miss}}(S, i) = \sum_{g_j \notin S, j \le i} \frac{1}{N - N_H}$$
 
-The Enrichment Score $ES(S)$ is the maximum deviation of $P_{\text{hit}} - P_{\text{miss}}$ from zero:
-
 $$ES(S) = \arg\max_{i} |P_{\text{hit}}(S, i) - P_{\text{miss}}(S, i)|$$
 
-```{r gsea-demo, fig.width=7.5, fig.height=5.2}
+```{r gsea-demo, fig.width=8.0, fig.height=5.2}
 library(cliomicplot)
+library(ggplot2)
 
-# Generate synthetic GSEA pathway enrichment results
-set.seed(42)
 pathways <- c(
   "Cytokine-Cytokine Receptor Interaction", "JAK-STAT Signaling Pathway",
   "Toll-like Receptor Signaling", "Th1 and Th2 Cell Differentiation",
@@ -35,18 +32,84 @@ gsea_df <- data.frame(
   FDR  = c(1e-5, 2e-5, 8e-5, 1e-4, 3e-4, 5e-4, 1e-3, 2e-3, 5e-3, 0.015, 0.045, 0.082, 0.002, 0.0005, 0.0001)
 )
 
+clitheme("nature")
+
 p_gsea <- cliplot(
   gsea_df,
   type     = "gsea",
   top_term = 15,
-  theme    = "nature",
-  title    = "Pathway Enrichment: Normalized Enrichment Score (NES) Across Inflammatory Cascades"
+  title    = "Normalized Enrichment Scores Across Inflammatory Cascades"
 )
 p_gsea
 ```
 
-## Structure of the Three-Tiered Layout
+## Diamond Bubble Heatmap: `type = "bubble_heatmap"`
 
-1. **Top Panel**: Running enrichment score curve tracing $P_{\text{hit}} - P_{\text{miss}}$, indicating peak $ES$ and leading edge subset.
-2. **Middle Panel**: Vertical barcode lines marking gene positions of set $S$ within ranked list $L$.
-3. **Bottom Panel**: Continuous ranked statistic distribution with a shaded zero baseline.
+Diamond bubble heatmaps display two continuous metrics simultaneously across features and experimental contrasts: diamond size encodes effect magnitude ($|\log_2\text{FC}|$), and fill color encodes statistical significance ($-\log_{10}P$):
+
+```{r bubble-heatmap-demo, fig.width=8.5, fig.height=6.5}
+set.seed(42)
+proteins <- c("APOE", "MAPT", "APP", "SNCA", "GFAP", "NEFL", "VIM", "SYN1", "GAP43", "UCHL1")
+contrasts <- c("AD vs Control", "PD vs Control", "AD vs PD", "Severe vs Mild")
+
+bh_df <- expand.grid(Protein = proteins, Comparison = contrasts, stringsAsFactors = FALSE)
+bh_df$absFC <- runif(nrow(bh_df), 0.2, 3.5)
+bh_df$negLogP <- runif(nrow(bh_df), 1.0, 15.0)
+
+clitheme("cell")
+
+p_bh <- cliplot(
+  Protein ~ Comparison,
+  data       = bh_df,
+  by         = bh_df$absFC,
+  type       = type_bubble_heatmap(
+    max_size        = 8.0,
+    size_name       = "|log2FC|",
+    fill_name       = expression(-log[10]~P),
+    fill_low        = "#4575B4",
+    fill_mid        = "#FFFFBF",
+    fill_high       = "#D73027"
+  ),
+  extra_data = list(fill = bh_df$negLogP),
+  title      = "Diamond Bubble Heatmap: Top Neurological Biomarkers",
+  subtitle   = "Size indicates effect magnitude; fill color denotes significance"
+)
+p_bh
+```
+
+## Rank-Abundance Dynamic Range Curves: `type = "rankabundance"`
+
+In quantitative proteomics, rank-abundance curves visualize the dynamic range of protein detection across orders of magnitude:
+
+```{r rank-abundance-demo, fig.width=8.0, fig.height=5.0}
+set.seed(42)
+n_prot <- 800
+intensities <- sort(10^rnorm(n_prot, mean = 6.5, sd = 1.1), decreasing = TRUE)
+ranks <- seq_len(n_prot)
+
+rank_df <- data.frame(
+  Rank      = ranks,
+  Intensity = intensities,
+  Protein   = paste0("Prot_", ranks)
+)
+
+clitheme("science")
+
+p_rank <- cliplot(
+  Intensity ~ Rank,
+  data = rank_df,
+  type = type_rankabundance(
+    log_scale     = "10",
+    point_color   = "#4DBBD5",
+    marginal_type = "density",
+    label_genes   = c("Prot_1", "Prot_10", "Prot_50", "Prot_200"),
+    label_color   = "#E64B35",
+    label_size    = 3.0
+  ),
+  title    = "Dynamic Range of Proteome Detection",
+  subtitle = "Protein abundance spanning ~5 orders of magnitude with marginal density",
+  xlab     = "Abundance Rank",
+  ylab     = "LFQ Intensity"
+)
+p_rank
+```

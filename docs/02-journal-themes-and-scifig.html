@@ -274,7 +274,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./08-pathway-enrichment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment: GSEA Running Enrichment Score Plots</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment and Multi-Omics Abundance Profiles</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -303,7 +303,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./11-cross-condition-networks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison and Trait Association</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -378,8 +378,9 @@ window.Quarto = {
    
   <ul>
   <li><a href="#journal-themes-overview" id="toc-journal-themes-overview" class="nav-link active" data-scroll-target="#journal-themes-overview"><span class="header-section-number">2.1</span> Journal Themes Overview</a></li>
-  <li><a href="#journal-dimension-specifications-cli_journal_size" id="toc-journal-dimension-specifications-cli_journal_size" class="nav-link" data-scroll-target="#journal-dimension-specifications-cli_journal_size"><span class="header-section-number">2.2</span> Journal Dimension Specifications: <code>cli_journal_size()</code></a></li>
-  <li><a href="#the-ai4scifig-quality-assurance-gate-cli_scifig_qa" id="toc-the-ai4scifig-quality-assurance-gate-cli_scifig_qa" class="nav-link" data-scroll-target="#the-ai4scifig-quality-assurance-gate-cli_scifig_qa"><span class="header-section-number">2.3</span> The AI4SciFig Quality Assurance Gate: <code>cli_scifig_qa()</code></a></li>
+  <li><a href="#side-by-side-journal-theme-comparison-on-proteomics-data" id="toc-side-by-side-journal-theme-comparison-on-proteomics-data" class="nav-link" data-scroll-target="#side-by-side-journal-theme-comparison-on-proteomics-data"><span class="header-section-number">2.2</span> Side-by-Side Journal Theme Comparison on Proteomics Data</a></li>
+  <li><a href="#journal-dimension-specifications-cli_journal_size" id="toc-journal-dimension-specifications-cli_journal_size" class="nav-link" data-scroll-target="#journal-dimension-specifications-cli_journal_size"><span class="header-section-number">2.3</span> Journal Dimension Specifications: <code>cli_journal_size()</code></a></li>
+  <li><a href="#the-ai4scifig-quality-assurance-gate-cli_scifig_qa" id="toc-the-ai4scifig-quality-assurance-gate-cli_scifig_qa" class="nav-link" data-scroll-target="#the-ai4scifig-quality-assurance-gate-cli_scifig_qa"><span class="header-section-number">2.4</span> The AI4SciFig Quality Assurance Gate: <code>cli_scifig_qa()</code></a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/02-journal-themes-and-scifig.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -463,52 +464,67 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
+</section>
+<section id="side-by-side-journal-theme-comparison-on-proteomics-data" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="side-by-side-journal-theme-comparison-on-proteomics-data"><span class="header-section-number">2.2</span> Side-by-Side Journal Theme Comparison on Proteomics Data</h2>
+<p>Using the bundled cortex proteomics dataset (<code>ADPD_cortex_Maxquant.RData</code>), we compare biomarker abundances across four journal presets:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>demo_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Biomarker =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Placebo"</span>, <span class="st">"Biologic_Low"</span>, <span class="st">"Biologic_High"</span>), <span class="at">each =</span> <span class="dv">25</span>)),</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Response  =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="dv">20</span>, <span class="dv">5</span>), <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="dv">45</span>, <span class="dv">6</span>), <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="dv">78</span>, <span class="dv">8</span>))</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>p_nat <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(Response <span class="sc">~</span> Biomarker, <span class="at">data =</span> demo_df, <span class="at">type =</span> <span class="st">"boxplot"</span>, <span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">title =</span> <span class="st">"Nature Style"</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>p_lan <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(Response <span class="sc">~</span> Biomarker, <span class="at">data =</span> demo_df, <span class="at">type =</span> <span class="st">"boxplot"</span>, <span class="at">preset =</span> <span class="st">"lancet"</span>, <span class="at">title =</span> <span class="st">"Lancet Style"</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>p_nat</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load bundled AD/PD cortex proteomics data</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"ADPD_cortex_Maxquant.RData"</span>, <span class="at">package =</span> <span class="st">"cliomicplot"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>e_adpd <span class="ot">&lt;-</span> <span class="fu">new.env</span>()</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(data_path, <span class="at">envir =</span> e_adpd)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>adpd_res <span class="ot">&lt;-</span> e_adpd<span class="sc">$</span>results_long</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter Alzheimer's vs Control contrast</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>sub_res <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(adpd_res[adpd_res<span class="sc">$</span>test <span class="sc">==</span> <span class="st">"ADvsCTL"</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(adpd_res<span class="sc">$</span>P.Value), ])</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>sub_res<span class="sc">$</span>pValue <span class="ot">&lt;-</span> sub_res<span class="sc">$</span>P.Value</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Nature style (open axes, slate blue / crimson palette)</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>p_nat <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(<span class="sc">-</span><span class="fu">log10</span>(pValue) <span class="sc">~</span> logFC, <span class="at">data =</span> sub_res,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type   =</span> <span class="fu">type_volcano</span>(<span class="at">fc_cutoff =</span> <span class="fl">0.5</span>, <span class="at">pval_cutoff =</span> <span class="fl">0.05</span>),</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                 <span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">title =</span> <span class="st">"Nature Style"</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Science style (jewel tones, high contrast)</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>p_sci <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(<span class="sc">-</span><span class="fu">log10</span>(pValue) <span class="sc">~</span> logFC, <span class="at">data =</span> sub_res,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type   =</span> <span class="fu">type_volcano</span>(<span class="at">fc_cutoff =</span> <span class="fl">0.5</span>, <span class="at">pval_cutoff =</span> <span class="fl">0.05</span>),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>                 <span class="at">preset =</span> <span class="st">"science"</span>, <span class="at">title =</span> <span class="st">"Science Style"</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Cell style (structured frame, vivid accents)</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>p_cel <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(<span class="sc">-</span><span class="fu">log10</span>(pValue) <span class="sc">~</span> logFC, <span class="at">data =</span> sub_res,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type   =</span> <span class="fu">type_volcano</span>(<span class="at">fc_cutoff =</span> <span class="fl">0.5</span>, <span class="at">pval_cutoff =</span> <span class="fl">0.05</span>),</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>                 <span class="at">preset =</span> <span class="st">"cell"</span>, <span class="at">title =</span> <span class="st">"Cell Style"</span>)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Lancet style (minimalist editorial grey, thin strokes)</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>p_lan <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(<span class="sc">-</span><span class="fu">log10</span>(pValue) <span class="sc">~</span> logFC, <span class="at">data =</span> sub_res,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type   =</span> <span class="fu">type_volcano</span>(<span class="at">fc_cutoff =</span> <span class="fl">0.5</span>, <span class="at">pval_cutoff =</span> <span class="fl">0.05</span>),</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                 <span class="at">preset =</span> <span class="st">"lancet"</span>, <span class="at">title =</span> <span class="st">"Lancet Style"</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>(p_nat <span class="sc">|</span> p_sci) <span class="sc">/</span> (p_cel <span class="sc">|</span> p_lan)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02-journal-themes-and-scifig_files/figure-html/journal-themes-comparison-1.png" class="img-fluid figure-img" width="2250"></p>
-</figure>
-</div>
-</div>
-<details open="" class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>p_lan</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="02-journal-themes-and-scifig_files/figure-html/journal-themes-comparison-2.png" class="img-fluid figure-img" width="2250"></p>
+<p><img src="02-journal-themes-and-scifig_files/figure-html/journal-themes-comparison-1.png" class="img-fluid figure-img" width="2550"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="journal-dimension-specifications-cli_journal_size" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="journal-dimension-specifications-cli_journal_size"><span class="header-section-number">2.2</span> Journal Dimension Specifications: <code>cli_journal_size()</code></h2>
+<section id="journal-dimension-specifications-cli_journal_size" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="journal-dimension-specifications-cli_journal_size"><span class="header-section-number">2.3</span> Journal Dimension Specifications: <code>cli_journal_size()</code></h2>
 <p><code>cli_journal_size()</code> calculates exact figure dimensions in millimeters and inches:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions for Nature double-column</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>size_nature_double <span class="ot">&lt;-</span> <span class="fu">cli_journal_size</span>(<span class="at">journal =</span> <span class="st">"nature"</span>, <span class="at">column =</span> <span class="st">"double"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>size_nature_double</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions for Nature double-column</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>size_nature_double <span class="ot">&lt;-</span> <span class="fu">cli_journal_size</span>(<span class="at">journal =</span> <span class="st">"nature"</span>, <span class="at">column =</span> <span class="st">"double"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>size_nature_double</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>$journal
@@ -534,9 +550,9 @@ $max_height_mm
 </div>
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions for Science single-column</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>size_science_single <span class="ot">&lt;-</span> <span class="fu">cli_journal_size</span>(<span class="at">journal =</span> <span class="st">"science"</span>, <span class="at">column =</span> <span class="st">"single"</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>size_science_single</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions for Science single-column</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>size_science_single <span class="ot">&lt;-</span> <span class="fu">cli_journal_size</span>(<span class="at">journal =</span> <span class="st">"science"</span>, <span class="at">column =</span> <span class="st">"single"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>size_science_single</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>$journal
@@ -560,10 +576,38 @@ $height_in
 $max_height_mm
 [1] 230</code></pre>
 </div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions for Cell 1.5-column</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>size_cell_onehalf <span class="ot">&lt;-</span> <span class="fu">cli_journal_size</span>(<span class="at">journal =</span> <span class="st">"cell"</span>, <span class="at">column =</span> <span class="st">"one_half"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>size_cell_onehalf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>$journal
+[1] "cell"
+
+$column
+[1] "one_half"
+
+$width_mm
+[1] 114
+
+$height_mm
+[1] 91.2
+
+$width_in
+[1] 4.488189
+
+$height_in
+[1] 3.590551
+
+$max_height_mm
+[1] 203</code></pre>
+</div>
 </div>
 </section>
-<section id="the-ai4scifig-quality-assurance-gate-cli_scifig_qa" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="the-ai4scifig-quality-assurance-gate-cli_scifig_qa"><span class="header-section-number">2.3</span> The AI4SciFig Quality Assurance Gate: <code>cli_scifig_qa()</code></h2>
+<section id="the-ai4scifig-quality-assurance-gate-cli_scifig_qa" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="the-ai4scifig-quality-assurance-gate-cli_scifig_qa"><span class="header-section-number">2.4</span> The AI4SciFig Quality Assurance Gate: <code>cli_scifig_qa()</code></h2>
 <p><code>cli_scifig_qa()</code> inspects a plot object and flags publication non-compliances:</p>
 <ul>
 <li>Text elements below the font floor (<span class="math inline">\le 5.0</span> pt).</li>
@@ -574,9 +618,9 @@ $max_height_mm
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run QA verification on plot</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>qa_report <span class="ot">&lt;-</span> <span class="fu">cli_scifig_qa</span>(p_nat, <span class="at">journal =</span> <span class="st">"nature"</span>, <span class="at">column =</span> <span class="st">"double"</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>qa_report</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run QA verification on Nature plot</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>qa_report <span class="ot">&lt;-</span> <span class="fu">cli_scifig_qa</span>(p_nat, <span class="at">journal =</span> <span class="st">"nature"</span>, <span class="at">column =</span> <span class="st">"double"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>qa_report</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -587,7 +631,7 @@ Journal: NATURE | Column: double
          Rule: NATURE double-column specification
 [PASS]   Physical Height        : 146.4 mm (Max: 170.0 mm)           
          Rule: NATURE printable page boundary
-[PASS]   Font Size Floor        : Default theme hierarchy used (&gt;= 5.0 pt)
+[PASS]   Font Size Floor        : Min text size: 8.5 pt (Floor: 5.0 pt)
          Rule: NATURE font-floor specification
 [PASS]   Stroke Width Floor     : Spine/edge widths adhere to standard presets
          Rule: NATURE hairline-floor specification
@@ -1077,70 +1121,99 @@ Verdict: PASSED - All gates comply with publisher standards.</code></pre>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Journal Themes and Publication Quality Gates</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>Scientific journals impose strict typographic, dimensional, and contrast guidelines on submitted figures. <span class="in">`cliomicplot`</span> provides journal theme presets and an automated verification gate (<span class="in">`cli_scifig_qa`</span>) enforcing submission rules.</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Journal Themes Overview</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="in">`clitheme()`</span> implements aesthetic profiles matched to target journals:</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Preset <span class="pp">|</span> Journal / Style <span class="pp">|</span> Primary Palette <span class="pp">|</span> Key Typography &amp; Grid <span class="pp">|</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|:---|:---|</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`nature`</span> <span class="pp">|</span> *Nature*, *Nature Medicine* <span class="pp">|</span> Slate Blue, Orange, Cyan <span class="pp">|</span> Helvetica/Arial, crisp border, no major grid <span class="pp">|</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`science`</span> <span class="pp">|</span> *Science*, *Sci Transl Med* <span class="pp">|</span> Jewel Navy, Crimson, Emerald <span class="pp">|</span> High-contrast jewel tones, clean serif/sans <span class="pp">|</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`cell`</span> <span class="pp">|</span> *Cell*, *Immunity*, *Neuron* <span class="pp">|</span> Obsidian Dark, Neon, Magenta <span class="pp">|</span> Vivid palettes, dark and light variants <span class="pp">|</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`lancet`</span> <span class="pp">|</span> *The Lancet* <span class="pp">|</span> Editorial Cyan, Navy, Grey <span class="pp">|</span> Thin strokes, minimal framing, serif title <span class="pp">|</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`nejm`</span> <span class="pp">|</span> *N Engl J Med* <span class="pp">|</span> Classic Crimson, Navy, Amber <span class="pp">|</span> Classic editorial layout, clean axes <span class="pp">|</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`scifig`</span> <span class="pp">|</span> Universal Fig4papers <span class="pp">|</span> Colorblind-safe palettes <span class="pp">|</span> Strict font floor $\ge 5.0$ pt, no stroke overlap <span class="pp">|</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="in">```{r journal-themes-comparison, fig.width=7.5, fig.height=4.8}</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>demo_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">Biomarker =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Placebo"</span>, <span class="st">"Biologic_Low"</span>, <span class="st">"Biologic_High"</span>), <span class="at">each =</span> <span class="dv">25</span>)),</span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">Response  =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="dv">20</span>, <span class="dv">5</span>), <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="dv">45</span>, <span class="dv">6</span>), <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="dv">78</span>, <span class="dv">8</span>))</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>p_nat <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(Response <span class="sc">~</span> Biomarker, <span class="at">data =</span> demo_df, <span class="at">type =</span> <span class="st">"boxplot"</span>, <span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">title =</span> <span class="st">"Nature Style"</span>)</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>p_lan <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(Response <span class="sc">~</span> Biomarker, <span class="at">data =</span> demo_df, <span class="at">type =</span> <span class="st">"boxplot"</span>, <span class="at">preset =</span> <span class="st">"lancet"</span>, <span class="at">title =</span> <span class="st">"Lancet Style"</span>)</span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>p_nat</span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>p_lan</span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## Journal Dimension Specifications: `cli_journal_size()`</span></span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a><span class="in">`cli_journal_size()`</span> calculates exact figure dimensions in millimeters and inches:</span>
-<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a><span class="in">```{r journal-sizes}</span></span>
-<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions for Nature double-column</span></span>
-<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>size_nature_double <span class="ot">&lt;-</span> <span class="fu">cli_journal_size</span>(<span class="at">journal =</span> <span class="st">"nature"</span>, <span class="at">column =</span> <span class="st">"double"</span>)</span>
-<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>size_nature_double</span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions for Science single-column</span></span>
-<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>size_science_single <span class="ot">&lt;-</span> <span class="fu">cli_journal_size</span>(<span class="at">journal =</span> <span class="st">"science"</span>, <span class="at">column =</span> <span class="st">"single"</span>)</span>
-<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>size_science_single</span>
-<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a><span class="fu">## The AI4SciFig Quality Assurance Gate: `cli_scifig_qa()`</span></span>
-<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a><span class="in">`cli_scifig_qa()`</span> inspects a plot object and flags publication non-compliances:</span>
-<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Text elements below the font floor ($\le 5.0$ pt).</span>
-<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Missing axis labels or clipped tick marks.</span>
-<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Low-contrast color pairings.</span>
-<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Element clipping beyond the plot border.</span>
-<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{r scifig-qa-demo}</span></span>
-<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Run QA verification on plot</span></span>
-<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>qa_report <span class="ot">&lt;-</span> <span class="fu">cli_scifig_qa</span>(p_nat, <span class="at">journal =</span> <span class="st">"nature"</span>, <span class="at">column =</span> <span class="st">"double"</span>)</span>
-<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>qa_report</span>
-<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>Plots configured with <span class="in">`scifig = TRUE`</span> apply these constraints automatically.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Journal Themes and Publication Quality Gates</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>Scientific journals impose strict typographic, dimensional, and contrast guidelines on submitted figures. <span class="in">`cliomicplot`</span> provides journal theme presets and an automated verification gate (<span class="in">`cli_scifig_qa`</span>) enforcing submission rules.</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Journal Themes Overview</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="in">`clitheme()`</span> implements aesthetic profiles matched to target journals:</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Preset <span class="pp">|</span> Journal / Style <span class="pp">|</span> Primary Palette <span class="pp">|</span> Key Typography &amp; Grid <span class="pp">|</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|:---|:---|</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`nature`</span> <span class="pp">|</span> *Nature*, *Nature Medicine* <span class="pp">|</span> Slate Blue, Orange, Cyan <span class="pp">|</span> Helvetica/Arial, crisp border, no major grid <span class="pp">|</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`science`</span> <span class="pp">|</span> *Science*, *Sci Transl Med* <span class="pp">|</span> Jewel Navy, Crimson, Emerald <span class="pp">|</span> High-contrast jewel tones, clean serif/sans <span class="pp">|</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`cell`</span> <span class="pp">|</span> *Cell*, *Immunity*, *Neuron* <span class="pp">|</span> Obsidian Dark, Neon, Magenta <span class="pp">|</span> Vivid palettes, dark and light variants <span class="pp">|</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`lancet`</span> <span class="pp">|</span> *The Lancet* <span class="pp">|</span> Editorial Cyan, Navy, Grey <span class="pp">|</span> Thin strokes, minimal framing, serif title <span class="pp">|</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`nejm`</span> <span class="pp">|</span> *N Engl J Med* <span class="pp">|</span> Classic Crimson, Navy, Amber <span class="pp">|</span> Classic editorial layout, clean axes <span class="pp">|</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`scifig`</span> <span class="pp">|</span> Universal Fig4papers <span class="pp">|</span> Colorblind-safe palettes <span class="pp">|</span> Strict font floor $\ge 5.0$ pt, no stroke overlap <span class="pp">|</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## Side-by-Side Journal Theme Comparison on Proteomics Data</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>Using the bundled cortex proteomics dataset (<span class="in">`ADPD_cortex_Maxquant.RData`</span>), we compare biomarker abundances across four journal presets:</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="in">```{r journal-themes-comparison, fig.width=8.5, fig.height=7.0}</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Load bundled AD/PD cortex proteomics data</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>data_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"ADPD_cortex_Maxquant.RData"</span>, <span class="at">package =</span> <span class="st">"cliomicplot"</span>)</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>e_adpd <span class="ot">&lt;-</span> <span class="fu">new.env</span>()</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(data_path, <span class="at">envir =</span> e_adpd)</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>adpd_res <span class="ot">&lt;-</span> e_adpd<span class="sc">$</span>results_long</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter Alzheimer's vs Control contrast</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>sub_res <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(adpd_res[adpd_res<span class="sc">$</span>test <span class="sc">==</span> <span class="st">"ADvsCTL"</span> <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(adpd_res<span class="sc">$</span>P.Value), ])</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>sub_res<span class="sc">$</span>pValue <span class="ot">&lt;-</span> sub_res<span class="sc">$</span>P.Value</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Nature style (open axes, slate blue / crimson palette)</span></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>p_nat <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(<span class="sc">-</span><span class="fu">log10</span>(pValue) <span class="sc">~</span> logFC, <span class="at">data =</span> sub_res,</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type   =</span> <span class="fu">type_volcano</span>(<span class="at">fc_cutoff =</span> <span class="fl">0.5</span>, <span class="at">pval_cutoff =</span> <span class="fl">0.05</span>),</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>                 <span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">title =</span> <span class="st">"Nature Style"</span>)</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Science style (jewel tones, high contrast)</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>p_sci <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(<span class="sc">-</span><span class="fu">log10</span>(pValue) <span class="sc">~</span> logFC, <span class="at">data =</span> sub_res,</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type   =</span> <span class="fu">type_volcano</span>(<span class="at">fc_cutoff =</span> <span class="fl">0.5</span>, <span class="at">pval_cutoff =</span> <span class="fl">0.05</span>),</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>                 <span class="at">preset =</span> <span class="st">"science"</span>, <span class="at">title =</span> <span class="st">"Science Style"</span>)</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Cell style (structured frame, vivid accents)</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>p_cel <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(<span class="sc">-</span><span class="fu">log10</span>(pValue) <span class="sc">~</span> logFC, <span class="at">data =</span> sub_res,</span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type   =</span> <span class="fu">type_volcano</span>(<span class="at">fc_cutoff =</span> <span class="fl">0.5</span>, <span class="at">pval_cutoff =</span> <span class="fl">0.05</span>),</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>                 <span class="at">preset =</span> <span class="st">"cell"</span>, <span class="at">title =</span> <span class="st">"Cell Style"</span>)</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Lancet style (minimalist editorial grey, thin strokes)</span></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>p_lan <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(<span class="sc">-</span><span class="fu">log10</span>(pValue) <span class="sc">~</span> logFC, <span class="at">data =</span> sub_res,</span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>                 <span class="at">type   =</span> <span class="fu">type_volcano</span>(<span class="at">fc_cutoff =</span> <span class="fl">0.5</span>, <span class="at">pval_cutoff =</span> <span class="fl">0.05</span>),</span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>                 <span class="at">preset =</span> <span class="st">"lancet"</span>, <span class="at">title =</span> <span class="st">"Lancet Style"</span>)</span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>(p_nat <span class="sc">|</span> p_sci) <span class="sc">/</span> (p_cel <span class="sc">|</span> p_lan)</span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a><span class="fu">## Journal Dimension Specifications: `cli_journal_size()`</span></span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a><span class="in">`cli_journal_size()`</span> calculates exact figure dimensions in millimeters and inches:</span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a><span class="in">```{r journal-sizes}</span></span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions for Nature double-column</span></span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>size_nature_double <span class="ot">&lt;-</span> <span class="fu">cli_journal_size</span>(<span class="at">journal =</span> <span class="st">"nature"</span>, <span class="at">column =</span> <span class="st">"double"</span>)</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>size_nature_double</span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions for Science single-column</span></span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>size_science_single <span class="ot">&lt;-</span> <span class="fu">cli_journal_size</span>(<span class="at">journal =</span> <span class="st">"science"</span>, <span class="at">column =</span> <span class="st">"single"</span>)</span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a>size_science_single</span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions for Cell 1.5-column</span></span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>size_cell_onehalf <span class="ot">&lt;-</span> <span class="fu">cli_journal_size</span>(<span class="at">journal =</span> <span class="st">"cell"</span>, <span class="at">column =</span> <span class="st">"one_half"</span>)</span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>size_cell_onehalf</span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a><span class="fu">## The AI4SciFig Quality Assurance Gate: `cli_scifig_qa()`</span></span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a><span class="in">`cli_scifig_qa()`</span> inspects a plot object and flags publication non-compliances:</span>
+<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Text elements below the font floor ($\le 5.0$ pt).</span>
+<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Missing axis labels or clipped tick marks.</span>
+<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Low-contrast color pairings.</span>
+<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Element clipping beyond the plot border.</span>
+<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a><span class="in">```{r scifig-qa-demo}</span></span>
+<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a><span class="co"># Run QA verification on Nature plot</span></span>
+<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a>qa_report <span class="ot">&lt;-</span> <span class="fu">cli_scifig_qa</span>(p_nat, <span class="at">journal =</span> <span class="st">"nature"</span>, <span class="at">column =</span> <span class="st">"double"</span>)</span>
+<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>qa_report</span>
+<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a>Plots configured with <span class="in">`scifig = TRUE`</span> apply these constraints automatically.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

@@ -1,16 +1,58 @@
 # Statistical Genetics and Microbiome GWAS (mGWAS)
 
-Genome-Wide Association Studies (GWAS) and Microbiome-GWAS (mGWAS) scan genetic variants across chromosomes for associations with clinical traits or microbial taxon abundances. `cliomicplot` provides Manhattan and dual-trait Miami plots.
+Genome-Wide Association Studies (GWAS) and Microbial GWAS (mGWAS) evaluate variant associations with clinical phenotypes or microbial traits across chromosomes. `cliomicplot` provides single-chromosome and multi-chromosome Manhattan architectures.
 
-## Manhattan Plots: `type = "manhattan"`
+## Multi-Chromosome Human GWAS: `p ~ bp | chr`
 
-Manhattan plots position genomic variants across chromosomes on the horizontal axis and $-\log_{10}(P\text{-value})$ on the vertical axis. The standard genome-wide significance threshold is $P \le 5 \times 10^{-8}$ ($-\log_{10}P \ge 7.30$), derived from Bonferroni correction over $\approx 10^6$ independent tests:
+In human genetics, variants are distributed across chromosomes 1 through 22. Alternating chromosome colors and standard significance thresholds ($\tau_{\text{GWAS}} = 5 \times 10^{-8}$ and suggestive $1 \times 10^{-5}$) mark genome-wide hits:
 
 $$\tau_{\text{GWAS}} = -\log_{10}(5 \times 10^{-8}) \approx 7.30$$
 
-```{r manhattan-demo, fig.width=8.0, fig.height=4.2}
+```{r manhattan-multi-demo, fig.width=8.5, fig.height=4.8}
 library(cliomicplot)
+library(ggplot2)
 
+set.seed(42)
+n_snps <- 600
+chroms <- factor(rep(1:5, each = 120), levels = 1:5)
+bps <- rep(seq(1e5, 2e7, length.out = 120), 5)
+pvals <- runif(n_snps, 0.001, 1.0)
+snps <- paste0("rs", 1000:(1000 + n_snps - 1))
+
+# Inject genome-wide significant lead variants
+lead_hits <- c(45, 185, 312, 450)
+pvals[lead_hits] <- c(2.1e-9, 4.8e-11, 1.2e-8, 3.5e-10)
+
+gwas_df <- data.frame(
+  chr = chroms,
+  bp  = bps,
+  p   = pvals,
+  snp = snps
+)
+
+clitheme("nature")
+
+p_gwas <- cliplot(
+  p ~ bp | chr,
+  data = gwas_df,
+  type = type_manhattan(
+    threshold       = 5e-8,
+    label_hits      = TRUE,
+    point_size      = 1.5
+  ),
+  title    = "Genome-Wide Association Study (GWAS)",
+  subtitle = "Chromosomal distribution of variant associations with suggestive and genome-wide thresholds",
+  xlab     = "Chromosome",
+  ylab     = expression(-log[10]~italic(P))
+)
+p_gwas
+```
+
+## Microbial GWAS (mGWAS) Along Bacterial Genomes
+
+Microbial GWAS evaluates single nucleotide variants along circular bacterial chromosomes (e.g. *Staphylococcus aureus*, ~2.8 Mb):
+
+```{r manhattan-bacterial-demo, fig.width=8.0, fig.height=4.2}
 set.seed(42)
 mgwas_df <- data.frame(
   pos  = seq(2000, 400000, by = 2500),
@@ -19,12 +61,12 @@ mgwas_df <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# Insert significant microbial variant associations
+# Insert significant virulence and resistance alleles
 hit_positions <- c(22, 68, 114, 142)
 mgwas_df$qval[hit_positions] <- c(3.2e-5, 8.4e-6, 4.1e-7, 1.9e-5)
 mgwas_df$gene[hit_positions] <- c("agrA", "mecA", "tsst-1", "ebpS")
 
-p_man <- cliplot(
+p_mgwas <- cliplot(
   qval ~ pos,
   data = mgwas_df,
   type = type_manhattan(
@@ -34,11 +76,8 @@ p_man <- cliplot(
     xlab       = "Staphylococcus aureus Genome Position (bp)",
     ylab       = expression(-log[10]~italic(q))
   ),
-  title = "Microbial GWAS: Bacterial Variants Associated with Eczema Severity"
+  preset = "science",
+  title  = "Microbial GWAS: Virulence Variants Associated with Disease Severity"
 )
-p_man
+p_mgwas
 ```
-
-## Mirrored Miami Plots
-
-In cross-trait studies, a Miami plot mirrors two traits back-to-back (e.g., Atopic Dermatitis risk alleles plotted upright, Serum IgE levels inverted) to identify shared pleiotropic loci.

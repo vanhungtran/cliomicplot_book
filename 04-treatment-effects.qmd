@@ -8,10 +8,57 @@ In clinical studies, treatment effect sizes (Hazard Ratios $\text{HR}$, Odds Rat
 
 $$\log(\widehat{\text{HR}}) \pm 1.96 \times \text{SE}(\log(\widehat{\text{HR}}))$$
 
-```{r forest-demo, fig.width=8.0, fig.height=5.2}
-library(cliomicplot)
+### Multivariable Cox Proportional Hazards Model (Science Style)
 
-# Reproducible clinical subgroup dataset
+We fit a multivariable Cox model directly to the NCCTG lung cancer cohort (`survival::lung`), estimating independent hazard ratios for age, sex, ECOG performance status, and weight loss:
+
+```{r forest-cox-demo, fig.width=8.0, fig.height=4.8}
+library(cliomicplot)
+library(survival)
+library(ggplot2)
+
+# Fit Cox proportional hazards model
+cox_fit <- coxph(Surv(time, status) ~ age + sex + ph.ecog + wt.loss, data = lung)
+cox_sum <- summary(cox_fit)
+
+# Prepare forest plot data frame
+forest_df <- data.frame(
+  Variable = c("Age (per year)", "Male vs. Female",
+               "ECOG PS (per point)", "Weight loss (per lb)"),
+  HR       = cox_sum$conf.int[, "exp(coef)"],
+  CI_low   = cox_sum$conf.int[, "lower .95"],
+  CI_high  = cox_sum$conf.int[, "upper .95"],
+  P        = cox_sum$coefficients[, "Pr(>|z|)"]
+)
+
+clitheme("science")
+
+p_forest_cox <- cliplot(
+  HR ~ Variable,
+  data = forest_df,
+  type = type_forest(
+    ref_line    = TRUE,
+    ref_val     = 1.0,
+    sort        = TRUE,
+    point_size  = 3.5,
+    ci_width    = 1.0,
+    stripe      = TRUE,
+    show_values = TRUE,
+    sig_color   = "#E64B35",
+    ns_color    = "#3C5488"
+  ),
+  title    = "Multivariable Cox Proportional Hazards Model",
+  subtitle = "Overall Survival Hazard Ratios (95% CI) with Zebra Row Stripes",
+  caption  = "NCCTG Advanced Lung Cancer (n = 228)"
+)
+p_forest_cox
+```
+
+## Subgroup Consistency Across Predefined Strata
+
+In Phase III clinical trials, evaluating consistency across demographic and clinical subgroups assesses whether the overall treatment benefit is driven by a single subpopulation:
+
+```{r forest-subgroups-demo, fig.width=8.0, fig.height=5.2}
 subgroup_df <- data.frame(
   Variable = c("Overall Population", "Age < 65", "Age >= 65", 
                "Female", "Male", "Stage III", "Stage IV"),
@@ -21,7 +68,9 @@ subgroup_df <- data.frame(
   P        = c(0.001, 0.003, 0.082, 0.006, 0.021, 0.002, 0.120)
 )
 
-p_forest <- cliplot(
+clitheme("nature")
+
+p_forest_sub <- cliplot(
   HR ~ Variable,
   data   = subgroup_df,
   type   = type_forest(
@@ -32,16 +81,7 @@ p_forest <- cliplot(
     stripe      = TRUE,
     show_values = TRUE
   ),
-  preset = "nature",
   title  = "Hazard Ratios for Progression-Free Survival Across Subgroups"
 )
-p_forest
+p_forest_sub
 ```
-
-## Subgroup Dissection and Interaction Tests
-
-The `type_forest()` constructor formats summary diamonds for pooled effects and aligns tabular annotations with plot points:
-
-- `ref_line = 1.0`: Displays the dashed line of null effect.
-- `log_scale = TRUE`: Equalizes the geometric distance for $\text{HR} = 0.5$ and $\text{HR} = 2.0$.
-- `diamond_rows`: Highlights the overall population with a pooled diamond.

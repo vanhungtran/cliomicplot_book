@@ -15,21 +15,46 @@ Scientific journals impose strict typographic, dimensional, and contrast guideli
 | `nejm` | *N Engl J Med* | Classic Crimson, Navy, Amber | Classic editorial layout, clean axes |
 | `scifig` | Universal Fig4papers | Colorblind-safe palettes | Strict font floor $\ge 5.0$ pt, no stroke overlap |
 
-```{r journal-themes-comparison, fig.width=7.5, fig.height=4.8}
+## Side-by-Side Journal Theme Comparison on Proteomics Data
+
+Using the bundled cortex proteomics dataset (`ADPD_cortex_Maxquant.RData`), we compare biomarker abundances across four journal presets:
+
+```{r journal-themes-comparison, fig.width=8.5, fig.height=7.0}
 library(cliomicplot)
 library(ggplot2)
+library(patchwork)
 
-set.seed(101)
-demo_df <- data.frame(
-  Biomarker = factor(rep(c("Placebo", "Biologic_Low", "Biologic_High"), each = 25)),
-  Response  = c(rnorm(25, 20, 5), rnorm(25, 45, 6), rnorm(25, 78, 8))
-)
+# Load bundled AD/PD cortex proteomics data
+data_path <- system.file("extdata", "ADPD_cortex_Maxquant.RData", package = "cliomicplot")
+e_adpd <- new.env()
+load(data_path, envir = e_adpd)
+adpd_res <- e_adpd$results_long
 
-p_nat <- cliplot(Response ~ Biomarker, data = demo_df, type = "boxplot", preset = "nature", title = "Nature Style")
-p_lan <- cliplot(Response ~ Biomarker, data = demo_df, type = "boxplot", preset = "lancet", title = "Lancet Style")
+# Filter Alzheimer's vs Control contrast
+sub_res <- as.data.frame(adpd_res[adpd_res$test == "ADvsCTL" & !is.na(adpd_res$P.Value), ])
+sub_res$pValue <- sub_res$P.Value
 
-p_nat
-p_lan
+# 1. Nature style (open axes, slate blue / crimson palette)
+p_nat <- cliplot(-log10(pValue) ~ logFC, data = sub_res,
+                 type   = type_volcano(fc_cutoff = 0.5, pval_cutoff = 0.05),
+                 preset = "nature", title = "Nature Style")
+
+# 2. Science style (jewel tones, high contrast)
+p_sci <- cliplot(-log10(pValue) ~ logFC, data = sub_res,
+                 type   = type_volcano(fc_cutoff = 0.5, pval_cutoff = 0.05),
+                 preset = "science", title = "Science Style")
+
+# 3. Cell style (structured frame, vivid accents)
+p_cel <- cliplot(-log10(pValue) ~ logFC, data = sub_res,
+                 type   = type_volcano(fc_cutoff = 0.5, pval_cutoff = 0.05),
+                 preset = "cell", title = "Cell Style")
+
+# 4. Lancet style (minimalist editorial grey, thin strokes)
+p_lan <- cliplot(-log10(pValue) ~ logFC, data = sub_res,
+                 type   = type_volcano(fc_cutoff = 0.5, pval_cutoff = 0.05),
+                 preset = "lancet", title = "Lancet Style")
+
+(p_nat | p_sci) / (p_cel | p_lan)
 ```
 
 ## Journal Dimension Specifications: `cli_journal_size()`
@@ -44,6 +69,10 @@ size_nature_double
 # Dimensions for Science single-column
 size_science_single <- cli_journal_size(journal = "science", column = "single")
 size_science_single
+
+# Dimensions for Cell 1.5-column
+size_cell_onehalf <- cli_journal_size(journal = "cell", column = "one_half")
+size_cell_onehalf
 ```
 
 ## The AI4SciFig Quality Assurance Gate: `cli_scifig_qa()`
@@ -56,7 +85,7 @@ size_science_single
 - Element clipping beyond the plot border.
 
 ```{r scifig-qa-demo}
-# Run QA verification on plot
+# Run QA verification on Nature plot
 qa_report <- cli_scifig_qa(p_nat, journal = "nature", column = "double")
 qa_report
 ```

@@ -1,26 +1,65 @@
 # Microbiome Abundance and Dyad Sharing Visualizations
 
-Microbiome profiling requires visualizing relative abundances across taxonomic ranks and tracking shared strain transmission across clinical dyads. This chapter covers bubble matrices and circular dyad sharing plots.
+Microbiome profiling requires visualizing relative abundances across taxonomic ranks and tracking shared strain transmission across clinical dyads. This chapter covers clinical severity stratification by host genetics, differential abundance bubble matrices, and circular dyad sharing heatmaps.
 
-## Bubble Matrices: `type = "bubble_matrix"`
+## Clinical Severity Stratification by Host Genetics
 
-Bubble matrices encode two data dimensions simultaneously: circle area represents mean relative abundance, while fill color represents fold change, prevalence, or statistical significance:
+In cohort studies of atopic dermatitis, host genetic lesions (such as *FLG* loss-of-function variants) interact with microbial colonization. Here, clinical eczema severity (SCORAD index) is compared across disease subgroups with overlaid patient jitter and rank-sum tests:
 
-```{r bubble-matrix-demo, fig.width=8.0, fig.height=4.8}
+```{r clinical-scorad, fig.width=7.5, fig.height=4.8}
 library(cliomicplot)
+library(ggplot2)
 
 set.seed(42)
-species <- c("S. aureus", "S. epidermidis", "C. acnes",
-             "M. restricta", "S. hominis", "L. crispatus")
-comparisons <- c("Lesional vs HC", "Non-Lesional vs HC", "Lesional vs Non-Lesional")
+cohort_df <- data.frame(
+  Subgroup = factor(rep(c("Healthy Control", "AD (FLG Wildtype)", "AD (FLG Mutant)"), c(35, 45, 28)),
+                    levels = c("Healthy Control", "AD (FLG Wildtype)", "AD (FLG Mutant)")),
+  SCORAD = c(
+    pmax(0, rnorm(35, mean = 3.5, sd = 2.0)),
+    pmax(5, rnorm(45, mean = 24.2, sd = 7.5)),
+    pmax(12, rnorm(28, mean = 38.6, sd = 9.2))
+  )
+)
+
+clitheme("nature")
+
+p_scorad <- cliplot(
+  SCORAD ~ Subgroup,
+  data      = cohort_df,
+  by        = "Subgroup",
+  type      = "boxplot",
+  palette   = "nature",
+  legend    = "none",
+  stat.test = "kruskal.test",
+  title     = "Clinical SCORAD Severity by Host FLG Genotype",
+  ylab      = "Objective SCORAD Index"
+)
+p_scorad
+```
+
+## Differential Abundance Bubble Matrices: `type = "bubble_matrix"`
+
+Differential abundance tests report both directional effect size (signed $\log_2\text{FC}$) and statistical significance ($-\log_{10} q$). `type_bubble_matrix()` renders both across anatomical sampling sites and study visits:
+
+```{r bubble-matrix-demo, fig.width=8.5, fig.height=5.2}
+set.seed(42)
+species <- c("S. aureus", "S. epidermidis", "S. hominis", "C. acnes",
+             "M. restricta", "P. melaninogenica", "V. parvula", "S. mitis")
+comparisons <- c("Cheek (T1)", "Forehead (T1)", "Antecubital (T1)", "Antecubital (T3)")
 
 da_df <- expand.grid(Species = species, Comparison = comparisons, stringsAsFactors = FALSE)
-da_df$log2FC <- c(3.2, -1.8, -0.4, 1.2, -2.1, -0.2,
-                  0.8, -0.9, -0.1, 0.4, -1.0,  0.1,
-                  2.4, -0.9, -0.3, 0.8, -1.1, -0.3)
-da_df$qval <- c(1.2e-6, 4.5e-4, 0.42, 0.012, 8.1e-5, 0.65,
-                0.08,   0.03,   0.85, 0.31,  0.02,   0.78,
-                5.4e-5, 0.04,   0.55, 0.06,  0.03,   0.51)
+da_df$log2FC <- c(
+  2.3, -1.9, -1.2, -1.8, 1.4, 2.7, 1.8, -0.3,
+  1.8, -2.1, -0.8, -1.5, 0.9, 2.0, 1.4, -0.2,
+  1.1, -0.7, -0.3, -0.8, 0.5, 1.0, 0.8, -0.1,
+  2.8, -2.5, -1.3, -2.3, 1.6, 3.1, 2.3, -0.5
+)
+da_df$qval <- c(
+  1.5e-4, 2.8e-3, 0.07, 3.1e-4, 0.02, 3.8e-5, 7.5e-4, 0.65,
+  7.2e-4, 1.5e-3, 0.11, 1.2e-3, 0.05, 2.8e-4, 1.9e-3, 0.72,
+  0.02,   0.12,   0.42, 0.08,   0.28, 0.03,   0.10,   0.88,
+  2.8e-5, 3.9e-4, 0.01, 9.8e-5, 0.007, 1.5e-5, 4.8e-4, 0.42
+)
 
 p_bubble <- cliplot(
   Species ~ Comparison,
@@ -32,20 +71,21 @@ p_bubble <- cliplot(
     max_size = 7.0,
     palette  = "nature"
   ),
-  title = "Differential Cutaneous Bacterial Abundance Across Clinical Contrasts"
+  title    = "Cutaneous Metagenomic Differential Abundance",
+  subtitle = "Circle size = -log10(q-value); fill color = signed log2(Fold Change)"
 )
 p_bubble
 ```
 
-## Circular Dyad Sharing: `type = "sharing_heatmap"`
+## Mother-Infant Dyad Strain Transmission Heatmap: `type = "sharing_heatmap"`
 
-Circular dyad sharing maps strain transmission between paired individuals (such as mother-infant dyads or twin pairs) or between coupled anatomical compartments:
+Bacterial vertical transmission and strain persistence across early infancy are evaluated across mother-infant dyads. `type_sharing_heatmap()` summarizes binary dyad sharing patterns across species:
 
-```{r sharing-demo, fig.width=7.5, fig.height=4.2}
+```{r sharing-demo, fig.width=8.0, fig.height=4.2}
 set.seed(42)
-dyads <- paste0("Dyad ", sprintf("%02d", 1:12))
-taxa  <- c("S. epidermidis ST2", "S. epidermidis ST5", "S. hominis ST1",
-           "C. acnes IA", "C. acnes II", "M. restricta ST4")
+dyads <- paste0("Dyad ", sprintf("%02d", 1:14))
+taxa <- c("S. epidermidis ST2", "S. epidermidis ST5", "S. hominis ST1",
+          "C. acnes IA", "C. acnes II", "M. restricta ST4")
 
 dyad_data <- expand.grid(Taxon = taxa, Dyad = dyads, stringsAsFactors = FALSE)
 dyad_data$Transmission <- ifelse(
@@ -54,15 +94,16 @@ dyad_data$Transmission <- ifelse(
 
 p_share <- cliplot(
   Taxon ~ Dyad,
-  data   = dyad_data,
-  type   = type_sharing_heatmap(
+  data = dyad_data,
+  type = type_sharing_heatmap(
     status_col     = "Transmission",
+    shared_label   = "Shared (Transmitted)",
     shared_color   = "#E64B35",
     unshared_color = "#EDF1F7",
     legend_title   = "Dyad Status"
   ),
   preset = "nature",
-  title  = "Vertical Mother-Infant Strain Transmission at 12 Months"
+  title  = "Mother-Infant Bacterial Strain Transmission at 12 Months"
 )
 p_share
 ```

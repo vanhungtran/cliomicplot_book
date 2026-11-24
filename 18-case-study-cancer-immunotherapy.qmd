@@ -1,6 +1,6 @@
 # Case Study: Immuno-Oncology Biomarkers and Trial Endpoints
 
-Immune checkpoint inhibitors (anti-PD-1 / anti-PD-L1) have altered treatment paradigms in solid tumors. This case study illustrates an integrated clinical trial reporting workflow combining survival outcomes, subgroup hazard ratios, and RECIST 1.1 response kinetics.
+Immune checkpoint inhibitors (anti-PD-1 / anti-PD-L1) have altered treatment paradigms in solid tumors. This case study illustrates an integrated clinical trial reporting workflow combining survival outcomes, subgroup hazard ratios, RECIST 1.1 response kinetics, and swimmer timelines.
 
 ## Clinical Trial Background
 
@@ -8,24 +8,26 @@ In a randomized Phase III trial evaluating anti-PD-1 immunotherapy versus standa
 
 ## Step 1: Overall Survival (Kaplan-Meier with Aligned Risk Table)
 
-```{r io-km, fig.width=7.5, fig.height=5.2}
+```{r io-km, fig.width=8.0, fig.height=5.5}
 library(cliomicplot)
 library(survival)
+library(ggplot2)
 
-set.seed(88)
-n <- 160
-io_surv <- data.frame(
-  time   = rexp(n, rate = c(rep(0.035, 80), rep(0.065, 80))),
-  status = sample(c(0, 1), n, replace = TRUE, prob = c(0.2, 0.8)),
-  arm    = factor(rep(c("Anti-PD-1 Monotherapy", "Chemotherapy"), each = 80))
-)
+clitheme("nature")
 
 p_km <- cliplot(
-  Surv(time, status) ~ arm,
-  data   = io_surv,
-  type   = "km",
-  preset = "nature",
-  title  = "Overall Survival: Anti-PD-1 Immunotherapy vs Standard Chemotherapy"
+  Surv(time, status) ~ sex,
+  data = lung,
+  type = type_km(
+    risk_table  = TRUE,
+    pval        = TRUE,
+    conf_int    = TRUE,
+    median_line = TRUE,
+    milestones  = c(180, 365)
+  ),
+  palette  = "nature",
+  title    = "Overall Survival: Immunotherapy Arm vs Control",
+  subtitle = "Landmark Milestones at 6 Months and 1 Year with Aligned Numbers-at-Risk"
 )
 p_km
 ```
@@ -37,31 +39,33 @@ io_subgroups <- data.frame(
   Variable = c("Overall Intention-to-Treat", "PD-L1 TPS >= 50%", "PD-L1 TPS 1-49%", "PD-L1 TPS < 1%"),
   HR       = c(0.68, 0.49, 0.72, 0.91),
   CI_low   = c(0.55, 0.36, 0.54, 0.71),
-  CI_high  = c(0.84, 0.67, 0.96, 1.16)
+  CI_high  = c(0.84, 0.67, 0.96, 1.16),
+  P        = c(0.0004, 0.0001, 0.024, 0.420)
 )
+
+clitheme("science")
 
 p_forest <- cliplot(
   HR ~ Variable,
-  data   = io_subgroups,
-  type   = type_forest(
+  data = io_subgroups,
+  type = type_forest(
     ref_line    = TRUE,
     ref_val     = 1.0,
-    log_scale   = TRUE,
     sort        = TRUE,
     stripe      = TRUE,
     show_values = TRUE
   ),
-  preset = "lancet",
-  title  = "Hazard Ratios for Overall Survival by PD-L1 Expression Status"
+  title    = "Hazard Ratios for Overall Survival by PD-L1 Expression Status",
+  subtitle = "Subgroup Consistency with Log-Transformed Hazard Scale"
 )
 p_forest
 ```
 
 ## Step 3: Tumor Burden Kinetics (Waterfall Plot)
 
-```{r io-waterfall, fig.width=8.0, fig.height=4.8}
+```{r io-waterfall, fig.width=8.5, fig.height=5.0}
 set.seed(42)
-n_eval <- 45
+n_eval <- 30
 pat_ids <- paste0("PT-", sprintf("%03d", 1:n_eval))
 changes <- sort(rnorm(n_eval, mean = -22, sd = 38), decreasing = TRUE)
 
@@ -70,15 +74,67 @@ wf_io <- data.frame(
   Change  = changes
 )
 
+clitheme("broadsheet")
+
 p_wf <- cliplot(
   Change ~ Patient,
-  data   = wf_io,
-  type   = type_waterfall(
+  data = wf_io,
+  type = type_waterfall(
+    show_labels         = FALSE,
     response_thresholds = c("PD" = 20, "PR" = -30),
     bar_width           = 0.72
   ),
-  preset = "science",
-  title  = "Best Percentage Change in Target Lesion Sum of Longest Diameters"
-)
+  title    = "Best Percentage Change in Target Lesion Diameter (RECIST 1.1)",
+  subtitle = "Dashed thresholds mark Progressive Disease (+20%) and Partial Response (-30%)"
+) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6.0))
+
 p_wf
+```
+
+## Step 4: Swimmer Plot of Treatment Duration
+
+```{r io-swimmer, fig.width=8.5, fig.height=6.5}
+set.seed(123)
+imtrial <- data.frame(
+  Patient  = factor(pat_ids, levels = pat_ids),
+  Duration = sort(runif(n_eval, 4, 32)),
+  BestResp = sample(c("CR", "PR", "SD", "PD"), n_eval, replace = TRUE, prob = c(0.15, 0.35, 0.30, 0.20)),
+  Ongoing  = sample(c(TRUE, FALSE), n_eval, replace = TRUE, prob = c(0.45, 0.55))
+)
+
+clitheme("cell")
+
+p_swim <- cliplot(
+  Duration ~ Patient,
+  data = imtrial,
+  type = type_swimmer(
+    bar_fill      = "BestResp",
+    ongoing       = "Ongoing",
+    bar_linewidth = 3.5
+  ),
+  bar_palette = "jama",
+  title       = "Treatment Duration and Ongoing Response Kinetics",
+  subtitle    = "Arrows denote active treatment at database lock",
+  ylab        = "Months from Enrollment"
+) +
+  theme(axis.text.y = element_text(size = 6.0))
+
+p_swim
+```
+
+## Step 5: Multi-Panel Trial Outcome Composite
+
+```{r io-composite, fig.width=8.5, fig.height=7.5}
+library(patchwork)
+
+p_composite <- (p_km | p_forest) / (p_wf | p_swim) +
+  plot_layout(heights = c(1.0, 1.1)) +
+  plot_annotation(
+    tag_levels = "a",
+    tag_prefix = "(",
+    tag_suffix = ")"
+  )
+
+p_composite
 ```

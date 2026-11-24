@@ -1,14 +1,12 @@
-# Cross-Condition Network Module Comparison
+# Cross-Condition Network Module Comparison and Trait Association
 
-Comparing biological co-occurrence networks between healthy and diseased states requires evaluating whether functional modules share feature composition. `cliomicplot` calculates hypergeometric overlap and Representation Factors ($RF$) through `type_module_compare()`.
+Comparing biological co-occurrence networks between healthy and diseased states requires evaluating whether functional modules share feature composition and covary with clinical phenotypes. `cliomicplot` calculates hypergeometric overlap and Representation Factors ($RF$) through `type_module_compare()`, and maps module-trait associations through `type_module_trait()`.
 
 ## Mathematical Formulation of Module Overlap
 
 Given a background universe of $N$ total features, module $M_1$ from Condition 1 containing $|M_1|$ features, and module $M_2$ from Condition 2 containing $|M_2|$ features, the overlap count is $k = |M_1 \cap M_2|$.
 
 ### Jaccard Similarity Index
-
-The Jaccard index measures the proportion of shared features relative to the union:
 
 $$J(M_1, M_2) = \frac{|M_1 \cap M_2|}{|M_1 \cup M_2|} = \frac{k}{|M_1| + |M_2| - k}$$
 
@@ -20,46 +18,86 @@ $$RF = \frac{|M_1 \cap M_2|}{\mathbb{E}[|M_1 \cap M_2|]} = \frac{k}{\frac{|M_1| 
 
 ### Hypergeometric Overlap Significance
 
-The probability of observing $k$ or more shared features by random chance is calculated from the hypergeometric distribution:
-
 $$P(X \ge k) = \sum_{x=k}^{\min(|M_1|, |M_2|)} \frac{\binom{|M_2|}{x} \binom{N - |M_2|}{|M_1| - x}}{\binom{N}{|M_1|}}$$
 
-## Visualizing Module Overlap with `type_module_compare`
-
-`cliplot()` accepts either node-level cluster assignments or precomputed overlap matrices:
+## Cross-Network Module Overlap: `type = "module_compare"`
 
 ```{r module-compare-demo, fig.width=7.5, fig.height=5.2}
 library(cliomicplot)
 
-# Reproducible node-level community assignments across discovery and replication networks
 set.seed(42)
-n_features <- 90
-features <- paste0("Taxon_", 1:n_features)
-net1_mods <- sample(c("M1_Barrier", "M2_Inflammation", "M3_Sebum"), n_features, replace = TRUE)
-net2_mods <- net1_mods
-# Rewire 30% of features in replication network
-rewired_idx <- sample(1:n_features, 27)
-net2_mods[rewired_idx] <- sample(c("ModA_Th2", "ModB_Stratum", "ModC_Lipid"), 27, replace = TRUE)
+taxa_pool <- paste0("Taxon_", 1:150)
+net_discovery <- sample(c("M1_StaphCommensal", "M2_Lipophilic", "M3_Coryneform", "M4_PathogenCluster"), 150, replace = TRUE)
+net_replication <- net_discovery
 
-df_nodes <- data.frame(
-  Feature     = features,
-  Discovery   = net1_mods,
-  Replication = net2_mods
+# Reorganize 35% of taxa to simulate biological perturbation
+perm_idx <- sample(1:150, 50)
+net_replication[perm_idx] <- sample(c("ModA_Commensal", "ModB_LipidUtil", "ModC_Actinobacteria", "ModD_Inflammation"), 50, replace = TRUE)
+net_replication[-perm_idx] <- gsub("M1_StaphCommensal", "ModA_Commensal", net_replication[-perm_idx])
+net_replication[-perm_idx] <- gsub("M2_Lipophilic", "ModB_LipidUtil", net_replication[-perm_idx])
+net_replication[-perm_idx] <- gsub("M3_Coryneform", "ModC_Actinobacteria", net_replication[-perm_idx])
+net_replication[-perm_idx] <- gsub("M4_PathogenCluster", "ModD_Inflammation", net_replication[-perm_idx])
+
+network_df <- data.frame(
+  Taxon       = taxa_pool,
+  Discovery   = net_discovery,
+  Replication = net_replication,
+  stringsAsFactors = FALSE
 )
 
 p_comp <- cliplot(
   Replication ~ Discovery,
-  data   = df_nodes,
-  type   = type_module_compare(
-    fill_by        = "rf",            # Fill by Representation Factor
-    show_stars     = TRUE,            # Display significance asterisks
-    show_totals    = TRUE,            # Display marginal totals
-    total_universe = 120              # Universe size N
+  data = network_df,
+  type = type_module_compare(
+    fill_by     = "rf",
+    show_stars  = TRUE,
+    show_totals = TRUE
   ),
   preset = "nature",
-  title  = "Cross-Network Module Preservation: Discovery vs Replication"
+  title  = "Cross-Network Module Preservation: Discovery vs Replication Cohorts",
+  xlab   = "Discovery Cohort Modules",
+  ylab   = "Replication Cohort Modules"
 )
 p_comp
 ```
 
-Significant overlaps ($P < 0.001$, $***$) identify conserved biological functional units that persist despite phenotypic transitions.
+## Module-Trait Clinical Association Heatmap: `type = "module_trait"`
+
+Connecting microbial modules with clinical phenotypes and micro-environmental exposures reveals which communities correlate with tissue dysfunction:
+
+```{r module-trait-demo, fig.width=8.5, fig.height=5.0}
+cor_env_df <- expand.grid(
+  Module = c("M1_StaphCommensal", "M2_Lipophilic", "M3_Coryneform", "M4_PathogenCluster"),
+  Factor = c("Skin pH", "Transepidermal Water Loss", "PM25 Exposure", "Ambient Temp", "Relative Humidity", "SCORAD Severity"),
+  stringsAsFactors = FALSE
+)
+
+cor_env_df$cor <- c(
+  -0.34,  0.42,  0.28, -0.12,  0.58,  0.72,
+  -0.28,  0.38,  0.15, -0.08,  0.45,  0.64,
+   0.45, -0.22, -0.35,  0.18, -0.15,  0.41,
+  -0.12,  0.08,  0.15,  0.52,  0.44, -0.19,
+  -0.25, -0.31,  0.20,  0.38,  0.55, -0.28,
+   0.68,  0.48, -0.32, -0.14, -0.22,  0.81
+)[1:nrow(cor_env_df)]
+
+# Calculate exact two-sided p-values for n=75
+n_samples <- 75
+t_stat <- cor_env_df$cor * sqrt((n_samples - 2) / (1 - cor_env_df$cor^2))
+cor_env_df$pvalue <- 2 * stats::pt(-abs(t_stat), df = n_samples - 2)
+
+p_trait <- cliplot(
+  Module ~ Factor,
+  data = cor_env_df,
+  type = type_module_trait(
+    show_labels     = "both",
+    cluster_modules = TRUE,
+    cluster_env     = TRUE,
+    sig_digits      = 2
+  ),
+  title = "Correlation Analysis: Microbial Modules vs Environmental Exposures",
+  xlab  = "Micro-Environmental & Clinical Phenotypes",
+  ylab  = "Microbial Network Modules"
+)
+p_trait
+```

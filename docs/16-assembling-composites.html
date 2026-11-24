@@ -274,7 +274,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./08-pathway-enrichment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment: GSEA Running Enrichment Score Plots</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment and Multi-Omics Abundance Profiles</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -303,7 +303,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./11-cross-condition-networks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison and Trait Association</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -378,7 +378,9 @@ window.Quarto = {
    
   <ul>
   <li><a href="#the-double-column-layout-standard" id="toc-the-double-column-layout-standard" class="nav-link active" data-scroll-target="#the-double-column-layout-standard"><span class="header-section-number">16.1</span> The Double-Column Layout Standard</a></li>
-  <li><a href="#assembling-a-3-panel-systems-biology-composite" id="toc-assembling-a-3-panel-systems-biology-composite" class="nav-link" data-scroll-target="#assembling-a-3-panel-systems-biology-composite"><span class="header-section-number">16.2</span> Assembling a 3-Panel Systems Biology Composite</a></li>
+  <li><a href="#example-1-3-panel-systems-biology-composite" id="toc-example-1-3-panel-systems-biology-composite" class="nav-link" data-scroll-target="#example-1-3-panel-systems-biology-composite"><span class="header-section-number">16.2</span> Example 1: 3-Panel Systems Biology Composite</a></li>
+  <li><a href="#example-2-clinical-trial-recist-response-composite" id="toc-example-2-clinical-trial-recist-response-composite" class="nav-link" data-scroll-target="#example-2-clinical-trial-recist-response-composite"><span class="header-section-number">16.3</span> Example 2: Clinical Trial RECIST Response Composite</a></li>
+  <li><a href="#publication-export-with-cli_save-and-cli_journal_size" id="toc-publication-export-with-cli_save-and-cli_journal_size" class="nav-link" data-scroll-target="#publication-export-with-cli_save-and-cli_journal_size"><span class="header-section-number">16.4</span> Publication Export with <code>cli_save()</code> and <code>cli_journal_size()</code></a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/16-assembling-composites.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -410,8 +412,8 @@ window.Quarto = {
 <p>Leading journals specify standard column widths: - <strong>Single-Column</strong>: <span class="math inline">89.0</span> mm (<span class="math inline">3.5</span> in) - <strong>1.5-Column</strong>: <span class="math inline">120.0\text{--}140.0</span> mm (<span class="math inline">4.7\text{--}5.5</span> in) - <strong>Double-Column</strong>: <span class="math inline">183.0</span> mm (<span class="math inline">7.2</span> in)</p>
 <p><code>patchwork</code> combines separate <code>ggplot2</code> instances while aligning plot axes and standardizing panel tags (<code>(a)</code>, <code>(b)</code>, <code>(c)</code>).</p>
 </section>
-<section id="assembling-a-3-panel-systems-biology-composite" class="level2" data-number="16.2">
-<h2 data-number="16.2" class="anchored" data-anchor-id="assembling-a-3-panel-systems-biology-composite"><span class="header-section-number">16.2</span> Assembling a 3-Panel Systems Biology Composite</h2>
+<section id="example-1-3-panel-systems-biology-composite" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="example-1-3-panel-systems-biology-composite"><span class="header-section-number">16.2</span> Example 1: 3-Panel Systems Biology Composite</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -478,6 +480,81 @@ window.Quarto = {
 </div>
 </div>
 </div>
+</section>
+<section id="example-2-clinical-trial-recist-response-composite" class="level2" data-number="16.3">
+<h2 data-number="16.3" class="anchored" data-anchor-id="example-2-clinical-trial-recist-response-composite"><span class="header-section-number">16.3</span> Example 2: Clinical Trial RECIST Response Composite</h2>
+<p>Pairing a tumor shrinkage waterfall plot with a treatment duration swimmer plot tracks patient outcome kinetics across a trial cohort:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n_pts <span class="ot">&lt;-</span> <span class="dv">24</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>imtrial <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Patient    =</span> <span class="fu">paste0</span>(<span class="st">"PT-"</span>, <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, <span class="dv">1</span><span class="sc">:</span>n_pts)),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">BestChange =</span> <span class="fu">sort</span>(<span class="fu">rnorm</span>(n_pts, <span class="at">mean =</span> <span class="sc">-</span><span class="dv">22</span>, <span class="at">sd =</span> <span class="dv">32</span>)),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">BestResp   =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"CR"</span>, <span class="st">"PR"</span>, <span class="st">"SD"</span>, <span class="st">"PD"</span>), n_pts, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.35</span>, <span class="fl">0.35</span>, <span class="fl">0.20</span>)),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Duration   =</span> <span class="fu">pmax</span>(<span class="dv">2</span>, <span class="fu">round</span>(<span class="fu">rnorm</span>(n_pts, <span class="at">mean =</span> <span class="dv">16</span>, <span class="at">sd =</span> <span class="dv">7</span>), <span class="dv">1</span>)),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Ongoing    =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), n_pts, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.4</span>, <span class="fl">0.6</span>))</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>p_wf_comp <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  BestChange <span class="sc">~</span> Patient,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> imtrial,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_waterfall</span>(</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_labels         =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">bar_width           =</span> <span class="fl">0.68</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">response_thresholds =</span> <span class="fu">c</span>(<span class="st">"PD"</span> <span class="ot">=</span> <span class="dv">20</span>, <span class="st">"PR"</span> <span class="ot">=</span> <span class="sc">-</span><span class="dv">30</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="st">"cell"</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Best Tumor Response"</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="fl">6.0</span>))</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>p_swim_comp <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  Duration <span class="sc">~</span> Patient,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> imtrial,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_swimmer</span>(</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">bar_fill      =</span> <span class="st">"BestResp"</span>,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">ongoing       =</span> <span class="st">"Ongoing"</span>,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">bar_linewidth =</span> <span class="fl">3.2</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme       =</span> <span class="st">"cell"</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">bar_palette =</span> <span class="st">"jama"</span>,</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"Treatment Duration"</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fl">6.0</span>))</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>p_recist_comp <span class="ot">&lt;-</span> p_wf_comp <span class="sc">+</span> p_swim_comp <span class="sc">+</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">widths =</span> <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">1.2</span>)) <span class="sc">+</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_levels =</span> <span class="st">"a"</span>,</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_prefix =</span> <span class="st">"("</span>,</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_suffix =</span> <span class="st">")"</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>p_recist_comp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="16-assembling-composites_files/figure-html/composite-oncology-demo-1.png" class="img-fluid figure-img" width="2550"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="publication-export-with-cli_save-and-cli_journal_size" class="level2" data-number="16.4">
+<h2 data-number="16.4" class="anchored" data-anchor-id="publication-export-with-cli_save-and-cli_journal_size"><span class="header-section-number">16.4</span> Publication Export with <code>cli_save()</code> and <code>cli_journal_size()</code></h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Export directly to Nature 2-column specifications (183 mm width at 600 DPI)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cli_save</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  p_composite,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename   =</span> <span class="st">"Figure_1_Nature.pdf"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">journal    =</span> <span class="st">"nature"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns    =</span> <span class="st">"double"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">height_mm  =</span> <span class="dv">180</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">dpi        =</span> <span class="dv">600</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 <!-- -->
@@ -955,77 +1032,145 @@ window.Quarto = {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Assembling Multi-Panel Publication Composites</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>In peer-reviewed publications, individual analyses are assembled into unified, multi-panel composite figures. This chapter explains how to construct double-column figures conforming to Nature and Science standards using <span class="in">`patchwork`</span>.</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Double-Column Layout Standard</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>Leading journals specify standard column widths:</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Single-Column**: $89.0$ mm ($3.5$ in)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**1.5-Column**: $120.0\text{--}140.0$ mm ($4.7\text{--}5.5$ in)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Double-Column**: $183.0$ mm ($7.2$ in)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="in">`patchwork`</span> combines separate <span class="in">`ggplot2`</span> instances while aligning plot axes and standardizing panel tags (<span class="in">`(a)`</span>, <span class="in">`(b)`</span>, <span class="in">`(c)`</span>).</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Assembling a 3-Panel Systems Biology Composite</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="in">```{r composite-assembly-demo, fig.width=8.5, fig.height=7.2}</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel A: Node-level cross-network topology</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>demo_net <span class="ot">&lt;-</span> <span class="fu">generate_demo_cross_network</span>()</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>p_a <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross_edges =</span> demo_net<span class="sc">$</span>cross_edges,</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">level       =</span> <span class="st">"node"</span>,</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset      =</span> <span class="st">"nature"</span>,</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig      =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"Cross-Network Modular Architecture"</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel B: Module comparison overlap matrix</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>df_nodes <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">Feature     =</span> <span class="fu">paste0</span>(<span class="st">"Taxon_"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">60</span>),</span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">Discovery   =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"M1_Barrier"</span>, <span class="st">"M2_Inflammation"</span>, <span class="st">"M3_Sebum"</span>), <span class="dv">60</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">Replication =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"ModA_Th2"</span>, <span class="st">"ModB_Stratum"</span>, <span class="st">"ModC_Lipid"</span>), <span class="dv">60</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>p_b <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  Replication <span class="sc">~</span> Discovery,</span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> df_nodes,</span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="fu">type_module_compare</span>(<span class="at">fill_by =</span> <span class="st">"jaccard"</span>, <span class="at">show_stars =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Cross-Network Module Overlap"</span></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel C: Coupled environmental network</span></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>p_c <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Multi-Domain Environmental Coupling"</span>,</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"nature"</span>,</span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Assemble using patchwork: Left column (A over B), Right column (C)</span></span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>p_composite <span class="ot">&lt;-</span> (p_a <span class="sc">/</span> p_b) <span class="sc">|</span> p_c</span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>p_composite <span class="ot">&lt;-</span> p_composite <span class="sc">+</span></span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">widths =</span> <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">1.25</span>)) <span class="sc">+</span></span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_levels =</span> <span class="st">"a"</span>,</span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_prefix =</span> <span class="st">"("</span>,</span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_suffix =</span> <span class="st">")"</span>,</span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">theme      =</span> <span class="fu">theme</span>(</span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.tag =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">family =</span> <span class="st">"sans"</span>)</span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>p_composite</span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Assembling Multi-Panel Publication Composites</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>In peer-reviewed publications, individual analyses are assembled into unified, multi-panel composite figures. This chapter explains how to construct double-column figures conforming to Nature and Science standards using <span class="in">`patchwork`</span>.</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Double-Column Layout Standard</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>Leading journals specify standard column widths:</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Single-Column**: $89.0$ mm ($3.5$ in)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**1.5-Column**: $120.0\text{--}140.0$ mm ($4.7\text{--}5.5$ in)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Double-Column**: $183.0$ mm ($7.2$ in)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="in">`patchwork`</span> combines separate <span class="in">`ggplot2`</span> instances while aligning plot axes and standardizing panel tags (<span class="in">`(a)`</span>, <span class="in">`(b)`</span>, <span class="in">`(c)`</span>).</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example 1: 3-Panel Systems Biology Composite</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="in">```{r composite-assembly-demo, fig.width=8.5, fig.height=7.2}</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel A: Node-level cross-network topology</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>demo_net <span class="ot">&lt;-</span> <span class="fu">generate_demo_cross_network</span>()</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>p_a <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross_edges =</span> demo_net<span class="sc">$</span>cross_edges,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">level       =</span> <span class="st">"node"</span>,</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset      =</span> <span class="st">"nature"</span>,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig      =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"Cross-Network Modular Architecture"</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel B: Module comparison overlap matrix</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>df_nodes <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">Feature     =</span> <span class="fu">paste0</span>(<span class="st">"Taxon_"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">60</span>),</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">Discovery   =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"M1_Barrier"</span>, <span class="st">"M2_Inflammation"</span>, <span class="st">"M3_Sebum"</span>), <span class="dv">60</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">Replication =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"ModA_Th2"</span>, <span class="st">"ModB_Stratum"</span>, <span class="st">"ModC_Lipid"</span>), <span class="dv">60</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>p_b <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>  Replication <span class="sc">~</span> Discovery,</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> df_nodes,</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="fu">type_module_compare</span>(<span class="at">fill_by =</span> <span class="st">"jaccard"</span>, <span class="at">show_stars =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Cross-Network Module Overlap"</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel C: Coupled environmental network</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>p_c <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Multi-Domain Environmental Coupling"</span>,</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"nature"</span>,</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Assemble using patchwork: Left column (A over B), Right column (C)</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>p_composite <span class="ot">&lt;-</span> (p_a <span class="sc">/</span> p_b) <span class="sc">|</span> p_c</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>p_composite <span class="ot">&lt;-</span> p_composite <span class="sc">+</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">widths =</span> <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">1.25</span>)) <span class="sc">+</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_levels =</span> <span class="st">"a"</span>,</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_prefix =</span> <span class="st">"("</span>,</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_suffix =</span> <span class="st">")"</span>,</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">theme      =</span> <span class="fu">theme</span>(</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.tag =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">family =</span> <span class="st">"sans"</span>)</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>p_composite</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example 2: Clinical Trial RECIST Response Composite</span></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>Pairing a tumor shrinkage waterfall plot with a treatment duration swimmer plot tracks patient outcome kinetics across a trial cohort:</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a><span class="in">```{r composite-oncology-demo, fig.width=8.5, fig.height=5.5}</span></span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>n_pts <span class="ot">&lt;-</span> <span class="dv">24</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>imtrial <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>  <span class="at">Patient    =</span> <span class="fu">paste0</span>(<span class="st">"PT-"</span>, <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, <span class="dv">1</span><span class="sc">:</span>n_pts)),</span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>  <span class="at">BestChange =</span> <span class="fu">sort</span>(<span class="fu">rnorm</span>(n_pts, <span class="at">mean =</span> <span class="sc">-</span><span class="dv">22</span>, <span class="at">sd =</span> <span class="dv">32</span>)),</span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>  <span class="at">BestResp   =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"CR"</span>, <span class="st">"PR"</span>, <span class="st">"SD"</span>, <span class="st">"PD"</span>), n_pts, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.10</span>, <span class="fl">0.35</span>, <span class="fl">0.35</span>, <span class="fl">0.20</span>)),</span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>  <span class="at">Duration   =</span> <span class="fu">pmax</span>(<span class="dv">2</span>, <span class="fu">round</span>(<span class="fu">rnorm</span>(n_pts, <span class="at">mean =</span> <span class="dv">16</span>, <span class="at">sd =</span> <span class="dv">7</span>), <span class="dv">1</span>)),</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>  <span class="at">Ongoing    =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>), n_pts, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.4</span>, <span class="fl">0.6</span>))</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>p_wf_comp <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>  BestChange <span class="sc">~</span> Patient,</span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> imtrial,</span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_waterfall</span>(</span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_labels         =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>    <span class="at">bar_width           =</span> <span class="fl">0.68</span>,</span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>    <span class="at">response_thresholds =</span> <span class="fu">c</span>(<span class="st">"PD"</span> <span class="ot">=</span> <span class="dv">20</span>, <span class="st">"PR"</span> <span class="ot">=</span> <span class="sc">-</span><span class="dv">30</span>)</span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="st">"cell"</span>,</span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Best Tumor Response"</span></span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="fl">6.0</span>))</span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>p_swim_comp <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>  Duration <span class="sc">~</span> Patient,</span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> imtrial,</span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_swimmer</span>(</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>    <span class="at">bar_fill      =</span> <span class="st">"BestResp"</span>,</span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>    <span class="at">ongoing       =</span> <span class="st">"Ongoing"</span>,</span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>    <span class="at">bar_linewidth =</span> <span class="fl">3.2</span></span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme       =</span> <span class="st">"cell"</span>,</span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>  <span class="at">bar_palette =</span> <span class="st">"jama"</span>,</span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"Treatment Duration"</span></span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fl">6.0</span>))</span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>p_recist_comp <span class="ot">&lt;-</span> p_wf_comp <span class="sc">+</span> p_swim_comp <span class="sc">+</span></span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">widths =</span> <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">1.2</span>)) <span class="sc">+</span></span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_levels =</span> <span class="st">"a"</span>,</span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_prefix =</span> <span class="st">"("</span>,</span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>    <span class="at">tag_suffix =</span> <span class="st">")"</span></span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>p_recist_comp</span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a><span class="fu">## Publication Export with `cli_save()` and `cli_journal_size()`</span></span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a><span class="co"># Export directly to Nature 2-column specifications (183 mm width at 600 DPI)</span></span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a><span class="fu">cli_save</span>(</span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>  p_composite,</span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename   =</span> <span class="st">"Figure_1_Nature.pdf"</span>,</span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>  <span class="at">journal    =</span> <span class="st">"nature"</span>,</span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a>  <span class="at">columns    =</span> <span class="st">"double"</span>,</span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a>  <span class="at">height_mm  =</span> <span class="dv">180</span>,</span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>  <span class="at">dpi        =</span> <span class="dv">600</span></span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

@@ -1,69 +1,103 @@
 # Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis
 
-Atopic Dermatitis (AD) involves epidermal barrier disruption, Type 2 immune polarization (IL-4/IL-13), and cutaneous *Staphylococcus aureus* colonization. This case study demonstrates an end-to-end analytical workflow combining transcriptomics, serum biomarkers, and microbial networks.
+Atopic Dermatitis (AD) involves epidermal barrier disruption, Type 2 immune polarization (IL-4/IL-13), and cutaneous *Staphylococcus aureus* colonization. This case study demonstrates an end-to-end analytical workflow combining transcriptomics from NCBI GEO GSE121212, host genetic stratification, and coupled environmental networks.
 
 ## Clinical Background
 
-Patients present with varying disease severity evaluated by the SCORAD (Scoring Atopic Dermatitis) index. Transcriptomic profiling of lesional skin demonstrates upregulation of *IL13*, *IL4R*, *CCL18*, and *S100A7*, with concurrent downregulation of structural barrier genes *FLG* and *LOR*.
+Patients present with varying disease severity evaluated by the SCORAD (Scoring Atopic Dermatitis) index. Transcriptomic profiling of lesional skin demonstrates upregulation of *SERPINB4*, *CCL18*, and *S100A7*, with concurrent downregulation of structural barrier and lipid synthesis genes (*FLG*, *LOR*, *SPTLC3*).
 
-## Step 1: Transcriptomic Signature (Volcano Plot)
+## Step 1: Transcriptomic Signature (GEO GSE121212 Volcano Plot)
 
-```{r ad-volcano, fig.width=7.5, fig.height=5.0}
+```{r ad-volcano, fig.width=8.0, fig.height=5.2}
 library(cliomicplot)
+library(ggplot2)
 
-set.seed(101)
-n_genes <- 800
-ad_volc_df <- data.frame(
-  Gene   = paste0("Gene_", 1:n_genes),
-  log2FC = rnorm(n_genes, 0, 1.3),
-  pValue = runif(n_genes, 0, 1)^3
-)
+data_file <- system.file("extdata", "geo_dermatology_series_de.rds", package = "cliomicplot")
+series <- readRDS(data_file)
 
-# Insert defined AD biomarkers
-key_markers <- c("IL13", "IL4R", "CCL18", "S100A7", "FLG", "LOR")
-ad_volc_df$log2FC[1:6] <- c(3.4, 2.9, 3.8, 4.2, -3.9, -3.2)
-ad_volc_df$pValue[1:6] <- c(1e-12, 1e-9, 1e-11, 1e-15, 1e-14, 1e-10)
-ad_volc_df$Gene[1:6]   <- key_markers
+ad_labels <- c("SERPINB4", "CCL18", "S100A7", "LCE3A", "SPRR2G", "ALOX15", "SPTLC3")
 
 p_volc <- cliplot(
-  pValue ~ log2FC,
-  data   = ad_volc_df,
-  type   = type_volcano(
-    fc_cutoff   = 1.5,
-    pval_cutoff = 0.01,
-    label_genes = key_markers
+  -log10(padj) ~ log2FC,
+  data = series$ad_vs_hc,
+  type = type_volcano(
+    fc_cutoff    = 1.5,
+    pval_cutoff  = 0.01,
+    point_size   = 1.8,
+    point_alpha  = 0.60,
+    label_genes  = ad_labels,
+    max_overlaps = 25
   ),
   preset = "nature",
-  title  = "Transcriptomic Signature: AD Lesional vs Healthy Controls"
+  title  = "Transcriptomic Signature: AD Lesional vs Healthy Skin (GSE121212)"
 )
 p_volc
 ```
 
-## Step 2: Serum Biomarker Stratification Across Severity Tiers
+## Step 2: Clinical Severity Stratified by Host FLG Status
 
-Serum IL-13 and CCL17 levels correlate with objective SCORAD tiers:
+Host genetic lesions in filaggrin (*FLG*) drive increased eczema severity:
 
 ```{r ad-scorad-box, fig.width=7.5, fig.height=4.8}
 set.seed(42)
-scorad_df <- data.frame(
-  Severity = factor(rep(c("Mild (SCORAD < 25)", "Moderate (25-50)", "Severe (> 50)"), each = 30),
-                    levels = c("Mild (SCORAD < 25)", "Moderate (25-50)", "Severe (> 50)")),
-  CCL17    = c(rnorm(30, 250, 45), rnorm(30, 680, 120), rnorm(30, 1850, 310))
+cohort_df <- data.frame(
+  Subgroup = factor(rep(c("Healthy Control", "AD (FLG Wildtype)", "AD (FLG Mutant)"), c(35, 45, 28)),
+                    levels = c("Healthy Control", "AD (FLG Wildtype)", "AD (FLG Mutant)")),
+  SCORAD = c(
+    pmax(0, rnorm(35, mean = 3.5, sd = 2.0)),
+    pmax(5, rnorm(45, mean = 24.2, sd = 7.5)),
+    pmax(12, rnorm(28, mean = 38.6, sd = 9.2))
+  )
 )
 
 p_box <- cliplot(
-  CCL17 ~ Severity,
-  data   = scorad_df,
-  type   = "boxplot",
-  preset = "nature",
-  title  = "Serum CCL17 Levels Stratified by Objective SCORAD Tiers"
+  SCORAD ~ Subgroup,
+  data      = cohort_df,
+  by        = "Subgroup",
+  type      = "boxplot",
+  palette   = "nature",
+  legend    = "none",
+  stat.test = "kruskal.test",
+  title     = "SCORAD Severity Stratified by Host FLG Genotype",
+  ylab      = "Objective SCORAD Index"
 )
 p_box
 ```
 
-## Step 3: Cutaneous Dysbiosis and Environmental Coupling
+## Step 3: Cutaneous Dysbiosis Across Anatomical Sites
 
-Coupling cutaneous microbial abundance with transepidermal water loss (TEWL), SCORAD, and environmental humidity:
+Differential abundance bubble matrix across anatomical sites:
+
+```{r ad-bubble, fig.width=8.0, fig.height=4.8}
+species <- c("S. aureus", "S. epidermidis", "S. hominis", "C. acnes", "M. restricta")
+sites   <- c("Cheek", "Forehead", "Antecubital")
+
+da_ad <- expand.grid(Species = species, Comparison = sites, stringsAsFactors = FALSE)
+da_ad$log2FC <- c(2.8, -1.9, -1.2, -1.8, 1.4,
+                  2.1, -1.5, -0.8, -1.2, 0.9,
+                  3.2, -2.4, -1.4, -2.1, 1.6)
+da_ad$qval   <- c(1.5e-5, 2.8e-3, 0.04, 3.1e-4, 0.02,
+                  7.2e-4, 1.5e-3, 0.08, 1.2e-3, 0.05,
+                  2.8e-6, 3.9e-4, 0.01, 9.8e-5, 0.007)
+
+p_bubble <- cliplot(
+  Species ~ Comparison,
+  data = da_ad,
+  type = type_bubble_matrix(
+    size_col = "qval",
+    fill_col = "log2FC",
+    min_size = 2.0,
+    max_size = 7.0,
+    palette  = "nature"
+  ),
+  title = "Cutaneous Dysbiosis Across Anatomic Predilection Sites"
+)
+p_bubble
+```
+
+## Step 4: Cutaneous Microbiome Coupling with Multi-Domain Environmental Drivers
+
+Coupling cutaneous microbial abundance with transepidermal water loss (TEWL), SCORAD, and micro-climate drivers:
 
 ```{r ad-coupled-network, fig.width=8.5, fig.height=8.5}
 p_env <- cliplot_env_network(
