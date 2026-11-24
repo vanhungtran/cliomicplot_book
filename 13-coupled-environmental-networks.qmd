@@ -1,0 +1,72 @@
+# Central Networks Coupled with Multi-Domain Environmental Heatmaps
+
+Complex biological communities do not function in isolation; they respond to environmental drivers, clinical phenotypes, and host tissue states. `cliplot_env_network()` integrates a central co-occurrence network with peripheral correlation heatmaps across 7 styling presets.
+
+## Architecture and Visual Coordinate System
+
+The layout integrates three distinct analytical layers on a unified coordinate system conforming to Fig4papers publication rules:
+
+1. **Central Modular Network ($r \le 2.80$)**: Displays functional modules with radial exclusion boundaries and bold opaque badges (`M1: Core`, `M2: Barrier`, etc.) eliminating text-stroke collisions.
+2. **Four Corner Triangular Heatmaps**: Displays pairwise intra-domain correlations with significance asterisks ($*P < 0.05$, $**P < 0.01$, $***P < 0.001$) and 78° angled outer labels. Diagonal self-correlations ($r = 1.0$) remain unstarred.
+3. **Annular Inter-Domain Connecting Links**: Originates from indicator badges in the annular corridor ($r \approx 3.38$) and connects to the central network perimeter ($r \approx 2.74$). Color indicates direction (red for positive, cyan for negative) and linewidth indicates statistical significance ($-\log_{10}P$).
+
+## The 7 Environmental Coupling Styles
+
+| Preset | Central Network | Peripheral Domains | Palette Aesthetics |
+|:---|:---|:---|:---|
+| `clinical` / `nature`| Multi-module microbiome | Biophysical, Severity, Cytokines, Exposome | Nature Slate Blue, Crimson, Amber |
+| `seasonal` | Seasonal succession | Spring, Summer, Autumn, Winter | Flora Green, Solar Amber, Rust, Frost Blue |
+| `dark` | Luminescent multi-omics| 4 Multi-omics layers | Obsidian background, neon cyan & magenta |
+| `lancet` | Clinical epidemiology | Clinical trials exposome | Muted greys, thin editorial strokes |
+| `multi_tissue` | Multi-tissue axis | Epidermis, Dermis, Serum, Gut | Terracotta, Cerulean, Amethyst, Forest |
+| `circadian` | Diurnal oscillations | Dawn (06:00), Midday (12:00), Dusk (18:00), Midnight (24:00) | Dawn Rose, Noon Gold, Dusk Indigo, Midnight Navy |
+| `bipolar` | Differential coupling | Healthy vs Disease contrasts | Polar divergent Crimson vs Deep Blue |
+
+## Examples
+
+### Style 1: Clinical Phenotype Domains (Nature Style)
+
+```{r env-clinical-demo, fig.width=8.5, fig.height=8.5}
+library(cliomicplot)
+
+p_env_clin <- cliplot_env_network(
+  title              = "Central Microbial Network Coupled with Multi-Domain Clinical Drivers",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  value_digits       = 2,
+  compact            = TRUE,
+  preset             = "nature",
+  scifig             = TRUE
+)
+p_env_clin
+```
+
+### Style 2: Four-Season Environmental Succession
+
+```{r env-seasonal-demo, fig.width=8.5, fig.height=8.5}
+p_env_seas <- cliplot_env_network(
+  title              = "Seasonal Environmental Succession Coupled with Microbial Network",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  value_digits       = 2,
+  compact            = TRUE,
+  preset             = "seasonal",
+  scifig             = TRUE
+)
+p_env_seas
+```
+
+### Style 5: Multi-Tissue Axis Coupling
+
+```{r env-multitissue-demo, fig.width=8.5, fig.height=8.5}
+p_env_mt <- cliplot_env_network(
+  title              = "Multi-Tissue Systemic Coupling (Epidermis, Dermis, Serum, Gut)",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  value_digits       = 2,
+  compact            = TRUE,
+  preset             = "multi_tissue",
+  scifig             = TRUE
+)
+p_env_mt
+```

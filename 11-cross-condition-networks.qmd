@@ -1,0 +1,65 @@
+# Cross-Condition Network Module Comparison
+
+Comparing biological co-occurrence networks between healthy and diseased states requires evaluating whether functional modules share feature composition. `cliomicplot` calculates hypergeometric overlap and Representation Factors ($RF$) through `type_module_compare()`.
+
+## Mathematical Formulation of Module Overlap
+
+Given a background universe of $N$ total features, module $M_1$ from Condition 1 containing $|M_1|$ features, and module $M_2$ from Condition 2 containing $|M_2|$ features, the overlap count is $k = |M_1 \cap M_2|$.
+
+### Jaccard Similarity Index
+
+The Jaccard index measures the proportion of shared features relative to the union:
+
+$$J(M_1, M_2) = \frac{|M_1 \cap M_2|}{|M_1 \cup M_2|} = \frac{k}{|M_1| + |M_2| - k}$$
+
+### Representation Factor ($RF$)
+
+The Representation Factor quantifies whether the observed overlap exceeds what is expected by chance ($RF > 1.0$ indicates enrichment, $RF < 1.0$ indicates depletion):
+
+$$RF = \frac{|M_1 \cap M_2|}{\mathbb{E}[|M_1 \cap M_2|]} = \frac{k}{\frac{|M_1| \cdot |M_2|}{N}} = \frac{k \cdot N}{|M_1| \cdot |M_2|}$$
+
+### Hypergeometric Overlap Significance
+
+The probability of observing $k$ or more shared features by random chance is calculated from the hypergeometric distribution:
+
+$$P(X \ge k) = \sum_{x=k}^{\min(|M_1|, |M_2|)} \frac{\binom{|M_2|}{x} \binom{N - |M_2|}{|M_1| - x}}{\binom{N}{|M_1|}}$$
+
+## Visualizing Module Overlap with `type_module_compare`
+
+`cliplot()` accepts either node-level cluster assignments or precomputed overlap matrices:
+
+```{r module-compare-demo, fig.width=7.5, fig.height=5.2}
+library(cliomicplot)
+
+# Reproducible node-level community assignments across discovery and replication networks
+set.seed(42)
+n_features <- 90
+features <- paste0("Taxon_", 1:n_features)
+net1_mods <- sample(c("M1_Barrier", "M2_Inflammation", "M3_Sebum"), n_features, replace = TRUE)
+net2_mods <- net1_mods
+# Rewire 30% of features in replication network
+rewired_idx <- sample(1:n_features, 27)
+net2_mods[rewired_idx] <- sample(c("ModA_Th2", "ModB_Stratum", "ModC_Lipid"), 27, replace = TRUE)
+
+df_nodes <- data.frame(
+  Feature     = features,
+  Discovery   = net1_mods,
+  Replication = net2_mods
+)
+
+p_comp <- cliplot(
+  Replication ~ Discovery,
+  data   = df_nodes,
+  type   = type_module_compare(
+    fill_by        = "rf",            # Fill by Representation Factor
+    show_stars     = TRUE,            # Display significance asterisks
+    show_totals    = TRUE,            # Display marginal totals
+    total_universe = 120              # Universe size N
+  ),
+  preset = "nature",
+  title  = "Cross-Network Module Preservation: Discovery vs Replication"
+)
+p_comp
+```
+
+Significant overlaps ($P < 0.001$, $***$) identify conserved biological functional units that persist despite phenotypic transitions.

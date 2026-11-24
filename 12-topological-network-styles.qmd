@@ -1,0 +1,82 @@
+# Multi-Group Comparative Networks Across 8 Journal Styles
+
+Visualizing topological differences across multiple conditions requires layout algorithms that distinguish intra-network connections from cross-network alignments. `cliplot_cross_network_graph()` implements 8 distinct journal layout presets.
+
+## The 8 Topological Layout Styles
+
+| Preset | Layout Architecture | Target Application | Visual Characteristics |
+|:---|:---|:---|:---|
+| `force` | Force-directed Fruchterman-Reingold | Organic community clustering | Spring-embedded repulsion, edge-weighted bundling |
+| `hierarchical`| Stratified flow / tree | Upstream/downstream causal pathways | Linear vertical/horizontal flow across tiers |
+| `bipartite` | Dual parallel vertical axes | Host-microbe or Drug-target pairing | Two opposing columns with cross-links between them |
+| `radial` | Central hub-and-spoke | Keystone taxa / master regulator analysis| Central keystone circle with peripheral satellites |
+| `lancet` | Lancet minimal editorial | High-impact clinical journals | Muted grey palette, ultra-clean monochrome framing |
+| `concentric` | Concentric circular orbital rings | Multi-layered molecular hierarchy | Dashed orbital guide tracks, radial alignment |
+| `bipolar` | Opposing magnetic dipolar fields | Case vs Control topological rewiring | Polar coordinate layout with divergent magnetic poles |
+| `science` | Jewel-toned Science palette | *Science*, *Science Advances* | Sapphire Navy, Ruby Crimson, Emerald, Amethyst |
+
+## Node-Level Cross-Network Graph
+
+```{r cross-network-styles-demo, fig.width=8.0, fig.height=7.2}
+library(cliomicplot)
+
+# Generate reproducible cross-network graph data
+demo_net <- generate_demo_cross_network()
+
+# Style 1: Force-directed Nature style
+p_force <- cliplot_cross_network_graph(
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level       = "node",
+  preset      = "nature",
+  scifig      = TRUE,
+  title       = "Cross-Network Topological Architecture (Nature Style)"
+)
+p_force
+```
+
+### Style 6: Concentric Orbital Ring Architecture
+
+```{r concentric-demo, fig.width=8.0, fig.height=7.2}
+p_conc <- cliplot_cross_network_graph(
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level       = "node",
+  preset      = "concentric",
+  scifig      = TRUE,
+  title       = "Concentric Circular Multi-Ring Architecture"
+)
+p_conc
+```
+
+### Style 7: Bipolar Magnetic Dipole Layout
+
+```{r bipolar-demo, fig.width=8.0, fig.height=7.2}
+p_bip <- cliplot_cross_network_graph(
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level       = "node",
+  preset      = "bipolar",
+  scifig      = TRUE,
+  title       = "Bipolar Differential Co-Occurrence Network"
+)
+p_bip
+```
+
+### Style 8: Science Jewel-Toned Palette
+
+```{r science-jewel-demo, fig.width=8.0, fig.height=7.2}
+p_sci <- cliplot_cross_network_graph(
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level       = "node",
+  preset      = "science",
+  scifig      = TRUE,
+  title       = "Jewel-Toned Comparative Network Architecture (Science Style)"
+)
+p_sci
+```

@@ -1,0 +1,45 @@
+# Welcome {.unnumbered}
+
+`cliomicplot` produces publication-ready clinical and multi-omics figures in R with a formula grammar and pre-configured journal styles. This handbook explains how to use the package for clinical trial reporting, high-dimensional omics profiling, systems biology network coupling, and multi-panel journal composite assembly.
+
+## Package Scope
+
+The package addresses three visual bottlenecks in biomedical data science:
+
+1. **Clinical Trial Visualizations**: Kaplan-Meier curves with aligned risk tables, competing risks cumulative incidence, hazard ratio forest plots, and oncology patient response trajectories (RECIST waterfall and swimmer plots).
+2. **High-Throughput Omics**: Volcano plots with biomarker callout boxes, differential expression contrast matrices, gene set enrichment running scores, microbiome GWAS Manhattan plots, and taxonomic abundance bubble matrices.
+3. **Systems Biology & Multi-Network Coupling**: Cross-condition module comparison, comparative multi-group network graphs, modular circular networks coupled with peripheral environmental heatmaps, module preservation testing ($Z_{\text{summary}}$), and topological attack simulations.
+
+## Installation
+
+Install `cliomicplot` from GitHub:
+
+```r
+# install.packages("remotes")
+remotes::install_github("vanhungtran/cliomicplot")
+```
+
+Verify the installation:
+
+```{r check-install}
+library(cliomicplot)
+packageVersion("cliomicplot")
+```
+
+## Structure of This Handbook
+
+- **Part I — Graphic Grammar and Design System**: The unified `cliplot()` formula syntax, theme resolvers, and journal styling presets conforming to AI4SciFig publication gates.
+- **Part II — Clinical Trials and Survival Analysis**: Time-to-event curves, subgroup treatment effects, oncology response tracking, and minimally clinically important difference (MCID) modeling.
+- **Part III — High-Dimensional Omics Visualizations**: Volcano plots, pathway enrichment running scores, microbiome GWAS Manhattan architectures, and taxonomic dyad sharing.
+- **Part IV — Systems Biology and Coupled Multi-Network Architectures**: Cross-network module overlap ($RF$, Jaccard), multi-group network layouts across 8 journal styles, multi-domain environmental coupling across 7 presets, module preservation, and permutation testing.
+- **Part V — Publication Composites and Applied Case Studies**: Figure assembly with `patchwork` and reproducible workflows for atopic dermatitis and immuno-oncology.
+
+## Reproducibility Setup
+
+All code chunks in this book execute in a standard R environment with fixed random seeds.
+
+```{r setup-chunk}
+library(cliomicplot)
+library(ggplot2)
+set.seed(42)
+```

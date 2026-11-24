@@ -1,0 +1,75 @@
+# Longitudinal Biomarkers and Clinical Meaningfulness (MCID)
+
+Statistical significance in biomarker changes does not automatically establish clinical benefit. This chapter covers multi-protein longitudinal timecourses and Minimally Clinically Important Difference (MCID) visualizations.
+
+## Multi-Protein Longitudinal Timecourses: `type = "timecourse"`
+
+Monitoring multiple proteins across treatment cycles reveals pharmacodynamic kinetics:
+
+```{r timecourse-demo, fig.width=8.0, fig.height=4.8}
+library(cliomicplot)
+library(ggplot2)
+
+set.seed(42)
+time_pts <- c("Baseline", "Week 2", "Week 4", "Week 8", "Week 12")
+proteins <- c("IL-13", "IL-22", "CCL17", "S100A9")
+
+tc_df <- expand.grid(
+  Time    = factor(time_pts, levels = time_pts),
+  Protein = proteins
+)
+tc_df$Abundance <- c(
+  # IL-13
+  4.5, 3.8, 2.9, 1.8, 1.4,
+  # IL-22
+  3.2, 3.0, 2.4, 1.6, 1.2,
+  # CCL17
+  6.8, 5.1, 3.4, 2.2, 1.8,
+  # S100A9
+  5.4, 4.9, 4.0, 3.1, 2.7
+)
+
+p_tc <- cliplot(
+  Abundance ~ Time | Protein,
+  data   = tc_df,
+  type   = "timecourse",
+  preset = "nature",
+  title  = "Pharmacodynamic Suppression of Serum Inflammatory Biomarkers"
+)
+p_tc
+```
+
+## Minimally Clinically Important Difference: `type = "mcid"`
+
+The Minimally Clinically Important Difference (MCID) defines the smallest score change patients perceive as beneficial (e.g., a 4-point drop on the SCORAD scale or 0.5 standard deviation change):
+
+$$\text{Responder} = \mathbb{I}(\Delta \text{Score}_i \ge \text{MCID})$$
+
+```{r mcid-demo, fig.width=7.5, fig.height=4.8}
+mcid_df <- data.frame(
+  Endpoint = c("SCORAD Total (Biologic)", "Pruritus NRS (Topical)",
+               "EASI-75 (Biologic)", "POEM Score (Biologic)",
+               "DLQI Quality of Life (Placebo)"),
+  Estimate = c(8.5, 3.4, 11.2, 4.2, 1.8),
+  MCID     = c(5.0, 2.0,  8.0, 3.0, 4.0),
+  N        = c(520, 380,  510, 240, 190),
+  Category = c("Biologic Exceeding MCID", "Topical Exceeding MCID",
+               "Biologic Exceeding MCID", "Biologic Exceeding MCID",
+               "Placebo Below MCID")
+)
+
+p_mcid <- cliplot(
+  Estimate ~ Endpoint,
+  data   = mcid_df,
+  type   = type_mcid(
+    mcid          = "MCID",
+    n_treated     = "N",
+    category      = "Category",
+    sort_by_ratio = TRUE
+  ),
+  preset = "lancet",
+  title  = "Minimal Clinically Important Difference (MCID) Evaluation",
+  xlab   = "Absolute Clinical Estimate (|estimate|)"
+)
+p_mcid
+```

@@ -1,0 +1,76 @@
+# Empirical Linkage Engines and Permutation Testing
+
+Establishing connections between high-dimensional omics matrices and external clinical indicators requires automated statistical estimation. `cliomicplot` provides `cli_calc_env_links()` for module-trait correlation tests and `cli_network_permutation()` for non-parametric topological difference testing.
+
+## Automated Empirical Linkage: `cli_calc_env_links()`
+
+`cli_calc_env_links()` extracts module eigengenes (the first principal component of each module via singular value decomposition) or standardized mean abundances, tests bivariate correlations against environmental or clinical variables, and applies Benjamini-Hochberg FDR correction.
+
+```{r calc-env-links-demo, fig.width=8.5, fig.height=8.5}
+library(cliomicplot)
+
+demo_omics <- cli_demo_vitality_multiomics(n_samples = 35, n_features = 60, seed = 42)
+
+# Named list of environmental and clinical indicators
+env_domains <- list(
+  Clinical = demo_omics$env_data[, 1:3],
+  Exposome = demo_omics$env_data[, 4:6]
+)
+
+# Automated empirical calculation and visualization
+p_auto_env <- cliplot_env_network(
+  comm_data          = demo_omics$ref_expr,
+  env_data           = env_domains,
+  modules            = demo_omics$modules,
+  title              = "Empirical Omics-Environment Linkage via Module Eigengenes",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  preset             = "nature",
+  scifig             = TRUE
+)
+p_auto_env
+```
+
+## Permutation Hypothesis Testing for Cross-Network Differences: `cli_network_permutation()`
+
+`cli_network_permutation()` tests whether global topological properties differ between experimental conditions. The function shuffles group assignments $B$ times, re-estimates correlation networks on each permuted sample, and computes two-sided empirical $P$-values:
+
+$$P_{\text{perm}} = \frac{1 + \sum_{b=1}^B \mathbb{I}(|\Delta^{(b)}| \ge |\Delta^{\text{obs}}|)}{B + 1}$$
+
+The tested metrics are edge density, natural connectivity $\bar{\lambda}$, negative-to-positive edge ratio $R_{\pm}$, mean degree, and clustering coefficient.
+
+```{r network-permutation-demo}
+# Stack reference and test samples
+comm_combined <- rbind(demo_omics$ref_expr, demo_omics$test_expr)
+group_combined <- rep(c("Reference_WT", "Perturbed_KO"),
+                      c(nrow(demo_omics$ref_expr), nrow(demo_omics$test_expr)))
+
+perm_res <- cli_network_permutation(
+  comm_data  = comm_combined,
+  group      = group_combined,
+  ref_group  = "Reference_WT",
+  test_group = "Perturbed_KO",
+  cor_method = "spearman",
+  cor_cutoff = 0.35,
+  p_cutoff   = 0.05,
+  n_perm     = 49,
+  seed       = 42
+)
+print(perm_res)
+```
+
+## Mantel and Partial Mantel Tests: `cli_mantel()`
+
+`cli_mantel()` evaluates matrix correlation between community dissimilarity (Bray-Curtis) and clinical distance (Euclidean):
+
+```{r mantel-demo}
+mantel_out <- cli_mantel(
+  comm_data   = demo_omics$ref_expr,
+  env_data    = demo_omics$env_data[, 1:4],
+  dist_comm   = "bray",
+  dist_env    = "euclidean",
+  n_perm      = 99,
+  by_variable = TRUE
+)
+knitr::kable(mantel_out, digits = 3, caption = "Mantel Matrix Correlations")
+```

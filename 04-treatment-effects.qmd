@@ -1,0 +1,47 @@
+# Treatment Effects and Subgroup Forest Plots
+
+Forest plots summarize treatment effects and evaluate consistency across patient subgroups in randomized controlled trials and meta-analyses. `cliomicplot` formats forest plots with tabular columns, logarithmic axes, and summary diamonds.
+
+## The Forest Plot Grammar: `type = "forest"`
+
+In clinical studies, treatment effect sizes (Hazard Ratios $\text{HR}$, Odds Ratios $\text{OR}$, or Relative Risks $\text{RR}$) are displayed on a logarithmic scale with 95% confidence intervals:
+
+$$\log(\widehat{\text{HR}}) \pm 1.96 \times \text{SE}(\log(\widehat{\text{HR}}))$$
+
+```{r forest-demo, fig.width=8.0, fig.height=5.2}
+library(cliomicplot)
+
+# Reproducible clinical subgroup dataset
+subgroup_df <- data.frame(
+  Variable = c("Overall Population", "Age < 65", "Age >= 65", 
+               "Female", "Male", "Stage III", "Stage IV"),
+  HR       = c(0.68, 0.62, 0.76, 0.65, 0.71, 0.58, 0.79),
+  CI_low   = c(0.54, 0.45, 0.55, 0.48, 0.53, 0.41, 0.59),
+  CI_high  = c(0.85, 0.84, 1.04, 0.88, 0.95, 0.82, 1.06),
+  P        = c(0.001, 0.003, 0.082, 0.006, 0.021, 0.002, 0.120)
+)
+
+p_forest <- cliplot(
+  HR ~ Variable,
+  data   = subgroup_df,
+  type   = type_forest(
+    ref_line    = TRUE,
+    ref_val     = 1.0,
+    log_scale   = TRUE,
+    sort        = TRUE,
+    stripe      = TRUE,
+    show_values = TRUE
+  ),
+  preset = "nature",
+  title  = "Hazard Ratios for Progression-Free Survival Across Subgroups"
+)
+p_forest
+```
+
+## Subgroup Dissection and Interaction Tests
+
+The `type_forest()` constructor formats summary diamonds for pooled effects and aligns tabular annotations with plot points:
+
+- `ref_line = 1.0`: Displays the dashed line of null effect.
+- `log_scale = TRUE`: Equalizes the geometric distance for $\text{HR} = 0.5$ and $\text{HR} = 2.0$.
+- `diamond_rows`: Highlights the overall population with a pooled diamond.

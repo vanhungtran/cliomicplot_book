@@ -1,0 +1,68 @@
+# Microbiome Abundance and Dyad Sharing Visualizations
+
+Microbiome profiling requires visualizing relative abundances across taxonomic ranks and tracking shared strain transmission across clinical dyads. This chapter covers bubble matrices and circular dyad sharing plots.
+
+## Bubble Matrices: `type = "bubble_matrix"`
+
+Bubble matrices encode two data dimensions simultaneously: circle area represents mean relative abundance, while fill color represents fold change, prevalence, or statistical significance:
+
+```{r bubble-matrix-demo, fig.width=8.0, fig.height=4.8}
+library(cliomicplot)
+
+set.seed(42)
+species <- c("S. aureus", "S. epidermidis", "C. acnes",
+             "M. restricta", "S. hominis", "L. crispatus")
+comparisons <- c("Lesional vs HC", "Non-Lesional vs HC", "Lesional vs Non-Lesional")
+
+da_df <- expand.grid(Species = species, Comparison = comparisons, stringsAsFactors = FALSE)
+da_df$log2FC <- c(3.2, -1.8, -0.4, 1.2, -2.1, -0.2,
+                  0.8, -0.9, -0.1, 0.4, -1.0,  0.1,
+                  2.4, -0.9, -0.3, 0.8, -1.1, -0.3)
+da_df$qval <- c(1.2e-6, 4.5e-4, 0.42, 0.012, 8.1e-5, 0.65,
+                0.08,   0.03,   0.85, 0.31,  0.02,   0.78,
+                5.4e-5, 0.04,   0.55, 0.06,  0.03,   0.51)
+
+p_bubble <- cliplot(
+  Species ~ Comparison,
+  data = da_df,
+  type = type_bubble_matrix(
+    size_col = "qval",
+    fill_col = "log2FC",
+    min_size = 2.0,
+    max_size = 7.0,
+    palette  = "nature"
+  ),
+  title = "Differential Cutaneous Bacterial Abundance Across Clinical Contrasts"
+)
+p_bubble
+```
+
+## Circular Dyad Sharing: `type = "sharing_heatmap"`
+
+Circular dyad sharing maps strain transmission between paired individuals (such as mother-infant dyads or twin pairs) or between coupled anatomical compartments:
+
+```{r sharing-demo, fig.width=7.5, fig.height=4.2}
+set.seed(42)
+dyads <- paste0("Dyad ", sprintf("%02d", 1:12))
+taxa  <- c("S. epidermidis ST2", "S. epidermidis ST5", "S. hominis ST1",
+           "C. acnes IA", "C. acnes II", "M. restricta ST4")
+
+dyad_data <- expand.grid(Taxon = taxa, Dyad = dyads, stringsAsFactors = FALSE)
+dyad_data$Transmission <- ifelse(
+  runif(nrow(dyad_data)) > 0.44, "Shared (Transmitted)", "Not shared"
+)
+
+p_share <- cliplot(
+  Taxon ~ Dyad,
+  data   = dyad_data,
+  type   = type_sharing_heatmap(
+    status_col     = "Transmission",
+    shared_color   = "#E64B35",
+    unshared_color = "#EDF1F7",
+    legend_title   = "Dyad Status"
+  ),
+  preset = "nature",
+  title  = "Vertical Mother-Infant Strain Transmission at 12 Months"
+)
+p_share
+```

@@ -1,0 +1,77 @@
+# Module Preservation and Targeted Attack Robustness
+
+Assessing biological network changes between health and disease requires testing whether module structures persist and whether the network withstands random loss or targeted hub disruption.
+
+## Module Preservation Statistics ($Z_{\text{summary}}$)
+
+`cli_module_preservation()` evaluates whether module density and intramodular hub rank are preserved between reference and test conditions under permutation testing (Langfelder et al., *PLoS Comput Biol* 2011).
+
+### Mathematical Definition of $Z_{\text{summary}}$
+
+The composite preservation statistic $Z_{\text{summary}}$ aggregates density and connectivity preservation metrics over $B$ permutations:
+
+$$Z_{\text{summary}} = \frac{Z_{\text{density}} + Z_{\text{connectivity}}}{2}$$
+
+where $Z_{\text{density}}$ evaluates whether features within module $q$ maintain elevated mutual correlation and clustering in the test condition:
+
+$$Z_{\text{density}} = \frac{Z_{\text{mean\_adj}} + Z_{\text{mean\_k}} + Z_{\text{cluster\_coef}} + Z_{\text{density\_raw}}}{4}$$
+
+and $Z_{\text{connectivity}}$ evaluates whether intramodular hub feature rankings are conserved between reference and test networks:
+
+$$Z_{\text{connectivity}} = \frac{Z_{\text{kIM}} + Z_{\text{kME}}}{2}, \quad Z = \frac{\text{obs} - \mu_{\text{perm}}}{\sigma_{\text{perm}}}$$
+
+- **Preservation Thresholds**:
+  - $Z < 2$ (dashed red line): No statistical evidence of module preservation.
+  - $2 \le Z \le 10$ (dashed orange line): Moderate module preservation.
+  - $Z > 10$ (dashed green line): Strong, statistically significant module preservation.
+
+```{r module-preservation-demo, fig.width=7.5, fig.height=4.8}
+library(cliomicplot)
+
+demo_omics <- cli_demo_vitality_multiomics(n_samples = 35, n_features = 60, seed = 42)
+
+pres_stats <- cli_module_preservation(
+  ref_data    = demo_omics$ref_expr,
+  test_data   = demo_omics$test_expr,
+  ref_modules = demo_omics$modules,
+  n_perm      = 100,
+  seed        = 42
+)
+
+cliplot_module_preservation(
+  pres_stats,
+  title = "Cross-Network Module Preservation: WT Reference vs KO Test"
+)
+```
+
+## Network Robustness and Targeted Attack Simulation
+
+`cli_network_robustness()` simulates progressive network degradation under random node loss versus targeted attacks on high-degree hub nodes. `cliplot_network_robustness()` displays natural connectivity decay curves.
+
+### Mathematical Formulation of Natural Connectivity
+
+Natural connectivity $\bar{\lambda}$ derives from the spectrum of the network adjacency matrix $A$ and reflects the redundancy of alternative paths between all node pairs (Wu et al., *IEEE Trans Reliab* 2012):
+
+$$\bar{\lambda} = \ln \left( \frac{1}{N} \sum_{i=1}^N e^{\lambda_i} \right)$$
+
+where $\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_N$ are the eigenvalues of $A$. Natural connectivity strictly decreases monotonically as edges and nodes are removed, quantifying alternate path redundancy and topological stability.
+
+The competitive-to-cooperative edge balance is evaluated as:
+
+$$R_{\pm} = \frac{E_{-}}{E_{+}}$$
+
+```{r network-robustness-demo, fig.width=8.0, fig.height=4.5}
+rob_stats <- cli_network_robustness(
+  networks     = demo_omics$networks,
+  attack       = c("random", "degree"),
+  rm_fractions = seq(0.05, 0.85, by = 0.05),
+  n_perm       = 20,
+  metric       = "natural_connectivity",
+  seed         = 42
+)
+
+cliplot_network_robustness(
+  rob_stats,
+  title = "Network Robustness Under Progressive Node Removal"
+)
+```

@@ -1,0 +1,97 @@
+# Graphic Grammar and Core API
+
+`cliplot()` provides a single entry point for generating biomedical visualizations through a formula syntax. This chapter details the formula grammar, the parameter system (`clipar`), and the type dispatch architecture.
+
+## Formula Syntax
+
+`cliplot()` accepts standard R formulas mapping variables to visual roles:
+
+- `y ~ x`: Bivariate plots (boxplots, scatter plots, violin plots, ROC curves).
+- `y ~ x | facet`: Conditioned plots faceted across biological subgroups or clinical trial cohorts.
+- `Surv(time, event) ~ arm`: Time-to-event outcomes with survival curves, risk tables, and hazard ratios.
+- `~ x`: Univariate distributions (histograms, density estimates, rank-abundance curves).
+
+```r
+# General syntax
+p <- cliplot(
+  formula = Value ~ Biomarker,
+  data    = clinical_data,
+  type    = "boxplot",
+  preset  = "nature"
+)
+```
+
+## Function Dispatch and Plot Types
+
+The `type` argument selects the geometry and statistical layer. It accepts either character aliases or typed constructor functions:
+
+```{r grammar-demo}
+library(cliomicplot)
+library(ggplot2)
+
+# Generate reproducible clinical cohort
+set.seed(42)
+df_cohort <- data.frame(
+  Biomarker = factor(rep(c("Control", "Mild_AD", "Severe_AD"), each = 40)),
+  IL13_pg_ml = c(rnorm(40, 4.2, 1.1), rnorm(40, 8.5, 1.8), rnorm(40, 15.2, 2.9)),
+  Age_Group  = factor(rep(c("Pediatric", "Adult"), 60))
+)
+
+# Direct character specification
+p_box <- cliplot(
+  IL13_pg_ml ~ Biomarker,
+  data   = df_cohort,
+  type   = "boxplot",
+  preset = "nature",
+  title  = "Serum IL-13 by Clinical Severity"
+)
+p_box
+```
+
+### Typed Constructor Functions
+
+Constructor functions configure geometry-specific options with autocomplete support:
+
+```{r constructor-demo}
+p_viol <- cliplot(
+  IL13_pg_ml ~ Biomarker,
+  data  = df_cohort,
+  type  = type_violin(add_boxplot = TRUE, trim = FALSE),
+  theme = "lancet"
+)
+p_viol
+```
+
+## The Parameter Object: `clipar()`
+
+`clipar()` sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:
+
+```{r clipar-demo}
+pars <- clipar(
+  point_size  = 2.2,
+  line_width  = 0.9,
+  alpha       = 0.75,
+  font_size   = 10
+)
+
+p_custom <- cliplot(
+  IL13_pg_ml ~ Biomarker,
+  data   = df_cohort,
+  type   = "beeswarm",
+  params = pars,
+  preset = "science"
+)
+p_custom
+```
+
+## Plot Composition and Layer Addition
+
+`cliplot()` objects are `ggplot2` instances. You can extend them using the standard `+` operator or the `cliplot_add()` helper:
+
+```{r add-layers}
+p_final <- p_box +
+  geom_hline(yintercept = 10, linetype = "dashed", color = "#B22222", linewidth = 0.6) +
+  annotate("text", x = 1.2, y = 10.8, label = "Diagnostic Threshold (10 pg/mL)",
+           size = 2.8, color = "#B22222", fontface = "bold")
+p_final
+```

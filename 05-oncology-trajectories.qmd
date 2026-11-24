@@ -1,0 +1,72 @@
+# Oncology Trajectories: Waterfall and Swimmer Plots
+
+Evaluating patient responses in oncology trials requires tracking both magnitude of tumor shrinkage (RECIST 1.1) and duration of response over time. `cliomicplot` provides waterfall, swimmer, and longitudinal trajectory visualizations.
+
+## RECIST 1.1 Waterfall Plots: `type = "waterfall"`
+
+Waterfall plots rank individual patients by the maximum percentage change in target lesion sum of longest diameters from baseline:
+
+$$\Delta\% = \frac{\text{SLD}_{\text{post}} - \text{SLD}_{\text{baseline}}}{\text{SLD}_{\text{baseline}}} \times 100$$
+
+Standard RECIST 1.1 thresholds define response categories:
+- **Partial Response (PR)**: $\Delta\% \le -30\%$
+- **Progressive Disease (PD)**: $\Delta\% \ge +20\%$
+- **Stable Disease (SD)**: Between $-30\%$ and $+20\%$
+
+```{r waterfall-demo, fig.width=8.0, fig.height=4.8}
+library(cliomicplot)
+
+set.seed(42)
+n_pat <- 50
+pat_ids <- paste0("PT-", sprintf("%03d", 1:n_pat))
+shrinkage <- sort(rnorm(n_pat, mean = -15, sd = 35), decreasing = TRUE)
+response <- ifelse(shrinkage <= -30, "PR",
+            ifelse(shrinkage >= 20, "PD", "SD"))
+
+wf_df <- data.frame(
+  Patient  = factor(pat_ids, levels = pat_ids),
+  Change   = shrinkage,
+  Response = factor(response, levels = c("PD", "SD", "PR"))
+)
+
+p_wf <- cliplot(
+  Change ~ Patient,
+  data   = wf_df,
+  type   = type_waterfall(
+    response_thresholds = c("PD" = 20, "PR" = -30),
+    bar_width           = 0.72
+  ),
+  preset = "nature",
+  title  = "Best Percentage Change in Target Lesion Size from Baseline"
+)
+p_wf
+```
+
+## Swimmer Plots: `type = "swimmer"`
+
+Swimmer plots display the time on therapy for each patient, marked with milestones (time to first response, progression, or ongoing treatment):
+
+```{r swimmer-demo, fig.width=8.0, fig.height=5.2}
+set.seed(123)
+n_s <- 20
+swim_df <- data.frame(
+  Patient  = factor(paste0("PT-", sprintf("%02d", 1:n_s))),
+  Months   = sort(runif(n_s, 3, 24)),
+  Ongoing  = sample(c(TRUE, FALSE), n_s, replace = TRUE, prob = c(0.4, 0.6)),
+  Response = sample(c("Complete Response", "Partial Response", "Stable Disease"), n_s, replace = TRUE)
+)
+
+p_swim <- cliplot(
+  Months ~ Patient,
+  data   = swim_df,
+  type   = type_swimmer(
+    ongoing       = "Ongoing",
+    bar_fill      = "Response",
+    show_duration = TRUE,
+    bar_linewidth = 4.0
+  ),
+  preset = "lancet",
+  title  = "Duration of Response and Treatment Exposure"
+)
+p_swim
+```

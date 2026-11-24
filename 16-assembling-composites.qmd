@@ -1,0 +1,71 @@
+# Assembling Multi-Panel Publication Composites
+
+In peer-reviewed publications, individual analyses are assembled into unified, multi-panel composite figures. This chapter explains how to construct double-column figures conforming to Nature and Science standards using `patchwork`.
+
+## The Double-Column Layout Standard
+
+Leading journals specify standard column widths:
+- **Single-Column**: $89.0$ mm ($3.5$ in)
+- **1.5-Column**: $120.0\text{--}140.0$ mm ($4.7\text{--}5.5$ in)
+- **Double-Column**: $183.0$ mm ($7.2$ in)
+
+`patchwork` combines separate `ggplot2` instances while aligning plot axes and standardizing panel tags (`(a)`, `(b)`, `(c)`).
+
+## Assembling a 3-Panel Systems Biology Composite
+
+```{r composite-assembly-demo, fig.width=8.5, fig.height=7.2}
+library(cliomicplot)
+library(ggplot2)
+library(patchwork)
+
+# Panel A: Node-level cross-network topology
+demo_net <- generate_demo_cross_network()
+p_a <- cliplot_cross_network_graph(
+  nodes       = demo_net$nodes,
+  edges       = demo_net$edges,
+  cross_edges = demo_net$cross_edges,
+  level       = "node",
+  preset      = "nature",
+  scifig      = TRUE,
+  title       = "Cross-Network Modular Architecture"
+)
+
+# Panel B: Module comparison overlap matrix
+df_nodes <- data.frame(
+  Feature     = paste0("Taxon_", 1:60),
+  Discovery   = sample(c("M1_Barrier", "M2_Inflammation", "M3_Sebum"), 60, replace = TRUE),
+  Replication = sample(c("ModA_Th2", "ModB_Stratum", "ModC_Lipid"), 60, replace = TRUE)
+)
+p_b <- cliplot(
+  Replication ~ Discovery,
+  data   = df_nodes,
+  type   = type_module_compare(fill_by = "jaccard", show_stars = TRUE),
+  preset = "nature",
+  title  = "Cross-Network Module Overlap"
+)
+
+# Panel C: Coupled environmental network
+p_c <- cliplot_env_network(
+  title              = "Multi-Domain Environmental Coupling",
+  show_values        = TRUE,
+  show_domain_labels = TRUE,
+  compact            = TRUE,
+  preset             = "nature",
+  scifig             = TRUE
+)
+
+# Assemble using patchwork: Left column (A over B), Right column (C)
+p_composite <- (p_a / p_b) | p_c
+p_composite <- p_composite +
+  plot_layout(widths = c(1.0, 1.25)) +
+  plot_annotation(
+    tag_levels = "a",
+    tag_prefix = "(",
+    tag_suffix = ")",
+    theme      = theme(
+      plot.tag = element_text(size = 9, face = "bold", family = "sans")
+    )
+  )
+
+p_composite
+```

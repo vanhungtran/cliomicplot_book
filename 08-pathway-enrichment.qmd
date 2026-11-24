@@ -1,0 +1,52 @@
+# Pathway Enrichment: GSEA Running Enrichment Score Plots
+
+Gene Set Enrichment Analysis (Subramanian et al., *PNAS* 2005) evaluates whether an a priori defined gene set $S$ shows cumulative enrichment at the extremes of a ranked gene list $L$. `cliomicplot` renders three-tiered GSEA figures.
+
+## Mathematical Formulation of GSEA
+
+Genes in $L = \{g_1, g_2, \dots, g_N\}$ are ranked by differential expression metric $r(g_j)$. The running enrichment score $P_{\text{hit}}(S, i)$ walks down the ranked list:
+
+$$P_{\text{hit}}(S, i) = \sum_{g_j \in S, j \le i} \frac{|r_j|^p}{N_R}, \quad N_R = \sum_{g_j \in S} |r_j|^p$$
+
+$$P_{\text{miss}}(S, i) = \sum_{g_j \notin S, j \le i} \frac{1}{N - N_H}$$
+
+The Enrichment Score $ES(S)$ is the maximum deviation of $P_{\text{hit}} - P_{\text{miss}}$ from zero:
+
+$$ES(S) = \arg\max_{i} |P_{\text{hit}}(S, i) - P_{\text{miss}}(S, i)|$$
+
+```{r gsea-demo, fig.width=7.5, fig.height=5.2}
+library(cliomicplot)
+
+# Generate synthetic GSEA pathway enrichment results
+set.seed(42)
+pathways <- c(
+  "Cytokine-Cytokine Receptor Interaction", "JAK-STAT Signaling Pathway",
+  "Toll-like Receptor Signaling", "Th1 and Th2 Cell Differentiation",
+  "Chemokine Signaling Pathway", "NF-kappa B Signaling",
+  "IL-17 Signaling Pathway", "Antigen Processing and Presentation",
+  "T Cell Receptor Signaling", "B Cell Receptor Signaling",
+  "Natural Killer Cell Mediated Cytotoxicity", "Apoptosis",
+  "Fatty Acid Metabolism", "Steroid Biosynthesis", "Keratinization"
+)
+
+gsea_df <- data.frame(
+  Term = pathways,
+  NES  = c(2.65, 2.38, 2.15, 2.08, 1.95, 1.88, 1.72, 1.65, 1.45, 1.25, 0.95, 0.82, -1.65, -1.98, -2.45),
+  FDR  = c(1e-5, 2e-5, 8e-5, 1e-4, 3e-4, 5e-4, 1e-3, 2e-3, 5e-3, 0.015, 0.045, 0.082, 0.002, 0.0005, 0.0001)
+)
+
+p_gsea <- cliplot(
+  gsea_df,
+  type     = "gsea",
+  top_term = 15,
+  theme    = "nature",
+  title    = "Pathway Enrichment: Normalized Enrichment Score (NES) Across Inflammatory Cascades"
+)
+p_gsea
+```
+
+## Structure of the Three-Tiered Layout
+
+1. **Top Panel**: Running enrichment score curve tracing $P_{\text{hit}} - P_{\text{miss}}$, indicating peak $ES$ and leading edge subset.
+2. **Middle Panel**: Vertical barcode lines marking gene positions of set $S$ within ranked list $L$.
+3. **Bottom Panel**: Continuous ranked statistic distribution with a shaded zero baseline.
