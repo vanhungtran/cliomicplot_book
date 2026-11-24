@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>11&nbsp; Cross-Condition Network Module Comparison – Clinical and Omics Data Visualization in R</title>
+<title>11&nbsp; Cross-Condition Network Module Comparison and Trait Association – Clinical and Omics Data Visualization in R</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -164,7 +164,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./11-cross-condition-networks.html">Part IV — Systems Biology and Coupled Multi-Network Architectures</a></li><li class="breadcrumb-item"><a href="./11-cross-condition-networks.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./11-cross-condition-networks.html">Part IV — Systems Biology and Coupled Multi-Network Architectures</a></li><li class="breadcrumb-item"><a href="./11-cross-condition-networks.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison and Trait Association</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -274,7 +274,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./08-pathway-enrichment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment: GSEA Running Enrichment Score Plots</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment and Multi-Omics Abundance Profiles</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -303,7 +303,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./11-cross-condition-networks.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison and Trait Association</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -383,16 +383,17 @@ window.Quarto = {
   <li><a href="#representation-factor-rf" id="toc-representation-factor-rf" class="nav-link" data-scroll-target="#representation-factor-rf"><span class="header-section-number">11.1.2</span> Representation Factor (<span class="math inline">RF</span>)</a></li>
   <li><a href="#hypergeometric-overlap-significance" id="toc-hypergeometric-overlap-significance" class="nav-link" data-scroll-target="#hypergeometric-overlap-significance"><span class="header-section-number">11.1.3</span> Hypergeometric Overlap Significance</a></li>
   </ul></li>
-  <li><a href="#visualizing-module-overlap-with-type_module_compare" id="toc-visualizing-module-overlap-with-type_module_compare" class="nav-link" data-scroll-target="#visualizing-module-overlap-with-type_module_compare"><span class="header-section-number">11.2</span> Visualizing Module Overlap with <code>type_module_compare</code></a></li>
+  <li><a href="#cross-network-module-overlap-type-module_compare" id="toc-cross-network-module-overlap-type-module_compare" class="nav-link" data-scroll-target="#cross-network-module-overlap-type-module_compare"><span class="header-section-number">11.2</span> Cross-Network Module Overlap: <code>type = "module_compare"</code></a></li>
+  <li><a href="#module-trait-clinical-association-heatmap-type-module_trait" id="toc-module-trait-clinical-association-heatmap-type-module_trait" class="nav-link" data-scroll-target="#module-trait-clinical-association-heatmap-type-module_trait"><span class="header-section-number">11.3</span> Module-Trait Clinical Association Heatmap: <code>type = "module_trait"</code></a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/11-cross-condition-networks.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./11-cross-condition-networks.html">Part IV — Systems Biology and Coupled Multi-Network Architectures</a></li><li class="breadcrumb-item"><a href="./11-cross-condition-networks.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./11-cross-condition-networks.html">Part IV — Systems Biology and Coupled Multi-Network Architectures</a></li><li class="breadcrumb-item"><a href="./11-cross-condition-networks.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison and Trait Association</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison and Trait Association</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -409,13 +410,12 @@ window.Quarto = {
 </header>
 
 
-<p>Comparing biological co-occurrence networks between healthy and diseased states requires evaluating whether functional modules share feature composition. <code>cliomicplot</code> calculates hypergeometric overlap and Representation Factors (<span class="math inline">RF</span>) through <code>type_module_compare()</code>.</p>
+<p>Comparing biological co-occurrence networks between healthy and diseased states requires evaluating whether functional modules share feature composition and covary with clinical phenotypes. <code>cliomicplot</code> calculates hypergeometric overlap and Representation Factors (<span class="math inline">RF</span>) through <code>type_module_compare()</code>, and maps module-trait associations through <code>type_module_trait()</code>.</p>
 <section id="mathematical-formulation-of-module-overlap" class="level2" data-number="11.1">
 <h2 data-number="11.1" class="anchored" data-anchor-id="mathematical-formulation-of-module-overlap"><span class="header-section-number">11.1</span> Mathematical Formulation of Module Overlap</h2>
 <p>Given a background universe of <span class="math inline">N</span> total features, module <span class="math inline">M_1</span> from Condition 1 containing <span class="math inline">|M_1|</span> features, and module <span class="math inline">M_2</span> from Condition 2 containing <span class="math inline">|M_2|</span> features, the overlap count is <span class="math inline">k = |M_1 \cap M_2|</span>.</p>
 <section id="jaccard-similarity-index" class="level3" data-number="11.1.1">
 <h3 data-number="11.1.1" class="anchored" data-anchor-id="jaccard-similarity-index"><span class="header-section-number">11.1.1</span> Jaccard Similarity Index</h3>
-<p>The Jaccard index measures the proportion of shared features relative to the union:</p>
 <p><span class="math display">J(M_1, M_2) = \frac{|M_1 \cap M_2|}{|M_1 \cup M_2|} = \frac{k}{|M_1| + |M_2| - k}</span></p>
 </section>
 <section id="representation-factor-rf" class="level3" data-number="11.1.2">
@@ -425,47 +425,50 @@ window.Quarto = {
 </section>
 <section id="hypergeometric-overlap-significance" class="level3" data-number="11.1.3">
 <h3 data-number="11.1.3" class="anchored" data-anchor-id="hypergeometric-overlap-significance"><span class="header-section-number">11.1.3</span> Hypergeometric Overlap Significance</h3>
-<p>The probability of observing <span class="math inline">k</span> or more shared features by random chance is calculated from the hypergeometric distribution:</p>
 <p><span class="math display">P(X \ge k) = \sum_{x=k}^{\min(|M_1|, |M_2|)} \frac{\binom{|M_2|}{x} \binom{N - |M_2|}{|M_1| - x}}{\binom{N}{|M_1|}}</span></p>
 </section>
 </section>
-<section id="visualizing-module-overlap-with-type_module_compare" class="level2" data-number="11.2">
-<h2 data-number="11.2" class="anchored" data-anchor-id="visualizing-module-overlap-with-type_module_compare"><span class="header-section-number">11.2</span> Visualizing Module Overlap with <code>type_module_compare</code></h2>
-<p><code>cliplot()</code> accepts either node-level cluster assignments or precomputed overlap matrices:</p>
+<section id="cross-network-module-overlap-type-module_compare" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="cross-network-module-overlap-type-module_compare"><span class="header-section-number">11.2</span> Cross-Network Module Overlap: <code>type = "module_compare"</code></h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Reproducible node-level community assignments across discovery and replication networks</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>n_features <span class="ot">&lt;-</span> <span class="dv">90</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>features <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Taxon_"</span>, <span class="dv">1</span><span class="sc">:</span>n_features)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>net1_mods <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"M1_Barrier"</span>, <span class="st">"M2_Inflammation"</span>, <span class="st">"M3_Sebum"</span>), n_features, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>net2_mods <span class="ot">&lt;-</span> net1_mods</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Rewire 30% of features in replication network</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>rewired_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n_features, <span class="dv">27</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>net2_mods[rewired_idx] <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"ModA_Th2"</span>, <span class="st">"ModB_Stratum"</span>, <span class="st">"ModC_Lipid"</span>), <span class="dv">27</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>df_nodes <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Feature     =</span> features,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Discovery   =</span> net1_mods,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">Replication =</span> net2_mods</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>p_comp <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  Replication <span class="sc">~</span> Discovery,</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> df_nodes,</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="fu">type_module_compare</span>(</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_by        =</span> <span class="st">"rf"</span>,            <span class="co"># Fill by Representation Factor</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_stars     =</span> <span class="cn">TRUE</span>,            <span class="co"># Display significance asterisks</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_totals    =</span> <span class="cn">TRUE</span>,            <span class="co"># Display marginal totals</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_universe =</span> <span class="dv">120</span>              <span class="co"># Universe size N</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Cross-Network Module Preservation: Discovery vs Replication"</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>p_comp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>taxa_pool <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Taxon_"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">150</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>net_discovery <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"M1_StaphCommensal"</span>, <span class="st">"M2_Lipophilic"</span>, <span class="st">"M3_Coryneform"</span>, <span class="st">"M4_PathogenCluster"</span>), <span class="dv">150</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>net_replication <span class="ot">&lt;-</span> net_discovery</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Reorganize 35% of taxa to simulate biological perturbation</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>perm_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">150</span>, <span class="dv">50</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>net_replication[perm_idx] <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"ModA_Commensal"</span>, <span class="st">"ModB_LipidUtil"</span>, <span class="st">"ModC_Actinobacteria"</span>, <span class="st">"ModD_Inflammation"</span>), <span class="dv">50</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>net_replication[<span class="sc">-</span>perm_idx] <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"M1_StaphCommensal"</span>, <span class="st">"ModA_Commensal"</span>, net_replication[<span class="sc">-</span>perm_idx])</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>net_replication[<span class="sc">-</span>perm_idx] <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"M2_Lipophilic"</span>, <span class="st">"ModB_LipidUtil"</span>, net_replication[<span class="sc">-</span>perm_idx])</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>net_replication[<span class="sc">-</span>perm_idx] <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"M3_Coryneform"</span>, <span class="st">"ModC_Actinobacteria"</span>, net_replication[<span class="sc">-</span>perm_idx])</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>net_replication[<span class="sc">-</span>perm_idx] <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"M4_PathogenCluster"</span>, <span class="st">"ModD_Inflammation"</span>, net_replication[<span class="sc">-</span>perm_idx])</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>network_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">Taxon       =</span> taxa_pool,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">Discovery   =</span> net_discovery,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">Replication =</span> net_replication,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>p_comp <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  Replication <span class="sc">~</span> Discovery,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> network_df,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_module_compare</span>(</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_by     =</span> <span class="st">"rf"</span>,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_stars  =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_totals =</span> <span class="cn">TRUE</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Cross-Network Module Preservation: Discovery vs Replication Cohorts"</span>,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab   =</span> <span class="st">"Discovery Cohort Modules"</span>,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab   =</span> <span class="st">"Replication Cohort Modules"</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>p_comp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -475,7 +478,56 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>Significant overlaps (<span class="math inline">P &lt; 0.001</span>, <span class="math inline">***</span>) identify conserved biological functional units that persist despite phenotypic transitions.</p>
+</section>
+<section id="module-trait-clinical-association-heatmap-type-module_trait" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="module-trait-clinical-association-heatmap-type-module_trait"><span class="header-section-number">11.3</span> Module-Trait Clinical Association Heatmap: <code>type = "module_trait"</code></h2>
+<p>Connecting microbial modules with clinical phenotypes and micro-environmental exposures reveals which communities correlate with tissue dysfunction:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>cor_env_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Module =</span> <span class="fu">c</span>(<span class="st">"M1_StaphCommensal"</span>, <span class="st">"M2_Lipophilic"</span>, <span class="st">"M3_Coryneform"</span>, <span class="st">"M4_PathogenCluster"</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Factor =</span> <span class="fu">c</span>(<span class="st">"Skin pH"</span>, <span class="st">"Transepidermal Water Loss"</span>, <span class="st">"PM25 Exposure"</span>, <span class="st">"Ambient Temp"</span>, <span class="st">"Relative Humidity"</span>, <span class="st">"SCORAD Severity"</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>cor_env_df<span class="sc">$</span>cor <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.34</span>,  <span class="fl">0.42</span>,  <span class="fl">0.28</span>, <span class="sc">-</span><span class="fl">0.12</span>,  <span class="fl">0.58</span>,  <span class="fl">0.72</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.28</span>,  <span class="fl">0.38</span>,  <span class="fl">0.15</span>, <span class="sc">-</span><span class="fl">0.08</span>,  <span class="fl">0.45</span>,  <span class="fl">0.64</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>   <span class="fl">0.45</span>, <span class="sc">-</span><span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.35</span>,  <span class="fl">0.18</span>, <span class="sc">-</span><span class="fl">0.15</span>,  <span class="fl">0.41</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.12</span>,  <span class="fl">0.08</span>,  <span class="fl">0.15</span>,  <span class="fl">0.52</span>,  <span class="fl">0.44</span>, <span class="sc">-</span><span class="fl">0.19</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.25</span>, <span class="sc">-</span><span class="fl">0.31</span>,  <span class="fl">0.20</span>,  <span class="fl">0.38</span>,  <span class="fl">0.55</span>, <span class="sc">-</span><span class="fl">0.28</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>   <span class="fl">0.68</span>,  <span class="fl">0.48</span>, <span class="sc">-</span><span class="fl">0.32</span>, <span class="sc">-</span><span class="fl">0.14</span>, <span class="sc">-</span><span class="fl">0.22</span>,  <span class="fl">0.81</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>)[<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(cor_env_df)]</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate exact two-sided p-values for n=75</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>n_samples <span class="ot">&lt;-</span> <span class="dv">75</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>t_stat <span class="ot">&lt;-</span> cor_env_df<span class="sc">$</span>cor <span class="sc">*</span> <span class="fu">sqrt</span>((n_samples <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> cor_env_df<span class="sc">$</span>cor<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>cor_env_df<span class="sc">$</span>pvalue <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> stats<span class="sc">::</span><span class="fu">pt</span>(<span class="sc">-</span><span class="fu">abs</span>(t_stat), <span class="at">df =</span> n_samples <span class="sc">-</span> <span class="dv">2</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>p_trait <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  Module <span class="sc">~</span> Factor,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> cor_env_df,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_module_trait</span>(</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_labels     =</span> <span class="st">"both"</span>,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_modules =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_env     =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">sig_digits      =</span> <span class="dv">2</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Correlation Analysis: Microbial Modules vs Environmental Exposures"</span>,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab  =</span> <span class="st">"Micro-Environmental &amp; Clinical Phenotypes"</span>,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab  =</span> <span class="st">"Microbial Network Modules"</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>p_trait</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="11-cross-condition-networks_files/figure-html/module-trait-demo-1.png" class="img-fluid figure-img" width="2550"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 <!-- -->
@@ -953,71 +1005,109 @@ window.Quarto = {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Cross-Condition Network Module Comparison</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Comparing biological co-occurrence networks between healthy and diseased states requires evaluating whether functional modules share feature composition. <span class="in">`cliomicplot`</span> calculates hypergeometric overlap and Representation Factors ($RF$) through <span class="in">`type_module_compare()`</span>.</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Mathematical Formulation of Module Overlap</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>Given a background universe of $N$ total features, module $M_1$ from Condition 1 containing $|M_1|$ features, and module $M_2$ from Condition 2 containing $|M_2|$ features, the overlap count is $k = |M_1 \cap M_2|$.</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">### Jaccard Similarity Index</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>The Jaccard index measures the proportion of shared features relative to the union:</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>$$J(M_1, M_2) = \frac{|M_1 \cap M_2|}{|M_1 \cup M_2|} = \frac{k}{|M_1| + |M_2| - k}$$</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">### Representation Factor ($RF$)</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>The Representation Factor quantifies whether the observed overlap exceeds what is expected by chance ($RF &gt; 1.0$ indicates enrichment, $RF &lt; 1.0$ indicates depletion):</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>$$RF = \frac{|M_1 \cap M_2|}{\mathbb{E}<span class="co">[</span><span class="ot">|M_1 \cap M_2|</span><span class="co">]</span>} = \frac{k}{\frac{|M_1| \cdot |M_2|}{N}} = \frac{k \cdot N}{|M_1| \cdot |M_2|}$$</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="fu">### Hypergeometric Overlap Significance</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>The probability of observing $k$ or more shared features by random chance is calculated from the hypergeometric distribution:</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>$$P(X \ge k) = \sum_{x=k}^{\min(|M_1|, |M_2|)} \frac{\binom{|M_2|}{x} \binom{N - |M_2|}{|M_1| - x}}{\binom{N}{|M_1|}}$$</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="fu">## Visualizing Module Overlap with `type_module_compare`</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="in">`cliplot()`</span> accepts either node-level cluster assignments or precomputed overlap matrices:</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="in">```{r module-compare-demo, fig.width=7.5, fig.height=5.2}</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Reproducible node-level community assignments across discovery and replication networks</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>n_features <span class="ot">&lt;-</span> <span class="dv">90</span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>features <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Taxon_"</span>, <span class="dv">1</span><span class="sc">:</span>n_features)</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>net1_mods <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"M1_Barrier"</span>, <span class="st">"M2_Inflammation"</span>, <span class="st">"M3_Sebum"</span>), n_features, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>net2_mods <span class="ot">&lt;-</span> net1_mods</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Rewire 30% of features in replication network</span></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>rewired_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n_features, <span class="dv">27</span>)</span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>net2_mods[rewired_idx] <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"ModA_Th2"</span>, <span class="st">"ModB_Stratum"</span>, <span class="st">"ModC_Lipid"</span>), <span class="dv">27</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>df_nodes <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">Feature     =</span> features,</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">Discovery   =</span> net1_mods,</span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">Replication =</span> net2_mods</span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>p_comp <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  Replication <span class="sc">~</span> Discovery,</span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> df_nodes,</span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="fu">type_module_compare</span>(</span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_by        =</span> <span class="st">"rf"</span>,            <span class="co"># Fill by Representation Factor</span></span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_stars     =</span> <span class="cn">TRUE</span>,            <span class="co"># Display significance asterisks</span></span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_totals    =</span> <span class="cn">TRUE</span>,            <span class="co"># Display marginal totals</span></span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_universe =</span> <span class="dv">120</span>              <span class="co"># Universe size N</span></span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Cross-Network Module Preservation: Discovery vs Replication"</span></span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>p_comp</span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>Significant overlaps ($P &lt; 0.001$, $***$) identify conserved biological functional units that persist despite phenotypic transitions.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Cross-Condition Network Module Comparison and Trait Association</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>Comparing biological co-occurrence networks between healthy and diseased states requires evaluating whether functional modules share feature composition and covary with clinical phenotypes. <span class="in">`cliomicplot`</span> calculates hypergeometric overlap and Representation Factors ($RF$) through <span class="in">`type_module_compare()`</span>, and maps module-trait associations through <span class="in">`type_module_trait()`</span>.</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Mathematical Formulation of Module Overlap</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>Given a background universe of $N$ total features, module $M_1$ from Condition 1 containing $|M_1|$ features, and module $M_2$ from Condition 2 containing $|M_2|$ features, the overlap count is $k = |M_1 \cap M_2|$.</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">### Jaccard Similarity Index</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>$$J(M_1, M_2) = \frac{|M_1 \cap M_2|}{|M_1 \cup M_2|} = \frac{k}{|M_1| + |M_2| - k}$$</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">### Representation Factor ($RF$)</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>The Representation Factor quantifies whether the observed overlap exceeds what is expected by chance ($RF &gt; 1.0$ indicates enrichment, $RF &lt; 1.0$ indicates depletion):</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>$$RF = \frac{|M_1 \cap M_2|}{\mathbb{E}<span class="co">[</span><span class="ot">|M_1 \cap M_2|</span><span class="co">]</span>} = \frac{k}{\frac{|M_1| \cdot |M_2|}{N}} = \frac{k \cdot N}{|M_1| \cdot |M_2|}$$</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="fu">### Hypergeometric Overlap Significance</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>$$P(X \ge k) = \sum_{x=k}^{\min(|M_1|, |M_2|)} \frac{\binom{|M_2|}{x} \binom{N - |M_2|}{|M_1| - x}}{\binom{N}{|M_1|}}$$</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cross-Network Module Overlap: `type = "module_compare"`</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="in">```{r module-compare-demo, fig.width=7.5, fig.height=5.2}</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>taxa_pool <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Taxon_"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">150</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>net_discovery <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"M1_StaphCommensal"</span>, <span class="st">"M2_Lipophilic"</span>, <span class="st">"M3_Coryneform"</span>, <span class="st">"M4_PathogenCluster"</span>), <span class="dv">150</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>net_replication <span class="ot">&lt;-</span> net_discovery</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Reorganize 35% of taxa to simulate biological perturbation</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>perm_idx <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">150</span>, <span class="dv">50</span>)</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>net_replication[perm_idx] <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"ModA_Commensal"</span>, <span class="st">"ModB_LipidUtil"</span>, <span class="st">"ModC_Actinobacteria"</span>, <span class="st">"ModD_Inflammation"</span>), <span class="dv">50</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>net_replication[<span class="sc">-</span>perm_idx] <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"M1_StaphCommensal"</span>, <span class="st">"ModA_Commensal"</span>, net_replication[<span class="sc">-</span>perm_idx])</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>net_replication[<span class="sc">-</span>perm_idx] <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"M2_Lipophilic"</span>, <span class="st">"ModB_LipidUtil"</span>, net_replication[<span class="sc">-</span>perm_idx])</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>net_replication[<span class="sc">-</span>perm_idx] <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"M3_Coryneform"</span>, <span class="st">"ModC_Actinobacteria"</span>, net_replication[<span class="sc">-</span>perm_idx])</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>net_replication[<span class="sc">-</span>perm_idx] <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"M4_PathogenCluster"</span>, <span class="st">"ModD_Inflammation"</span>, net_replication[<span class="sc">-</span>perm_idx])</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>network_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">Taxon       =</span> taxa_pool,</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">Discovery   =</span> net_discovery,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">Replication =</span> net_replication,</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>p_comp <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>  Replication <span class="sc">~</span> Discovery,</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> network_df,</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_module_compare</span>(</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_by     =</span> <span class="st">"rf"</span>,</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_stars  =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_totals =</span> <span class="cn">TRUE</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Cross-Network Module Preservation: Discovery vs Replication Cohorts"</span>,</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab   =</span> <span class="st">"Discovery Cohort Modules"</span>,</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab   =</span> <span class="st">"Replication Cohort Modules"</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>p_comp</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="fu">## Module-Trait Clinical Association Heatmap: `type = "module_trait"`</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>Connecting microbial modules with clinical phenotypes and micro-environmental exposures reveals which communities correlate with tissue dysfunction:</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a><span class="in">```{r module-trait-demo, fig.width=8.5, fig.height=5.0}</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>cor_env_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">Module =</span> <span class="fu">c</span>(<span class="st">"M1_StaphCommensal"</span>, <span class="st">"M2_Lipophilic"</span>, <span class="st">"M3_Coryneform"</span>, <span class="st">"M4_PathogenCluster"</span>),</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">Factor =</span> <span class="fu">c</span>(<span class="st">"Skin pH"</span>, <span class="st">"Transepidermal Water Loss"</span>, <span class="st">"PM25 Exposure"</span>, <span class="st">"Ambient Temp"</span>, <span class="st">"Relative Humidity"</span>, <span class="st">"SCORAD Severity"</span>),</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>cor_env_df<span class="sc">$</span>cor <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.34</span>,  <span class="fl">0.42</span>,  <span class="fl">0.28</span>, <span class="sc">-</span><span class="fl">0.12</span>,  <span class="fl">0.58</span>,  <span class="fl">0.72</span>,</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.28</span>,  <span class="fl">0.38</span>,  <span class="fl">0.15</span>, <span class="sc">-</span><span class="fl">0.08</span>,  <span class="fl">0.45</span>,  <span class="fl">0.64</span>,</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>   <span class="fl">0.45</span>, <span class="sc">-</span><span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.35</span>,  <span class="fl">0.18</span>, <span class="sc">-</span><span class="fl">0.15</span>,  <span class="fl">0.41</span>,</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.12</span>,  <span class="fl">0.08</span>,  <span class="fl">0.15</span>,  <span class="fl">0.52</span>,  <span class="fl">0.44</span>, <span class="sc">-</span><span class="fl">0.19</span>,</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.25</span>, <span class="sc">-</span><span class="fl">0.31</span>,  <span class="fl">0.20</span>,  <span class="fl">0.38</span>,  <span class="fl">0.55</span>, <span class="sc">-</span><span class="fl">0.28</span>,</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>   <span class="fl">0.68</span>,  <span class="fl">0.48</span>, <span class="sc">-</span><span class="fl">0.32</span>, <span class="sc">-</span><span class="fl">0.14</span>, <span class="sc">-</span><span class="fl">0.22</span>,  <span class="fl">0.81</span></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>)[<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(cor_env_df)]</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate exact two-sided p-values for n=75</span></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>n_samples <span class="ot">&lt;-</span> <span class="dv">75</span></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>t_stat <span class="ot">&lt;-</span> cor_env_df<span class="sc">$</span>cor <span class="sc">*</span> <span class="fu">sqrt</span>((n_samples <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> cor_env_df<span class="sc">$</span>cor<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>cor_env_df<span class="sc">$</span>pvalue <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> stats<span class="sc">::</span><span class="fu">pt</span>(<span class="sc">-</span><span class="fu">abs</span>(t_stat), <span class="at">df =</span> n_samples <span class="sc">-</span> <span class="dv">2</span>)</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>p_trait <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>  Module <span class="sc">~</span> Factor,</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> cor_env_df,</span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_module_trait</span>(</span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_labels     =</span> <span class="st">"both"</span>,</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_modules =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_env     =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>    <span class="at">sig_digits      =</span> <span class="dv">2</span></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Correlation Analysis: Microbial Modules vs Environmental Exposures"</span>,</span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab  =</span> <span class="st">"Micro-Environmental &amp; Clinical Phenotypes"</span>,</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab  =</span> <span class="st">"Microbial Network Modules"</span></span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>p_trait</span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

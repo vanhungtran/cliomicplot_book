@@ -231,7 +231,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./08-pathway-enrichment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment: GSEA Running Enrichment Score Plots</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment and Multi-Omics Abundance Profiles</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -260,7 +260,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./11-cross-condition-networks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison</span></span></a>
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison and Trait Association</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -335,9 +335,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#clinical-background" id="toc-clinical-background" class="nav-link active" data-scroll-target="#clinical-background"><span class="header-section-number">17.1</span> Clinical Background</a></li>
-  <li><a href="#step-1-transcriptomic-signature-volcano-plot" id="toc-step-1-transcriptomic-signature-volcano-plot" class="nav-link" data-scroll-target="#step-1-transcriptomic-signature-volcano-plot"><span class="header-section-number">17.2</span> Step 1: Transcriptomic Signature (Volcano Plot)</a></li>
-  <li><a href="#step-2-serum-biomarker-stratification-across-severity-tiers" id="toc-step-2-serum-biomarker-stratification-across-severity-tiers" class="nav-link" data-scroll-target="#step-2-serum-biomarker-stratification-across-severity-tiers"><span class="header-section-number">17.3</span> Step 2: Serum Biomarker Stratification Across Severity Tiers</a></li>
-  <li><a href="#step-3-cutaneous-dysbiosis-and-environmental-coupling" id="toc-step-3-cutaneous-dysbiosis-and-environmental-coupling" class="nav-link" data-scroll-target="#step-3-cutaneous-dysbiosis-and-environmental-coupling"><span class="header-section-number">17.4</span> Step 3: Cutaneous Dysbiosis and Environmental Coupling</a></li>
+  <li><a href="#step-1-transcriptomic-signature-geo-gse121212-volcano-plot" id="toc-step-1-transcriptomic-signature-geo-gse121212-volcano-plot" class="nav-link" data-scroll-target="#step-1-transcriptomic-signature-geo-gse121212-volcano-plot"><span class="header-section-number">17.2</span> Step 1: Transcriptomic Signature (GEO GSE121212 Volcano Plot)</a></li>
+  <li><a href="#step-2-clinical-severity-stratified-by-host-flg-status" id="toc-step-2-clinical-severity-stratified-by-host-flg-status" class="nav-link" data-scroll-target="#step-2-clinical-severity-stratified-by-host-flg-status"><span class="header-section-number">17.3</span> Step 2: Clinical Severity Stratified by Host FLG Status</a></li>
+  <li><a href="#step-3-cutaneous-dysbiosis-across-anatomical-sites" id="toc-step-3-cutaneous-dysbiosis-across-anatomical-sites" class="nav-link" data-scroll-target="#step-3-cutaneous-dysbiosis-across-anatomical-sites"><span class="header-section-number">17.4</span> Step 3: Cutaneous Dysbiosis Across Anatomical Sites</a></li>
+  <li><a href="#step-4-cutaneous-microbiome-coupling-with-multi-domain-environmental-drivers" id="toc-step-4-cutaneous-microbiome-coupling-with-multi-domain-environmental-drivers" class="nav-link" data-scroll-target="#step-4-cutaneous-microbiome-coupling-with-multi-domain-environmental-drivers"><span class="header-section-number">17.5</span> Step 4: Cutaneous Microbiome Coupling with Multi-Domain Environmental Drivers</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/17-case-study-atopic-dermatitis.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -363,75 +364,78 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Atopic Dermatitis (AD) involves epidermal barrier disruption, Type 2 immune polarization (IL-4/IL-13), and cutaneous <em>Staphylococcus aureus</em> colonization. This case study demonstrates an end-to-end analytical workflow combining transcriptomics, serum biomarkers, and microbial networks.</p>
+<p>Atopic Dermatitis (AD) involves epidermal barrier disruption, Type 2 immune polarization (IL-4/IL-13), and cutaneous <em>Staphylococcus aureus</em> colonization. This case study demonstrates an end-to-end analytical workflow combining transcriptomics from NCBI GEO GSE121212, host genetic stratification, and coupled environmental networks.</p>
 <section id="clinical-background" class="level2" data-number="17.1">
 <h2 data-number="17.1" class="anchored" data-anchor-id="clinical-background"><span class="header-section-number">17.1</span> Clinical Background</h2>
-<p>Patients present with varying disease severity evaluated by the SCORAD (Scoring Atopic Dermatitis) index. Transcriptomic profiling of lesional skin demonstrates upregulation of <em>IL13</em>, <em>IL4R</em>, <em>CCL18</em>, and <em>S100A7</em>, with concurrent downregulation of structural barrier genes <em>FLG</em> and <em>LOR</em>.</p>
+<p>Patients present with varying disease severity evaluated by the SCORAD (Scoring Atopic Dermatitis) index. Transcriptomic profiling of lesional skin demonstrates upregulation of <em>SERPINB4</em>, <em>CCL18</em>, and <em>S100A7</em>, with concurrent downregulation of structural barrier and lipid synthesis genes (<em>FLG</em>, <em>LOR</em>, <em>SPTLC3</em>).</p>
 </section>
-<section id="step-1-transcriptomic-signature-volcano-plot" class="level2" data-number="17.2">
-<h2 data-number="17.2" class="anchored" data-anchor-id="step-1-transcriptomic-signature-volcano-plot"><span class="header-section-number">17.2</span> Step 1: Transcriptomic Signature (Volcano Plot)</h2>
+<section id="step-1-transcriptomic-signature-geo-gse121212-volcano-plot" class="level2" data-number="17.2">
+<h2 data-number="17.2" class="anchored" data-anchor-id="step-1-transcriptomic-signature-geo-gse121212-volcano-plot"><span class="header-section-number">17.2</span> Step 1: Transcriptomic Signature (GEO GSE121212 Volcano Plot)</h2>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>n_genes <span class="ot">&lt;-</span> <span class="dv">800</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>ad_volc_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Gene   =</span> <span class="fu">paste0</span>(<span class="st">"Gene_"</span>, <span class="dv">1</span><span class="sc">:</span>n_genes),</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">log2FC =</span> <span class="fu">rnorm</span>(n_genes, <span class="dv">0</span>, <span class="fl">1.3</span>),</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">pValue =</span> <span class="fu">runif</span>(n_genes, <span class="dv">0</span>, <span class="dv">1</span>)<span class="sc">^</span><span class="dv">3</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert defined AD biomarkers</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>key_markers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"IL13"</span>, <span class="st">"IL4R"</span>, <span class="st">"CCL18"</span>, <span class="st">"S100A7"</span>, <span class="st">"FLG"</span>, <span class="st">"LOR"</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>ad_volc_df<span class="sc">$</span>log2FC[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.4</span>, <span class="fl">2.9</span>, <span class="fl">3.8</span>, <span class="fl">4.2</span>, <span class="sc">-</span><span class="fl">3.9</span>, <span class="sc">-</span><span class="fl">3.2</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>ad_volc_df<span class="sc">$</span>pValue[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1e-12</span>, <span class="fl">1e-9</span>, <span class="fl">1e-11</span>, <span class="fl">1e-15</span>, <span class="fl">1e-14</span>, <span class="fl">1e-10</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>ad_volc_df<span class="sc">$</span>Gene[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]   <span class="ot">&lt;-</span> key_markers</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>p_volc <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  pValue <span class="sc">~</span> log2FC,</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> ad_volc_df,</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="fu">type_volcano</span>(</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">fc_cutoff   =</span> <span class="fl">1.5</span>,</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">pval_cutoff =</span> <span class="fl">0.01</span>,</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_genes =</span> key_markers</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Transcriptomic Signature: AD Lesional vs Healthy Controls"</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>p_volc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>data_file <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"geo_dermatology_series_de.rds"</span>, <span class="at">package =</span> <span class="st">"cliomicplot"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>series <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(data_file)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>ad_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"SERPINB4"</span>, <span class="st">"CCL18"</span>, <span class="st">"S100A7"</span>, <span class="st">"LCE3A"</span>, <span class="st">"SPRR2G"</span>, <span class="st">"ALOX15"</span>, <span class="st">"SPTLC3"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>p_volc <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fu">log10</span>(padj) <span class="sc">~</span> log2FC,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> series<span class="sc">$</span>ad_vs_hc,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_volcano</span>(</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">fc_cutoff    =</span> <span class="fl">1.5</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">pval_cutoff  =</span> <span class="fl">0.01</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size   =</span> <span class="fl">1.8</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_alpha  =</span> <span class="fl">0.60</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_genes  =</span> ad_labels,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_overlaps =</span> <span class="dv">25</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Transcriptomic Signature: AD Lesional vs Healthy Skin (GSE121212)"</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>p_volc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="17-case-study-atopic-dermatitis_files/figure-html/ad-volcano-1.png" class="img-fluid figure-img" width="2250"></p>
+<p><img src="17-case-study-atopic-dermatitis_files/figure-html/ad-volcano-1.png" class="img-fluid figure-img" width="2400"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="step-2-serum-biomarker-stratification-across-severity-tiers" class="level2" data-number="17.3">
-<h2 data-number="17.3" class="anchored" data-anchor-id="step-2-serum-biomarker-stratification-across-severity-tiers"><span class="header-section-number">17.3</span> Step 2: Serum Biomarker Stratification Across Severity Tiers</h2>
-<p>Serum IL-13 and CCL17 levels correlate with objective SCORAD tiers:</p>
+<section id="step-2-clinical-severity-stratified-by-host-flg-status" class="level2" data-number="17.3">
+<h2 data-number="17.3" class="anchored" data-anchor-id="step-2-clinical-severity-stratified-by-host-flg-status"><span class="header-section-number">17.3</span> Step 2: Clinical Severity Stratified by Host FLG Status</h2>
+<p>Host genetic lesions in filaggrin (<em>FLG</em>) drive increased eczema severity:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>scorad_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Severity =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Mild (SCORAD &lt; 25)"</span>, <span class="st">"Moderate (25-50)"</span>, <span class="st">"Severe (&gt; 50)"</span>), <span class="at">each =</span> <span class="dv">30</span>),</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Mild (SCORAD &lt; 25)"</span>, <span class="st">"Moderate (25-50)"</span>, <span class="st">"Severe (&gt; 50)"</span>)),</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">CCL17    =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="dv">250</span>, <span class="dv">45</span>), <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="dv">680</span>, <span class="dv">120</span>), <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="dv">1850</span>, <span class="dv">310</span>))</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>p_box <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  CCL17 <span class="sc">~</span> Severity,</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> scorad_df,</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="st">"boxplot"</span>,</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Serum CCL17 Levels Stratified by Objective SCORAD Tiers"</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>p_box</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>cohort_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Subgroup =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Healthy Control"</span>, <span class="st">"AD (FLG Wildtype)"</span>, <span class="st">"AD (FLG Mutant)"</span>), <span class="fu">c</span>(<span class="dv">35</span>, <span class="dv">45</span>, <span class="dv">28</span>)),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Healthy Control"</span>, <span class="st">"AD (FLG Wildtype)"</span>, <span class="st">"AD (FLG Mutant)"</span>)),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">SCORAD =</span> <span class="fu">c</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(<span class="dv">35</span>, <span class="at">mean =</span> <span class="fl">3.5</span>, <span class="at">sd =</span> <span class="fl">2.0</span>)),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">5</span>, <span class="fu">rnorm</span>(<span class="dv">45</span>, <span class="at">mean =</span> <span class="fl">24.2</span>, <span class="at">sd =</span> <span class="fl">7.5</span>)),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">12</span>, <span class="fu">rnorm</span>(<span class="dv">28</span>, <span class="at">mean =</span> <span class="fl">38.6</span>, <span class="at">sd =</span> <span class="fl">9.2</span>))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>p_box <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  SCORAD <span class="sc">~</span> Subgroup,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> cohort_df,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">by        =</span> <span class="st">"Subgroup"</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="st">"boxplot"</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="st">"nature"</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend    =</span> <span class="st">"none"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"kruskal.test"</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"SCORAD Severity Stratified by Host FLG Genotype"</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Objective SCORAD Index"</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>p_box</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -442,21 +446,61 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="step-3-cutaneous-dysbiosis-and-environmental-coupling" class="level2" data-number="17.4">
-<h2 data-number="17.4" class="anchored" data-anchor-id="step-3-cutaneous-dysbiosis-and-environmental-coupling"><span class="header-section-number">17.4</span> Step 3: Cutaneous Dysbiosis and Environmental Coupling</h2>
-<p>Coupling cutaneous microbial abundance with transepidermal water loss (TEWL), SCORAD, and environmental humidity:</p>
+<section id="step-3-cutaneous-dysbiosis-across-anatomical-sites" class="level2" data-number="17.4">
+<h2 data-number="17.4" class="anchored" data-anchor-id="step-3-cutaneous-dysbiosis-across-anatomical-sites"><span class="header-section-number">17.4</span> Step 3: Cutaneous Dysbiosis Across Anatomical Sites</h2>
+<p>Differential abundance bubble matrix across anatomical sites:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>p_env <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Cutaneous Microbiome Coupling with Biophysical Barrier and Clinical Drivers"</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"clinical"</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>p_env</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. aureus"</span>, <span class="st">"S. epidermidis"</span>, <span class="st">"S. hominis"</span>, <span class="st">"C. acnes"</span>, <span class="st">"M. restricta"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sites   <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Cheek"</span>, <span class="st">"Forehead"</span>, <span class="st">"Antecubital"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>da_ad <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Species =</span> species, <span class="at">Comparison =</span> sites, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>da_ad<span class="sc">$</span>log2FC <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">2.8</span>, <span class="sc">-</span><span class="fl">1.9</span>, <span class="sc">-</span><span class="fl">1.2</span>, <span class="sc">-</span><span class="fl">1.8</span>, <span class="fl">1.4</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">2.1</span>, <span class="sc">-</span><span class="fl">1.5</span>, <span class="sc">-</span><span class="fl">0.8</span>, <span class="sc">-</span><span class="fl">1.2</span>, <span class="fl">0.9</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">3.2</span>, <span class="sc">-</span><span class="fl">2.4</span>, <span class="sc">-</span><span class="fl">1.4</span>, <span class="sc">-</span><span class="fl">2.1</span>, <span class="fl">1.6</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>da_ad<span class="sc">$</span>qval   <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.5e-5</span>, <span class="fl">2.8e-3</span>, <span class="fl">0.04</span>, <span class="fl">3.1e-4</span>, <span class="fl">0.02</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">7.2e-4</span>, <span class="fl">1.5e-3</span>, <span class="fl">0.08</span>, <span class="fl">1.2e-3</span>, <span class="fl">0.05</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">2.8e-6</span>, <span class="fl">3.9e-4</span>, <span class="fl">0.01</span>, <span class="fl">9.8e-5</span>, <span class="fl">0.007</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>p_bubble <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  Species <span class="sc">~</span> Comparison,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> da_ad,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_bubble_matrix</span>(</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_col =</span> <span class="st">"qval"</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_col =</span> <span class="st">"log2FC"</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_size =</span> <span class="fl">2.0</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size =</span> <span class="fl">7.0</span>,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette  =</span> <span class="st">"nature"</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Cutaneous Dysbiosis Across Anatomic Predilection Sites"</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>p_bubble</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="17-case-study-atopic-dermatitis_files/figure-html/ad-bubble-1.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-4-cutaneous-microbiome-coupling-with-multi-domain-environmental-drivers" class="level2" data-number="17.5">
+<h2 data-number="17.5" class="anchored" data-anchor-id="step-4-cutaneous-microbiome-coupling-with-multi-domain-environmental-drivers"><span class="header-section-number">17.5</span> Step 4: Cutaneous Microbiome Coupling with Multi-Domain Environmental Drivers</h2>
+<p>Coupling cutaneous microbial abundance with transepidermal water loss (TEWL), SCORAD, and micro-climate drivers:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p_env <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Cutaneous Microbiome Coupling with Biophysical Barrier and Clinical Drivers"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"clinical"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>p_env</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -943,84 +987,118 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>Atopic Dermatitis (AD) involves epidermal barrier disruption, Type 2 immune polarization (IL-4/IL-13), and cutaneous *Staphylococcus aureus* colonization. This case study demonstrates an end-to-end analytical workflow combining transcriptomics, serum biomarkers, and microbial networks.</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Clinical Background</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>Patients present with varying disease severity evaluated by the SCORAD (Scoring Atopic Dermatitis) index. Transcriptomic profiling of lesional skin demonstrates upregulation of *IL13*, *IL4R*, *CCL18*, and *S100A7*, with concurrent downregulation of structural barrier genes *FLG* and *LOR*.</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 1: Transcriptomic Signature (Volcano Plot)</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ad-volcano, fig.width=7.5, fig.height=5.0}</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>n_genes <span class="ot">&lt;-</span> <span class="dv">800</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>ad_volc_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">Gene   =</span> <span class="fu">paste0</span>(<span class="st">"Gene_"</span>, <span class="dv">1</span><span class="sc">:</span>n_genes),</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">log2FC =</span> <span class="fu">rnorm</span>(n_genes, <span class="dv">0</span>, <span class="fl">1.3</span>),</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">pValue =</span> <span class="fu">runif</span>(n_genes, <span class="dv">0</span>, <span class="dv">1</span>)<span class="sc">^</span><span class="dv">3</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert defined AD biomarkers</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>key_markers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"IL13"</span>, <span class="st">"IL4R"</span>, <span class="st">"CCL18"</span>, <span class="st">"S100A7"</span>, <span class="st">"FLG"</span>, <span class="st">"LOR"</span>)</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>ad_volc_df<span class="sc">$</span>log2FC[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.4</span>, <span class="fl">2.9</span>, <span class="fl">3.8</span>, <span class="fl">4.2</span>, <span class="sc">-</span><span class="fl">3.9</span>, <span class="sc">-</span><span class="fl">3.2</span>)</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>ad_volc_df<span class="sc">$</span>pValue[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1e-12</span>, <span class="fl">1e-9</span>, <span class="fl">1e-11</span>, <span class="fl">1e-15</span>, <span class="fl">1e-14</span>, <span class="fl">1e-10</span>)</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>ad_volc_df<span class="sc">$</span>Gene[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]   <span class="ot">&lt;-</span> key_markers</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>p_volc <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  pValue <span class="sc">~</span> log2FC,</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> ad_volc_df,</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="fu">type_volcano</span>(</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">fc_cutoff   =</span> <span class="fl">1.5</span>,</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">pval_cutoff =</span> <span class="fl">0.01</span>,</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_genes =</span> key_markers</span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Transcriptomic Signature: AD Lesional vs Healthy Controls"</span></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>p_volc</span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 2: Serum Biomarker Stratification Across Severity Tiers</span></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>Serum IL-13 and CCL17 levels correlate with objective SCORAD tiers:</span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ad-scorad-box, fig.width=7.5, fig.height=4.8}</span></span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>scorad_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">Severity =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Mild (SCORAD &lt; 25)"</span>, <span class="st">"Moderate (25-50)"</span>, <span class="st">"Severe (&gt; 50)"</span>), <span class="at">each =</span> <span class="dv">30</span>),</span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Mild (SCORAD &lt; 25)"</span>, <span class="st">"Moderate (25-50)"</span>, <span class="st">"Severe (&gt; 50)"</span>)),</span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">CCL17    =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="dv">250</span>, <span class="dv">45</span>), <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="dv">680</span>, <span class="dv">120</span>), <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="dv">1850</span>, <span class="dv">310</span>))</span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>p_box <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>  CCL17 <span class="sc">~</span> Severity,</span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> scorad_df,</span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="st">"boxplot"</span>,</span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Serum CCL17 Levels Stratified by Objective SCORAD Tiers"</span></span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>p_box</span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 3: Cutaneous Dysbiosis and Environmental Coupling</span></span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>Coupling cutaneous microbial abundance with transepidermal water loss (TEWL), SCORAD, and environmental humidity:</span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ad-coupled-network, fig.width=8.5, fig.height=8.5}</span></span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>p_env <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Cutaneous Microbiome Coupling with Biophysical Barrier and Clinical Drivers"</span>,</span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"clinical"</span>,</span>
-<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
-<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>p_env</span>
-<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>Atopic Dermatitis (AD) involves epidermal barrier disruption, Type 2 immune polarization (IL-4/IL-13), and cutaneous *Staphylococcus aureus* colonization. This case study demonstrates an end-to-end analytical workflow combining transcriptomics from NCBI GEO GSE121212, host genetic stratification, and coupled environmental networks.</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Clinical Background</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>Patients present with varying disease severity evaluated by the SCORAD (Scoring Atopic Dermatitis) index. Transcriptomic profiling of lesional skin demonstrates upregulation of *SERPINB4*, *CCL18*, and *S100A7*, with concurrent downregulation of structural barrier and lipid synthesis genes (*FLG*, *LOR*, *SPTLC3*).</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 1: Transcriptomic Signature (GEO GSE121212 Volcano Plot)</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ad-volcano, fig.width=8.0, fig.height=5.2}</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>data_file <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"geo_dermatology_series_de.rds"</span>, <span class="at">package =</span> <span class="st">"cliomicplot"</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>series <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(data_file)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>ad_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"SERPINB4"</span>, <span class="st">"CCL18"</span>, <span class="st">"S100A7"</span>, <span class="st">"LCE3A"</span>, <span class="st">"SPRR2G"</span>, <span class="st">"ALOX15"</span>, <span class="st">"SPTLC3"</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>p_volc <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fu">log10</span>(padj) <span class="sc">~</span> log2FC,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> series<span class="sc">$</span>ad_vs_hc,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_volcano</span>(</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">fc_cutoff    =</span> <span class="fl">1.5</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">pval_cutoff  =</span> <span class="fl">0.01</span>,</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size   =</span> <span class="fl">1.8</span>,</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_alpha  =</span> <span class="fl">0.60</span>,</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_genes  =</span> ad_labels,</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_overlaps =</span> <span class="dv">25</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Transcriptomic Signature: AD Lesional vs Healthy Skin (GSE121212)"</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>p_volc</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 2: Clinical Severity Stratified by Host FLG Status</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>Host genetic lesions in filaggrin (*FLG*) drive increased eczema severity:</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ad-scorad-box, fig.width=7.5, fig.height=4.8}</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>cohort_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">Subgroup =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Healthy Control"</span>, <span class="st">"AD (FLG Wildtype)"</span>, <span class="st">"AD (FLG Mutant)"</span>), <span class="fu">c</span>(<span class="dv">35</span>, <span class="dv">45</span>, <span class="dv">28</span>)),</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Healthy Control"</span>, <span class="st">"AD (FLG Wildtype)"</span>, <span class="st">"AD (FLG Mutant)"</span>)),</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">SCORAD =</span> <span class="fu">c</span>(</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(<span class="dv">35</span>, <span class="at">mean =</span> <span class="fl">3.5</span>, <span class="at">sd =</span> <span class="fl">2.0</span>)),</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">5</span>, <span class="fu">rnorm</span>(<span class="dv">45</span>, <span class="at">mean =</span> <span class="fl">24.2</span>, <span class="at">sd =</span> <span class="fl">7.5</span>)),</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pmax</span>(<span class="dv">12</span>, <span class="fu">rnorm</span>(<span class="dv">28</span>, <span class="at">mean =</span> <span class="fl">38.6</span>, <span class="at">sd =</span> <span class="fl">9.2</span>))</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>p_box <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>  SCORAD <span class="sc">~</span> Subgroup,</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> cohort_df,</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">by        =</span> <span class="st">"Subgroup"</span>,</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="st">"boxplot"</span>,</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="st">"nature"</span>,</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend    =</span> <span class="st">"none"</span>,</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"kruskal.test"</span>,</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"SCORAD Severity Stratified by Host FLG Genotype"</span>,</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Objective SCORAD Index"</span></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>p_box</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 3: Cutaneous Dysbiosis Across Anatomical Sites</span></span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>Differential abundance bubble matrix across anatomical sites:</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ad-bubble, fig.width=8.0, fig.height=4.8}</span></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. aureus"</span>, <span class="st">"S. epidermidis"</span>, <span class="st">"S. hominis"</span>, <span class="st">"C. acnes"</span>, <span class="st">"M. restricta"</span>)</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>sites   <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Cheek"</span>, <span class="st">"Forehead"</span>, <span class="st">"Antecubital"</span>)</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>da_ad <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Species =</span> species, <span class="at">Comparison =</span> sites, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>da_ad<span class="sc">$</span>log2FC <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">2.8</span>, <span class="sc">-</span><span class="fl">1.9</span>, <span class="sc">-</span><span class="fl">1.2</span>, <span class="sc">-</span><span class="fl">1.8</span>, <span class="fl">1.4</span>,</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">2.1</span>, <span class="sc">-</span><span class="fl">1.5</span>, <span class="sc">-</span><span class="fl">0.8</span>, <span class="sc">-</span><span class="fl">1.2</span>, <span class="fl">0.9</span>,</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">3.2</span>, <span class="sc">-</span><span class="fl">2.4</span>, <span class="sc">-</span><span class="fl">1.4</span>, <span class="sc">-</span><span class="fl">2.1</span>, <span class="fl">1.6</span>)</span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>da_ad<span class="sc">$</span>qval   <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.5e-5</span>, <span class="fl">2.8e-3</span>, <span class="fl">0.04</span>, <span class="fl">3.1e-4</span>, <span class="fl">0.02</span>,</span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">7.2e-4</span>, <span class="fl">1.5e-3</span>, <span class="fl">0.08</span>, <span class="fl">1.2e-3</span>, <span class="fl">0.05</span>,</span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">2.8e-6</span>, <span class="fl">3.9e-4</span>, <span class="fl">0.01</span>, <span class="fl">9.8e-5</span>, <span class="fl">0.007</span>)</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>p_bubble <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>  Species <span class="sc">~</span> Comparison,</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> da_ad,</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_bubble_matrix</span>(</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_col =</span> <span class="st">"qval"</span>,</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_col =</span> <span class="st">"log2FC"</span>,</span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_size =</span> <span class="fl">2.0</span>,</span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size =</span> <span class="fl">7.0</span>,</span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette  =</span> <span class="st">"nature"</span></span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Cutaneous Dysbiosis Across Anatomic Predilection Sites"</span></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>p_bubble</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 4: Cutaneous Microbiome Coupling with Multi-Domain Environmental Drivers</span></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>Coupling cutaneous microbial abundance with transepidermal water loss (TEWL), SCORAD, and micro-climate drivers:</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ad-coupled-network, fig.width=8.5, fig.height=8.5}</span></span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>p_env <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Cutaneous Microbiome Coupling with Biophysical Barrier and Clinical Drivers"</span>,</span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_domain_labels =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>  <span class="at">compact            =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset             =</span> <span class="st">"clinical"</span>,</span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig             =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>p_env</span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
