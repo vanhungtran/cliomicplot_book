@@ -385,6 +385,8 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#mathematical-formulation-of-natural-connectivity" id="toc-mathematical-formulation-of-natural-connectivity" class="nav-link" data-scroll-target="#mathematical-formulation-of-natural-connectivity"><span class="header-section-number">14.2.1</span> Mathematical Formulation of Natural Connectivity</a></li>
   </ul></li>
+  <li><a href="#zi-pi-keystone-ecological-role-plot-type-zipi" id="toc-zi-pi-keystone-ecological-role-plot-type-zipi" class="nav-link" data-scroll-target="#zi-pi-keystone-ecological-role-plot-type-zipi"><span class="header-section-number">14.3</span> Zi-Pi Keystone Ecological Role Plot: <code>type = "zipi"</code></a></li>
+  <li><a href="#ecological-network-edge-sign-dynamics-type-edge_dynamics" id="toc-ecological-network-edge-sign-dynamics-type-edge_dynamics" class="nav-link" data-scroll-target="#ecological-network-edge-sign-dynamics-type-edge_dynamics"><span class="header-section-number">14.4</span> Ecological Network Edge-Sign Dynamics: <code>type = "edge_dynamics"</code></a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/14-preservation-and-robustness.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -495,11 +497,68 @@ window.Quarto = {
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="zi-pi-keystone-ecological-role-plot-type-zipi" class="level2" data-number="14.3">
+<h2 data-number="14.3" class="anchored" data-anchor-id="zi-pi-keystone-ecological-role-plot-type-zipi"><span class="header-section-number">14.3</span> Zi-Pi Keystone Ecological Role Plot: <code>type = "zipi"</code></h2>
+<p>Keystone taxa play disproportionately vital roles in maintaining community structure. The Zi-Pi classification framework (Guimerà &amp; Amaral, <em>Nature</em> 2005; Deng et al., <em>Science</em> 2012; Tao Wen et al., <em>iMeta</em> 2025) maps within-module connectivity z-score (<span class="math inline">Z_i</span>) against among-module participation coefficient (<span class="math inline">P_i</span>):</p>
+<ul>
+<li><p><strong>Within-module connectivity (<span class="math inline">Z_i</span>)</strong>: <span class="math display">Z_i = \frac{k_{i, s_i} - \bar{k}_{s_i}}{\sigma_{k_{s_i}}}</span> where <span class="math inline">k_{i, s_i}</span> is the degree of node <span class="math inline">i</span> inside its own module <span class="math inline">s_i</span>, <span class="math inline">\bar{k}_{s_i}</span> is the mean intra-module degree, and <span class="math inline">\sigma_{k_{s_i}}</span> is the standard deviation.</p></li>
+<li><p><strong>Participation coefficient (<span class="math inline">P_i</span>)</strong>: <span class="math display">P_i = 1 - \sum_{s=1}^{N_M} \left( \frac{k_{i, s}}{k_i} \right)^2</span> where <span class="math inline">k_{i, s}</span> is the number of links from node <span class="math inline">i</span> to module <span class="math inline">s</span>, and <span class="math inline">k_i</span> is the total degree of node <span class="math inline">i</span>.</p></li>
+</ul>
+<p>Standard cutoffs (<span class="math inline">Z = 2.5, P = 0.62</span>) partition the plane into four topological roles: 1. <strong>Peripherals</strong> (<span class="math inline">Z_i \le 2.5, P_i \le 0.62</span>): Module specialists with few inter-module links. 2. <strong>Connectors</strong> (<span class="math inline">Z_i \le 2.5, P_i &gt; 0.62</span>): Generalists linking distinct modules. 3. <strong>Module hubs</strong> (<span class="math inline">Z_i &gt; 2.5, P_i \le 0.62</span>): Highly connected specialists inside their module. 4. <strong>Network hubs</strong> (<span class="math inline">Z_i &gt; 2.5, P_i &gt; 0.62</span>): Super-generalists critical to global network integrity.</p>
+<p><code>type_zipi()</code> automates role classification, renders soft shaded background quadrants, adds marginal density rugs, and labels keystone taxa with collision-free text:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>n_taxa <span class="ot">&lt;-</span> <span class="dv">45</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>zipi_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">taxa   =</span> <span class="fu">paste0</span>(<span class="st">"ASV_"</span>, <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, <span class="fu">seq_len</span>(n_taxa))),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Zi     =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">38</span>, <span class="at">mean =</span> <span class="sc">-</span><span class="fl">0.2</span>, <span class="at">sd =</span> <span class="fl">0.9</span>), <span class="fu">rnorm</span>(<span class="dv">4</span>, <span class="at">mean =</span> <span class="fl">2.9</span>, <span class="at">sd =</span> <span class="fl">0.3</span>), <span class="fu">rnorm</span>(<span class="dv">3</span>, <span class="at">mean =</span> <span class="fl">2.8</span>, <span class="at">sd =</span> <span class="fl">0.4</span>)),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Pi     =</span> <span class="fu">c</span>(<span class="fu">runif</span>(<span class="dv">35</span>, <span class="fl">0.05</span>, <span class="fl">0.55</span>), <span class="fu">runif</span>(<span class="dv">4</span>, <span class="fl">0.65</span>, <span class="fl">0.85</span>), <span class="fu">runif</span>(<span class="dv">3</span>, <span class="fl">0.15</span>, <span class="fl">0.45</span>), <span class="fu">runif</span>(<span class="dv">3</span>, <span class="fl">0.68</span>, <span class="fl">0.92</span>)),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Phylum =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Bacteroidetes"</span>, <span class="st">"Firmicutes"</span>, <span class="st">"Actinobacteria"</span>, <span class="st">"Proteobacteria"</span>), n_taxa, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>p_zipi <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  Zi <span class="sc">~</span> Pi,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">data  =</span> zipi_df,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">type  =</span> <span class="fu">type_zipi</span>(<span class="at">point_size =</span> <span class="fl">3.2</span>, <span class="at">label_top =</span> <span class="dv">6</span>),</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Microbial Keystone Hub Identification (Zi-Pi Role Classification)"</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>p_zipi</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-preservation-and-robustness_files/figure-html/zipi-book-demo-1.png" class="img-fluid figure-img" width="2250"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ecological-network-edge-sign-dynamics-type-edge_dynamics" class="level2" data-number="14.4">
+<h2 data-number="14.4" class="anchored" data-anchor-id="ecological-network-edge-sign-dynamics-type-edge_dynamics"><span class="header-section-number">14.4</span> Ecological Network Edge-Sign Dynamics: <code>type = "edge_dynamics"</code></h2>
+<p>The balance of positive co-occurrences (mutualism, cross-feeding, or shared environmental preference) versus negative correlations (competitive exclusion, predation, or niche differentiation) quantifies ecological community stability across clinical phenotypes or treatment arms (Faust &amp; Raes 2012; Wen et al.&nbsp;<em>iMeta</em> 2025):</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p_edge <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(<span class="at">type =</span> <span class="fu">type_edge_dynamics</span>(<span class="at">mode =</span> <span class="st">"stack"</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>p_edge</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="14-preservation-and-robustness_files/figure-html/edge-dynamics-book-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 <!-- -->
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -973,83 +1032,132 @@ window.Quarto = {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Module Preservation and Targeted Attack Robustness</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>Assessing biological network changes between health and disease requires testing whether module structures persist and whether the network withstands random loss or targeted hub disruption.</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Module Preservation Statistics ($Z_{\text{summary}}$)</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="in">`cli_module_preservation()`</span> evaluates whether module density and intramodular hub rank are preserved between reference and test conditions under permutation testing (Langfelder et al., *PLoS Comput Biol* 2011).</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mathematical Definition of $Z_{\text{summary}}$</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>The composite preservation statistic $Z_{\text{summary}}$ aggregates density and connectivity preservation metrics over $B$ permutations:</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>$$Z_{\text{summary}} = \frac{Z_{\text{density}} + Z_{\text{connectivity}}}{2}$$</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>where $Z_{\text{density}}$ evaluates whether features within module $q$ maintain elevated mutual correlation and clustering in the test condition:</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>$$Z_{\text{density}} = \frac{Z_{\text{mean<span class="sc">\_</span>adj}} + Z_{\text{mean<span class="sc">\_</span>k}} + Z_{\text{cluster<span class="sc">\_</span>coef}} + Z_{\text{density<span class="sc">\_</span>raw}}}{4}$$</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>and $Z_{\text{connectivity}}$ evaluates whether intramodular hub feature rankings are conserved between reference and test networks:</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>$$Z_{\text{connectivity}} = \frac{Z_{\text{kIM}} + Z_{\text{kME}}}{2}, \quad Z = \frac{\text{obs} - \mu_{\text{perm}}}{\sigma_{\text{perm}}}$$</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Preservation Thresholds**:</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>$Z &lt; 2$ (dashed red line): No statistical evidence of module preservation.</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>$2 \le Z \le 10$ (dashed orange line): Moderate module preservation.</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>$Z &gt; 10$ (dashed green line): Strong, statistically significant module preservation.</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="in">```{r module-preservation-demo, fig.width=7.5, fig.height=4.8}</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>demo_omics <span class="ot">&lt;-</span> <span class="fu">cli_demo_vitality_multiomics</span>(<span class="at">n_samples =</span> <span class="dv">35</span>, <span class="at">n_features =</span> <span class="dv">60</span>, <span class="at">seed =</span> <span class="dv">42</span>)</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>pres_stats <span class="ot">&lt;-</span> <span class="fu">cli_module_preservation</span>(</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_data    =</span> demo_omics<span class="sc">$</span>ref_expr,</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">test_data   =</span> demo_omics<span class="sc">$</span>test_expr,</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_modules =</span> demo_omics<span class="sc">$</span>modules,</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_perm      =</span> <span class="dv">100</span>,</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed        =</span> <span class="dv">42</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="fu">cliplot_module_preservation</span>(</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  pres_stats,</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Cross-Network Module Preservation: WT Reference vs KO Test"</span></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## Network Robustness and Targeted Attack Simulation</span></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="in">`cli_network_robustness()`</span> simulates progressive network degradation under random node loss versus targeted attacks on high-degree hub nodes. <span class="in">`cliplot_network_robustness()`</span> displays natural connectivity decay curves.</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mathematical Formulation of Natural Connectivity</span></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>Natural connectivity $\bar{\lambda}$ derives from the spectrum of the network adjacency matrix $A$ and reflects the redundancy of alternative paths between all node pairs (Wu et al., *IEEE Trans Reliab* 2012):</span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>$$\bar{\lambda} = \ln \left( \frac{1}{N} \sum_{i=1}^N e^{\lambda_i} \right)$$</span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>where $\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_N$ are the eigenvalues of $A$. Natural connectivity strictly decreases monotonically as edges and nodes are removed, quantifying alternate path redundancy and topological stability.</span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>The competitive-to-cooperative edge balance is evaluated as:</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>$$R_{\pm} = \frac{E_{-}}{E_{+}}$$</span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{r network-robustness-demo, fig.width=8.0, fig.height=4.5}</span></span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>rob_stats <span class="ot">&lt;-</span> <span class="fu">cli_network_robustness</span>(</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">networks     =</span> demo_omics<span class="sc">$</span>networks,</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">attack       =</span> <span class="fu">c</span>(<span class="st">"random"</span>, <span class="st">"degree"</span>),</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">rm_fractions =</span> <span class="fu">seq</span>(<span class="fl">0.05</span>, <span class="fl">0.85</span>, <span class="at">by =</span> <span class="fl">0.05</span>),</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_perm       =</span> <span class="dv">20</span>,</span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">metric       =</span> <span class="st">"natural_connectivity"</span>,</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed         =</span> <span class="dv">42</span></span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a><span class="fu">cliplot_network_robustness</span>(</span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>  rob_stats,</span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Network Robustness Under Progressive Node Removal"</span></span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Module Preservation and Targeted Attack Robustness</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>Assessing biological network changes between health and disease requires testing whether module structures persist and whether the network withstands random loss or targeted hub disruption.</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Module Preservation Statistics ($Z_{\text{summary}}$)</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="in">`cli_module_preservation()`</span> evaluates whether module density and intramodular hub rank are preserved between reference and test conditions under permutation testing (Langfelder et al., *PLoS Comput Biol* 2011).</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mathematical Definition of $Z_{\text{summary}}$</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>The composite preservation statistic $Z_{\text{summary}}$ aggregates density and connectivity preservation metrics over $B$ permutations:</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>$$Z_{\text{summary}} = \frac{Z_{\text{density}} + Z_{\text{connectivity}}}{2}$$</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>where $Z_{\text{density}}$ evaluates whether features within module $q$ maintain elevated mutual correlation and clustering in the test condition:</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>$$Z_{\text{density}} = \frac{Z_{\text{mean<span class="sc">\_</span>adj}} + Z_{\text{mean<span class="sc">\_</span>k}} + Z_{\text{cluster<span class="sc">\_</span>coef}} + Z_{\text{density<span class="sc">\_</span>raw}}}{4}$$</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>and $Z_{\text{connectivity}}$ evaluates whether intramodular hub feature rankings are conserved between reference and test networks:</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>$$Z_{\text{connectivity}} = \frac{Z_{\text{kIM}} + Z_{\text{kME}}}{2}, \quad Z = \frac{\text{obs} - \mu_{\text{perm}}}{\sigma_{\text{perm}}}$$</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Preservation Thresholds**:</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>$Z &lt; 2$ (dashed red line): No statistical evidence of module preservation.</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>$2 \le Z \le 10$ (dashed orange line): Moderate module preservation.</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>$Z &gt; 10$ (dashed green line): Strong, statistically significant module preservation.</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="in">```{r module-preservation-demo, fig.width=7.5, fig.height=4.8}</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>demo_omics <span class="ot">&lt;-</span> <span class="fu">cli_demo_vitality_multiomics</span>(<span class="at">n_samples =</span> <span class="dv">35</span>, <span class="at">n_features =</span> <span class="dv">60</span>, <span class="at">seed =</span> <span class="dv">42</span>)</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>pres_stats <span class="ot">&lt;-</span> <span class="fu">cli_module_preservation</span>(</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_data    =</span> demo_omics<span class="sc">$</span>ref_expr,</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">test_data   =</span> demo_omics<span class="sc">$</span>test_expr,</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">ref_modules =</span> demo_omics<span class="sc">$</span>modules,</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_perm      =</span> <span class="dv">100</span>,</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed        =</span> <span class="dv">42</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="fu">cliplot_module_preservation</span>(</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  pres_stats,</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Cross-Network Module Preservation: WT Reference vs KO Test"</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## Network Robustness and Targeted Attack Simulation</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="in">`cli_network_robustness()`</span> simulates progressive network degradation under random node loss versus targeted attacks on high-degree hub nodes. <span class="in">`cliplot_network_robustness()`</span> displays natural connectivity decay curves.</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mathematical Formulation of Natural Connectivity</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>Natural connectivity $\bar{\lambda}$ derives from the spectrum of the network adjacency matrix $A$ and reflects the redundancy of alternative paths between all node pairs (Wu et al., *IEEE Trans Reliab* 2012):</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>$$\bar{\lambda} = \ln \left( \frac{1}{N} \sum_{i=1}^N e^{\lambda_i} \right)$$</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>where $\lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_N$ are the eigenvalues of $A$. Natural connectivity strictly decreases monotonically as edges and nodes are removed, quantifying alternate path redundancy and topological stability.</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>The competitive-to-cooperative edge balance is evaluated as:</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>$$R_{\pm} = \frac{E_{-}}{E_{+}}$$</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{r network-robustness-demo, fig.width=8.0, fig.height=4.5}</span></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>rob_stats <span class="ot">&lt;-</span> <span class="fu">cli_network_robustness</span>(</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">networks     =</span> demo_omics<span class="sc">$</span>networks,</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">attack       =</span> <span class="fu">c</span>(<span class="st">"random"</span>, <span class="st">"degree"</span>),</span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">rm_fractions =</span> <span class="fu">seq</span>(<span class="fl">0.05</span>, <span class="fl">0.85</span>, <span class="at">by =</span> <span class="fl">0.05</span>),</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_perm       =</span> <span class="dv">20</span>,</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">metric       =</span> <span class="st">"natural_connectivity"</span>,</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed         =</span> <span class="dv">42</span></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a><span class="fu">cliplot_network_robustness</span>(</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>  rob_stats,</span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Network Robustness Under Progressive Node Removal"</span></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a><span class="fu">## Zi-Pi Keystone Ecological Role Plot: `type = "zipi"`</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>Keystone taxa play disproportionately vital roles in maintaining community structure. The Zi-Pi classification framework (Guimerà &amp; Amaral, *Nature* 2005; Deng et al., *Science* 2012; Tao Wen et al., *iMeta* 2025) maps within-module connectivity z-score ($Z_i$) against among-module participation coefficient ($P_i$):</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Within-module connectivity ($Z_i$)**:</span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>  $$Z_i = \frac{k_{i, s_i} - \bar{k}_{s_i}}{\sigma_{k_{s_i}}}$$</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>  where $k_{i, s_i}$ is the degree of node $i$ inside its own module $s_i$, $\bar{k}_{s_i}$ is the mean intra-module degree, and $\sigma_{k_{s_i}}$ is the standard deviation.</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Participation coefficient ($P_i$)**:</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>  $$P_i = 1 - \sum_{s=1}^{N_M} \left( \frac{k_{i, s}}{k_i} \right)^2$$</span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>  where $k_{i, s}$ is the number of links from node $i$ to module $s$, and $k_i$ is the total degree of node $i$.</span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>Standard cutoffs ($Z = 2.5, P = 0.62$) partition the plane into four topological roles:</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Peripherals** ($Z_i \le 2.5, P_i \le 0.62$): Module specialists with few inter-module links.</span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Connectors** ($Z_i \le 2.5, P_i &gt; 0.62$): Generalists linking distinct modules.</span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Module hubs** ($Z_i &gt; 2.5, P_i \le 0.62$): Highly connected specialists inside their module.</span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Network hubs** ($Z_i &gt; 2.5, P_i &gt; 0.62$): Super-generalists critical to global network integrity.</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a><span class="in">`type_zipi()`</span> automates role classification, renders soft shaded background quadrants, adds marginal density rugs, and labels keystone taxa with collision-free text:</span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a><span class="in">```{r zipi-book-demo, fig.width=7.5, fig.height=5.2}</span></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>n_taxa <span class="ot">&lt;-</span> <span class="dv">45</span></span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>zipi_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>  <span class="at">taxa   =</span> <span class="fu">paste0</span>(<span class="st">"ASV_"</span>, <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, <span class="fu">seq_len</span>(n_taxa))),</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">Zi     =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">38</span>, <span class="at">mean =</span> <span class="sc">-</span><span class="fl">0.2</span>, <span class="at">sd =</span> <span class="fl">0.9</span>), <span class="fu">rnorm</span>(<span class="dv">4</span>, <span class="at">mean =</span> <span class="fl">2.9</span>, <span class="at">sd =</span> <span class="fl">0.3</span>), <span class="fu">rnorm</span>(<span class="dv">3</span>, <span class="at">mean =</span> <span class="fl">2.8</span>, <span class="at">sd =</span> <span class="fl">0.4</span>)),</span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">Pi     =</span> <span class="fu">c</span>(<span class="fu">runif</span>(<span class="dv">35</span>, <span class="fl">0.05</span>, <span class="fl">0.55</span>), <span class="fu">runif</span>(<span class="dv">4</span>, <span class="fl">0.65</span>, <span class="fl">0.85</span>), <span class="fu">runif</span>(<span class="dv">3</span>, <span class="fl">0.15</span>, <span class="fl">0.45</span>), <span class="fu">runif</span>(<span class="dv">3</span>, <span class="fl">0.68</span>, <span class="fl">0.92</span>)),</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">Phylum =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Bacteroidetes"</span>, <span class="st">"Firmicutes"</span>, <span class="st">"Actinobacteria"</span>, <span class="st">"Proteobacteria"</span>), n_taxa, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>p_zipi <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>  Zi <span class="sc">~</span> Pi,</span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">data  =</span> zipi_df,</span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">type  =</span> <span class="fu">type_zipi</span>(<span class="at">point_size =</span> <span class="fl">3.2</span>, <span class="at">label_top =</span> <span class="dv">6</span>),</span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Microbial Keystone Hub Identification (Zi-Pi Role Classification)"</span></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a>p_zipi</span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ecological Network Edge-Sign Dynamics: `type = "edge_dynamics"`</span></span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a>The balance of positive co-occurrences (mutualism, cross-feeding, or shared environmental preference) versus negative correlations (competitive exclusion, predation, or niche differentiation) quantifies ecological community stability across clinical phenotypes or treatment arms (Faust &amp; Raes 2012; Wen et al. *iMeta* 2025):</span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r edge-dynamics-book, fig.width=7.0, fig.height=4.8}</span></span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>p_edge <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(<span class="at">type =</span> <span class="fu">type_edge_dynamics</span>(<span class="at">mode =</span> <span class="st">"stack"</span>))</span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a>p_edge</span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
