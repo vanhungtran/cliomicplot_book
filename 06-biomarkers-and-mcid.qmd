@@ -122,19 +122,84 @@ p_tc <- cliplot(
 p_tc
 ```
 
-When evaluating treatment-level pharmacokinetics without individual profile tracking, `type_lines()` automatically calculates the group mean trajectory and overlays standard error bars:
+When evaluating treatment-level pharmacokinetics without individual profile tracking, `type_lines()` automatically calculates the group mean trajectory, offsets overlapping error bars horizontally with `dodge`, highlights mean markers with white borders, and maps individual replicate observations into the background:
 
-```{r timecourse-mean-demo, fig.width=8.0, fig.height=5.2}
-# Mean trajectory with standard error bars across recovery time points
+```{r timecourse-mean-demo, fig.width=8.5, fig.height=5.6}
+library(scales)
+
+# Mean trajectory with horizontal dodge and standard error bars
 p_tc_mean <- cliplot(
   expr ~ Day | Treatment,
   data = mpeg1,
-  type = type_lines(linewidth = 1.3, show_se = TRUE, add_points = TRUE, point_size = 2.2),
+  type = type_lines(
+    linewidth        = 1.25,
+    show_se          = TRUE,
+    dodge            = 0.50,
+    errorbar_width   = 0.40,
+    add_points       = TRUE,
+    point_size       = 2.0,
+    point_alpha      = 0.35,
+    show_mean_points = TRUE,
+    mean_point_size  = 3.6
+  ),
   palette = "jco",
   title   = "Mpeg1 Macrophage Marker Mean Kinetics",
-  subtitle = "Group Average (Mean ± SEM) Across Recovery Time Points",
-  xlab    = "Days Post-Onset",
-  ylab    = "Mean Protein Expression (LFQ Intensity)"
-)
+  subtitle = "Stroke Brain Proteomics — Mean ± SEM Trajectory Across Recovery (xOmicsShiny)",
+  xlab    = "Recovery Timeline Post-Ischemic Stroke",
+  ylab    = "Protein Expression (LFQ Intensity)"
+) +
+  scale_x_continuous(
+    breaks = c(1, 3, 7, 14),
+    labels = c("Day 1\n(Acute)", "Day 3\n(Subacute)", "Day 7\n(Peak)", "Day 14\n(Resolution)")
+  ) +
+  scale_y_continuous(
+    labels = label_number(scale = 1e-3, suffix = "k"),
+    limits = c(0, NA),
+    expand = expansion(mult = c(0.02, 0.12))
+  ) +
+  annotate(
+    "label", x = 7, y = 43000,
+    label = "Peak Infiltration\n(Day 7: +323% vs Sham, p < 0.001)",
+    size = 3.2, fontface = "bold", color = "#CD534C",
+    fill = "#FFF8F8"
+  ) +
+  theme(
+    legend.position = "top",
+    legend.justification = "left",
+    panel.grid.major.y = element_line(color = "grey92", linewidth = 0.4, linetype = "dotted"),
+    axis.text.x = element_text(size = 9.5, face = "bold", lineheight = 0.9)
+  )
 p_tc_mean
+```
+
+Alternatively, `show_ribbon = TRUE` provides continuous semi-transparent confidence envelopes around each treatment path:
+
+```{r timecourse-ribbon-demo, fig.width=8.5, fig.height=5.2}
+# Smooth shaded mean ± SEM ribbon trajectories
+p_tc_ribbon <- cliplot(
+  expr ~ Day | Treatment,
+  data = mpeg1,
+  type = type_lines(
+    linewidth        = 1.3,
+    show_ribbon      = TRUE,
+    ribbon_alpha     = 0.18,
+    add_points       = TRUE,
+    point_size       = 1.8,
+    point_alpha      = 0.25,
+    show_mean_points = TRUE,
+    mean_point_size  = 3.4
+  ),
+  palette = "jco",
+  title   = "Mpeg1 Trajectory with Continuous SEM Confidence Bands",
+  subtitle = "Shaded Confidence Bands Displaying Between-Animal Dispersion",
+  xlab    = "Days Post-Onset",
+  ylab    = "Protein Expression (LFQ Intensity)"
+) +
+  scale_x_continuous(breaks = c(1, 3, 7, 14), labels = c("Day 1", "Day 3", "Day 7", "Day 14")) +
+  scale_y_continuous(labels = label_number(scale = 1e-3, suffix = "k"), limits = c(0, NA)) +
+  theme(
+    legend.position = c(0.25, 0.82),
+    legend.background = element_rect(fill = alpha("white", 0.85), color = "grey85", linewidth = 0.3)
+  )
+p_tc_ribbon
 ```
