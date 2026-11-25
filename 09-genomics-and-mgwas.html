@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>9&nbsp; Statistical Genetics and Microbiome GWAS (mGWAS) – Clinical and Omics Data Visualization in R</title>
+<title>9&nbsp; Statistical Genetics and Multi-Omics Functional Mapping – Clinical and Omics Data Visualization in R</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -164,7 +164,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./07-differential-expression.html">Part III — High-Dimensional Omics Visualizations</a></li><li class="breadcrumb-item"><a href="./09-genomics-and-mgwas.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Statistical Genetics and Microbiome GWAS (mGWAS)</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./07-differential-expression.html">Part III — High-Dimensional Omics Visualizations</a></li><li class="breadcrumb-item"><a href="./09-genomics-and-mgwas.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Statistical Genetics and Multi-Omics Functional Mapping</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -280,7 +280,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./09-genomics-and-mgwas.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Statistical Genetics and Microbiome GWAS (mGWAS)</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Statistical Genetics and Multi-Omics Functional Mapping</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -379,15 +379,18 @@ window.Quarto = {
   <ul>
   <li><a href="#multi-chromosome-human-gwas-p-bp-chr" id="toc-multi-chromosome-human-gwas-p-bp-chr" class="nav-link active" data-scroll-target="#multi-chromosome-human-gwas-p-bp-chr"><span class="header-section-number">9.1</span> Multi-Chromosome Human GWAS: <code>p ~ bp | chr</code></a></li>
   <li><a href="#microbial-gwas-mgwas-along-bacterial-genomes" id="toc-microbial-gwas-mgwas-along-bacterial-genomes" class="nav-link" data-scroll-target="#microbial-gwas-mgwas-along-bacterial-genomes"><span class="header-section-number">9.2</span> Microbial GWAS (mGWAS) Along Bacterial Genomes</a></li>
+  <li><a href="#cis-pqtl-mendelian-randomization-and-colocalization-type_mr_coloc" id="toc-cis-pqtl-mendelian-randomization-and-colocalization-type_mr_coloc" class="nav-link" data-scroll-target="#cis-pqtl-mendelian-randomization-and-colocalization-type_mr_coloc"><span class="header-section-number">9.3</span> Cis-pQTL Mendelian Randomization and Colocalization: <code>type_mr_coloc()</code></a></li>
+  <li><a href="#single-cell-immune-lineage-composition-type_composition" id="toc-single-cell-immune-lineage-composition-type_composition" class="nav-link" data-scroll-target="#single-cell-immune-lineage-composition-type_composition"><span class="header-section-number">9.4</span> Single-Cell Immune Lineage Composition: <code>type_composition()</code></a></li>
+  <li><a href="#paired-pre-vs-post-intervention-trajectories-type_slope" id="toc-paired-pre-vs-post-intervention-trajectories-type_slope" class="nav-link" data-scroll-target="#paired-pre-vs-post-intervention-trajectories-type_slope"><span class="header-section-number">9.5</span> Paired Pre-vs-Post Intervention Trajectories: <code>type_slope()</code></a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/09-genomics-and-mgwas.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./07-differential-expression.html">Part III — High-Dimensional Omics Visualizations</a></li><li class="breadcrumb-item"><a href="./09-genomics-and-mgwas.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Statistical Genetics and Microbiome GWAS (mGWAS)</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./07-differential-expression.html">Part III — High-Dimensional Omics Visualizations</a></li><li class="breadcrumb-item"><a href="./09-genomics-and-mgwas.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Statistical Genetics and Multi-Omics Functional Mapping</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Statistical Genetics and Microbiome GWAS (mGWAS)</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Statistical Genetics and Multi-Omics Functional Mapping</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -404,7 +407,7 @@ window.Quarto = {
 </header>
 
 
-<p>Genome-Wide Association Studies (GWAS) and Microbial GWAS (mGWAS) evaluate variant associations with clinical phenotypes or microbial traits across chromosomes. <code>cliomicplot</code> provides single-chromosome and multi-chromosome Manhattan architectures.</p>
+<p>Genome-Wide Association Studies (GWAS), Microbial GWAS (mGWAS), and Proteomic Quantitative Trait Loci (pQTL) map genetic variants to organism-level phenotypes, microbial virulence, and molecular cellular targets. <code>cliomicplot</code> provides chromosomal Manhattan architectures, two-sample Mendelian Randomization colocalization matrices, single-cell lineage composition tracks, and paired intervention trajectories.</p>
 <section id="multi-chromosome-human-gwas-p-bp-chr" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="multi-chromosome-human-gwas-p-bp-chr"><span class="header-section-number">9.1</span> Multi-Chromosome Human GWAS: <code>p ~ bp | chr</code></h2>
 <p>In human genetics, variants are distributed across chromosomes 1 through 22. Alternating chromosome colors and standard significance thresholds (<span class="math inline">\tau_{\text{GWAS}} = 5 \times 10^{-8}</span> and suggestive <span class="math inline">1 \times 10^{-5}</span>) mark genome-wide hits:</p>
@@ -497,6 +500,141 @@ window.Quarto = {
 <div>
 <figure class="figure">
 <p><img src="09-genomics-and-mgwas_files/figure-html/manhattan-bacterial-demo-1.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="cis-pqtl-mendelian-randomization-and-colocalization-type_mr_coloc" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="cis-pqtl-mendelian-randomization-and-colocalization-type_mr_coloc"><span class="header-section-number">9.3</span> Cis-pQTL Mendelian Randomization and Colocalization: <code>type_mr_coloc()</code></h2>
+<p>Translating GWAS risk variants into actionable therapeutic targets requires distinguishing causal proteins from bystander biomarkers. Two-sample Mendelian Randomization (MR) uses cis-protein quantitative trait loci (cis-pQTLs) as genetic instruments:</p>
+<p><span class="math display">b_{\text{MR}} = \frac{\hat{\beta}_{\text{outcome}}}{\hat{\beta}_{\text{exposure}}}</span></p>
+<p>The standard error is estimated using the second-order delta method:</p>
+<p><span class="math display">\text{SE}(b_{\text{MR}}) \approx \sqrt{\frac{\sigma_y^2}{\beta_x^2} + \frac{\beta_y^2 \sigma_x^2}{\beta_x^4}}</span></p>
+<p>Because high linkage disequilibrium (LD) can cause distinct causal variants to appear correlated (especially within the Major Histocompatibility Complex, MHC/HLA), Bayesian colocalization (<em>coloc.abf</em>) calculates posterior probabilities for five competing hypotheses:</p>
+<ul>
+<li><strong><span class="math inline">H_0</span></strong>: Neither trait has a genetic association in the region.</li>
+<li><strong><span class="math inline">H_1</span> / <span class="math inline">H_2</span></strong>: Only the molecular exposure (<span class="math inline">H_1</span>) or disease outcome (<span class="math inline">H_2</span>) is associated.</li>
+<li><strong><span class="math inline">H_3</span></strong>: Both traits are associated, but driven by <strong>two distinct causal variants</strong> (<span class="math inline">\text{PP.H3} \ge 0.80</span>). This indicates an LD artifact or pleiotropic confounding.</li>
+<li><strong><span class="math inline">H_4</span></strong>: Both traits share <strong>one common causal variant</strong> (<span class="math inline">\text{PP.H4} \ge 0.80</span>).</li>
+</ul>
+<p><code>type_mr_coloc()</code> integrates these statistical criteria into a publication-ready matrix:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pqtl_mr_coloc)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Cis-pQTL MR &amp; Colocalization heatmap (UKB-PPP to FinnGen R12)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>p_mr <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  symbol <span class="sc">~</span> label_short,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> pqtl_mr_coloc,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_mr_coloc</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">set_col              =</span> <span class="st">"set_label"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">family_col           =</span> <span class="st">"family_label"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">p_threshold          =</span> <span class="fl">0.05</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">bonferroni           =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">coloc_threshold      =</span> <span class="fl">0.80</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">discordant_threshold =</span> <span class="fl">0.80</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">text_size            =</span> <span class="fl">1.9</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">glyph_size           =</span> <span class="fl">0.95</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Cis-pQTL Mendelian Randomization &amp; Colocalization Matrix"</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Plasma Proteome Signatures of CD8 T-Cell Aging States vs Clinical Endpoints (Terekhova et al., Immunity 2026)"</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme    =</span> <span class="st">"minimal"</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>p_mr</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-genomics-and-mgwas_files/figure-html/pqtl-mr-coloc-demo-1.png" class="img-fluid figure-img" width="2640"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this analysis: - <strong>IL7R</strong>: Carries robust colocalization (<span class="math inline">\text{PP.H4} &gt; 0.95</span>) with atopic dermatitis (<span class="math inline">\text{OR} = 1.075</span>, <span class="math inline">P = 9.3 \times 10^{-13}</span>), asthma (<span class="math inline">\text{OR} = 1.045</span>, <span class="math inline">P = 2.1 \times 10^{-8}</span>), and psoriasis (<span class="math inline">\text{OR} = 1.075</span>, <span class="math inline">P = 2.6 \times 10^{-6}</span>) through missense variant rs6897932. - <strong>CD27</strong>: Associated with increased risk of heart failure (<span class="math inline">\text{OR} = 1.178</span>, <span class="math inline">P = 4.7 \times 10^{-6}</span>, <span class="math inline">\text{PP.H4} = 0.990</span>) via rs25680. - <strong>LTB</strong>: Displays extreme significance (<span class="math inline">P = 1.2 \times 10^{-29}</span> for rheumatoid arthritis, <span class="math inline">P = 3.4 \times 10^{-26}</span> for type 1 diabetes) but <span class="math inline">\text{PP.H3} = 1.000</span>. Because LTB resides in the MHC, these associations represent LD artifacts and are appropriately displayed in muted italicized gray text.</p>
+</section>
+<section id="single-cell-immune-lineage-composition-type_composition" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="single-cell-immune-lineage-composition-type_composition"><span class="header-section-number">9.4</span> Single-Cell Immune Lineage Composition: <code>type_composition()</code></h2>
+<p>Single-cell transcriptomics often tracks changes in cellular proportions across patient cohorts and treatment arms. However, standard ggplot2 limitations allow only one fill scale per plot, preventing concurrent visualization of cell lineages and patient clinical phenotypes.</p>
+<p><code>type_composition()</code> resolves this by plotting stacked leukocyte proportions with an independent phenotypic metadata track along the base of the bars:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(immune_cell_composition)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Focus on three clinical series (atopic dermatitis, vascular disease, asthma)</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>demo_cohorts <span class="ot">&lt;-</span> <span class="fu">subset</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  immune_cell_composition,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  dataset <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"GSE183953"</span>, <span class="st">"GSE272294"</span>, <span class="st">"GSE288147"</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>p_comp <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  share <span class="sc">~</span> gsm,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> demo_cohorts,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_composition</span>(</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">lineage_col      =</span> <span class="st">"lineage"</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">track_col        =</span> <span class="st">"group"</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">facet_col        =</span> <span class="st">"dataset"</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette          =</span> <span class="st">"nature"</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">lineage_name     =</span> <span class="st">"Leukocyte Lineage"</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">track_name       =</span> <span class="st">"Clinical Cohort / Status"</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_percentages =</span> <span class="cn">TRUE</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Single-Cell Leukocyte Composition with Integrated Clinical Phenotype Track"</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Lineage Fractions Across Allergic and Vascular Blood Series (NCBI GEO)"</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Individual Blood Libraries (Grouped by Disease Strata)"</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="st">"Percentage of Total Leukocytes"</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>p_comp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-genomics-and-mgwas_files/figure-html/cell-composition-demo-1.png" class="img-fluid figure-img" width="2640"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="paired-pre-vs-post-intervention-trajectories-type_slope" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="paired-pre-vs-post-intervention-trajectories-type_slope"><span class="header-section-number">9.5</span> Paired Pre-vs-Post Intervention Trajectories: <code>type_slope()</code></h2>
+<p>For paired clinical cohorts (e.g.&nbsp;patients evaluated before and after targeted biologic therapy or lipid lowering), <code>type_slope()</code> provides paired trajectory lines with horizontal reference thresholds:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paired GZMK / GZMB balance in blood before and after treatment</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>paired_demo <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">donor     =</span> <span class="fu">rep</span>(<span class="fu">paste0</span>(<span class="st">"PT"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>), <span class="at">each =</span> <span class="dv">2</span>),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">timepoint =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Before"</span>, <span class="st">"After"</span>), <span class="dv">8</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Before"</span>, <span class="st">"After"</span>)),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">balance   =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.84</span>, <span class="sc">-</span><span class="fl">1.41</span>,  <span class="sc">-</span><span class="fl">1.80</span>, <span class="sc">-</span><span class="fl">0.10</span>,  <span class="sc">-</span><span class="fl">2.01</span>, <span class="sc">-</span><span class="fl">1.99</span>,  <span class="sc">-</span><span class="fl">1.49</span>, <span class="sc">-</span><span class="fl">1.52</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.03</span>,  <span class="fl">0.38</span>,   <span class="fl">0.44</span>,  <span class="fl">0.12</span>,  <span class="sc">-</span><span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.15</span>,   <span class="fl">1.49</span>,  <span class="fl">1.12</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">cohort    =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Atopic Dermatitis (Dupilumab)"</span>, <span class="st">"Atherosclerosis (Lipid Lowering)"</span>), <span class="at">each =</span> <span class="dv">8</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>p_slope <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  balance <span class="sc">~</span> timepoint <span class="sc">|</span> cohort,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> paired_demo,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_slope</span>(</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">pair                     =</span> <span class="st">"donor"</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference_line           =</span> <span class="dv">0</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference_line_linetype  =</span> <span class="st">"dashed"</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference_line_linewidth =</span> <span class="fl">0.45</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference_line_color     =</span> <span class="st">"grey50"</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth                =</span> <span class="fl">0.85</span>,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size               =</span> <span class="fl">2.8</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Paired Cellular Balance Before and After Therapy"</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Horizontal Zero Line Marks GZMK+ vs GZMB+ Effector-Memory T-Cell Equivalence"</span>,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Clinical Time Point"</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="fu">expression</span>(log[<span class="dv">2</span>]<span class="sc">~</span><span class="st">"(GZMK+ / GZMB+ Ratio)"</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>p_slope</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="09-genomics-and-mgwas_files/figure-html/paired-trajectory-demo-1.png" class="img-fluid figure-img" width="2400"></p>
 </figure>
 </div>
 </div>
@@ -978,89 +1116,206 @@ window.Quarto = {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Statistical Genetics and Microbiome GWAS (mGWAS)</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>Genome-Wide Association Studies (GWAS) and Microbial GWAS (mGWAS) evaluate variant associations with clinical phenotypes or microbial traits across chromosomes. <span class="in">`cliomicplot`</span> provides single-chromosome and multi-chromosome Manhattan architectures.</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Multi-Chromosome Human GWAS: `p ~ bp | chr`</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>In human genetics, variants are distributed across chromosomes 1 through 22. Alternating chromosome colors and standard significance thresholds ($\tau_{\text{GWAS}} = 5 \times 10^{-8}$ and suggestive $1 \times 10^{-5}$) mark genome-wide hits:</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>$$\tau_{\text{GWAS}} = -\log_{10}(5 \times 10^{-8}) \approx 7.30$$</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{r manhattan-multi-demo, fig.width=8.5, fig.height=4.8}</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>n_snps <span class="ot">&lt;-</span> <span class="dv">600</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>chroms <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">each =</span> <span class="dv">120</span>), <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>bps <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="fl">1e5</span>, <span class="fl">2e7</span>, <span class="at">length.out =</span> <span class="dv">120</span>), <span class="dv">5</span>)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>pvals <span class="ot">&lt;-</span> <span class="fu">runif</span>(n_snps, <span class="fl">0.001</span>, <span class="fl">1.0</span>)</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>snps <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"rs"</span>, <span class="dv">1000</span><span class="sc">:</span>(<span class="dv">1000</span> <span class="sc">+</span> n_snps <span class="sc">-</span> <span class="dv">1</span>))</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Inject genome-wide significant lead variants</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>lead_hits <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">45</span>, <span class="dv">185</span>, <span class="dv">312</span>, <span class="dv">450</span>)</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>pvals[lead_hits] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">2.1e-9</span>, <span class="fl">4.8e-11</span>, <span class="fl">1.2e-8</span>, <span class="fl">3.5e-10</span>)</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>gwas_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">chr =</span> chroms,</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">bp  =</span> bps,</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">p   =</span> pvals,</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">snp =</span> snps</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>p_gwas <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  p <span class="sc">~</span> bp <span class="sc">|</span> chr,</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gwas_df,</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_manhattan</span>(</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold       =</span> <span class="fl">5e-8</span>,</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_hits      =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size      =</span> <span class="fl">1.5</span></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Genome-Wide Association Study (GWAS)"</span>,</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Chromosomal distribution of variant associations with suggestive and genome-wide thresholds"</span>,</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Chromosome"</span>,</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="fu">italic</span>(P))</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>p_gwas</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## Microbial GWAS (mGWAS) Along Bacterial Genomes</span></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>Microbial GWAS evaluates single nucleotide variants along circular bacterial chromosomes (e.g. *Staphylococcus aureus*, ~2.8 Mb):</span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="in">```{r manhattan-bacterial-demo, fig.width=8.0, fig.height=4.2}</span></span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>mgwas_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">pos  =</span> <span class="fu">seq</span>(<span class="dv">2000</span>, <span class="dv">400000</span>, <span class="at">by =</span> <span class="dv">2500</span>),</span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">qval =</span> <span class="fu">runif</span>(<span class="dv">160</span>, <span class="fl">0.02</span>, <span class="fl">1.0</span>),</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">gene =</span> <span class="st">""</span>,</span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert significant virulence and resistance alleles</span></span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>hit_positions <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">68</span>, <span class="dv">114</span>, <span class="dv">142</span>)</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>mgwas_df<span class="sc">$</span>qval[hit_positions] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.2e-5</span>, <span class="fl">8.4e-6</span>, <span class="fl">4.1e-7</span>, <span class="fl">1.9e-5</span>)</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>mgwas_df<span class="sc">$</span>gene[hit_positions] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"agrA"</span>, <span class="st">"mecA"</span>, <span class="st">"tsst-1"</span>, <span class="st">"ebpS"</span>)</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>p_mgwas <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>  qval <span class="sc">~</span> pos,</span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mgwas_df,</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_manhattan</span>(</span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold  =</span> <span class="fl">0.01</span>,</span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_col  =</span> <span class="st">"gene"</span>,</span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size =</span> <span class="fl">1.4</span>,</span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlab       =</span> <span class="st">"Staphylococcus aureus Genome Position (bp)"</span>,</span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab       =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="fu">italic</span>(q))</span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"science"</span>,</span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Microbial GWAS: Virulence Variants Associated with Disease Severity"</span></span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>p_mgwas</span>
-<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Statistical Genetics and Multi-Omics Functional Mapping</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>Genome-Wide Association Studies (GWAS), Microbial GWAS (mGWAS), and Proteomic Quantitative Trait Loci (pQTL) map genetic variants to organism-level phenotypes, microbial virulence, and molecular cellular targets. <span class="in">`cliomicplot`</span> provides chromosomal Manhattan architectures, two-sample Mendelian Randomization colocalization matrices, single-cell lineage composition tracks, and paired intervention trajectories.</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Multi-Chromosome Human GWAS: `p ~ bp | chr`</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>In human genetics, variants are distributed across chromosomes 1 through 22. Alternating chromosome colors and standard significance thresholds ($\tau_{\text{GWAS}} = 5 \times 10^{-8}$ and suggestive $1 \times 10^{-5}$) mark genome-wide hits:</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>$$\tau_{\text{GWAS}} = -\log_{10}(5 \times 10^{-8}) \approx 7.30$$</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="in">```{r manhattan-multi-demo, fig.width=8.5, fig.height=4.8}</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>n_snps <span class="ot">&lt;-</span> <span class="dv">600</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>chroms <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">each =</span> <span class="dv">120</span>), <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>bps <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="fl">1e5</span>, <span class="fl">2e7</span>, <span class="at">length.out =</span> <span class="dv">120</span>), <span class="dv">5</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>pvals <span class="ot">&lt;-</span> <span class="fu">runif</span>(n_snps, <span class="fl">0.001</span>, <span class="fl">1.0</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>snps <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"rs"</span>, <span class="dv">1000</span><span class="sc">:</span>(<span class="dv">1000</span> <span class="sc">+</span> n_snps <span class="sc">-</span> <span class="dv">1</span>))</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Inject genome-wide significant lead variants</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>lead_hits <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">45</span>, <span class="dv">185</span>, <span class="dv">312</span>, <span class="dv">450</span>)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>pvals[lead_hits] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">2.1e-9</span>, <span class="fl">4.8e-11</span>, <span class="fl">1.2e-8</span>, <span class="fl">3.5e-10</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>gwas_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">chr =</span> chroms,</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">bp  =</span> bps,</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">p   =</span> pvals,</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">snp =</span> snps</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>p_gwas <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>  p <span class="sc">~</span> bp <span class="sc">|</span> chr,</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> gwas_df,</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_manhattan</span>(</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold       =</span> <span class="fl">5e-8</span>,</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_hits      =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size      =</span> <span class="fl">1.5</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Genome-Wide Association Study (GWAS)"</span>,</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Chromosomal distribution of variant associations with suggestive and genome-wide thresholds"</span>,</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Chromosome"</span>,</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="fu">italic</span>(P))</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>p_gwas</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## Microbial GWAS (mGWAS) Along Bacterial Genomes</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>Microbial GWAS evaluates single nucleotide variants along circular bacterial chromosomes (e.g. *Staphylococcus aureus*, ~2.8 Mb):</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="in">```{r manhattan-bacterial-demo, fig.width=8.0, fig.height=4.2}</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>mgwas_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">pos  =</span> <span class="fu">seq</span>(<span class="dv">2000</span>, <span class="dv">400000</span>, <span class="at">by =</span> <span class="dv">2500</span>),</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">qval =</span> <span class="fu">runif</span>(<span class="dv">160</span>, <span class="fl">0.02</span>, <span class="fl">1.0</span>),</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">gene =</span> <span class="st">""</span>,</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert significant virulence and resistance alleles</span></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>hit_positions <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">68</span>, <span class="dv">114</span>, <span class="dv">142</span>)</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>mgwas_df<span class="sc">$</span>qval[hit_positions] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">3.2e-5</span>, <span class="fl">8.4e-6</span>, <span class="fl">4.1e-7</span>, <span class="fl">1.9e-5</span>)</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>mgwas_df<span class="sc">$</span>gene[hit_positions] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"agrA"</span>, <span class="st">"mecA"</span>, <span class="st">"tsst-1"</span>, <span class="st">"ebpS"</span>)</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>p_mgwas <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>  qval <span class="sc">~</span> pos,</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mgwas_df,</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_manhattan</span>(</span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold  =</span> <span class="fl">0.01</span>,</span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_col  =</span> <span class="st">"gene"</span>,</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size =</span> <span class="fl">1.4</span>,</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlab       =</span> <span class="st">"Staphylococcus aureus Genome Position (bp)"</span>,</span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab       =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="fu">italic</span>(q))</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"science"</span>,</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Microbial GWAS: Virulence Variants Associated with Disease Severity"</span></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>p_mgwas</span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cis-pQTL Mendelian Randomization and Colocalization: `type_mr_coloc()`</span></span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>Translating GWAS risk variants into actionable therapeutic targets requires distinguishing causal proteins from bystander biomarkers. Two-sample Mendelian Randomization (MR) uses cis-protein quantitative trait loci (cis-pQTLs) as genetic instruments:</span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>$$b_{\text{MR}} = \frac{\hat{\beta}_{\text{outcome}}}{\hat{\beta}_{\text{exposure}}}$$</span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>The standard error is estimated using the second-order delta method:</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>$$\text{SE}(b_{\text{MR}}) \approx \sqrt{\frac{\sigma_y^2}{\beta_x^2} + \frac{\beta_y^2 \sigma_x^2}{\beta_x^4}}$$</span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>Because high linkage disequilibrium (LD) can cause distinct causal variants to appear correlated (especially within the Major Histocompatibility Complex, MHC/HLA), Bayesian colocalization (*coloc.abf*) calculates posterior probabilities for five competing hypotheses:</span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$H_0$**: Neither trait has a genetic association in the region.</span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$H_1$ / $H_2$**: Only the molecular exposure ($H_1$) or disease outcome ($H_2$) is associated.</span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$H_3$**: Both traits are associated, but driven by **two distinct causal variants** ($\text{PP.H3} \ge 0.80$). This indicates an LD artifact or pleiotropic confounding.</span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$H_4$**: Both traits share **one common causal variant** ($\text{PP.H4} \ge 0.80$).</span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a><span class="in">`type_mr_coloc()`</span> integrates these statistical criteria into a publication-ready matrix:</span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a><span class="in">```{r pqtl-mr-coloc-demo, fig.width=8.8, fig.height=6.2}</span></span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pqtl_mr_coloc)</span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a><span class="co"># Cis-pQTL MR &amp; Colocalization heatmap (UKB-PPP to FinnGen R12)</span></span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>p_mr <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>  symbol <span class="sc">~</span> label_short,</span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> pqtl_mr_coloc,</span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_mr_coloc</span>(</span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">set_col              =</span> <span class="st">"set_label"</span>,</span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>    <span class="at">family_col           =</span> <span class="st">"family_label"</span>,</span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>    <span class="at">p_threshold          =</span> <span class="fl">0.05</span>,</span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>    <span class="at">bonferroni           =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>    <span class="at">coloc_threshold      =</span> <span class="fl">0.80</span>,</span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>    <span class="at">discordant_threshold =</span> <span class="fl">0.80</span>,</span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>    <span class="at">text_size            =</span> <span class="fl">1.9</span>,</span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>    <span class="at">glyph_size           =</span> <span class="fl">0.95</span></span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Cis-pQTL Mendelian Randomization &amp; Colocalization Matrix"</span>,</span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Plasma Proteome Signatures of CD8 T-Cell Aging States vs Clinical Endpoints (Terekhova et al., Immunity 2026)"</span>,</span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme    =</span> <span class="st">"minimal"</span></span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>p_mr</span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a>In this analysis:</span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**IL7R**: Carries robust colocalization ($\text{PP.H4} &gt; 0.95$) with atopic dermatitis ($\text{OR} = 1.075$, $P = 9.3 \times 10^{-13}$), asthma ($\text{OR} = 1.045$, $P = 2.1 \times 10^{-8}$), and psoriasis ($\text{OR} = 1.075$, $P = 2.6 \times 10^{-6}$) through missense variant rs6897932.</span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CD27**: Associated with increased risk of heart failure ($\text{OR} = 1.178$, $P = 4.7 \times 10^{-6}$, $\text{PP.H4} = 0.990$) via rs25680.</span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**LTB**: Displays extreme significance ($P = 1.2 \times 10^{-29}$ for rheumatoid arthritis, $P = 3.4 \times 10^{-26}$ for type 1 diabetes) but $\text{PP.H3} = 1.000$. Because LTB resides in the MHC, these associations represent LD artifacts and are appropriately displayed in muted italicized gray text.</span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single-Cell Immune Lineage Composition: `type_composition()`</span></span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a>Single-cell transcriptomics often tracks changes in cellular proportions across patient cohorts and treatment arms. However, standard ggplot2 limitations allow only one fill scale per plot, preventing concurrent visualization of cell lineages and patient clinical phenotypes.</span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a><span class="in">`type_composition()`</span> resolves this by plotting stacked leukocyte proportions with an independent phenotypic metadata track along the base of the bars:</span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a><span class="in">```{r cell-composition-demo, fig.width=8.8, fig.height=5.6}</span></span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(immune_cell_composition)</span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a><span class="co"># Focus on three clinical series (atopic dermatitis, vascular disease, asthma)</span></span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a>demo_cohorts <span class="ot">&lt;-</span> <span class="fu">subset</span>(</span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a>  immune_cell_composition,</span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>  dataset <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"GSE183953"</span>, <span class="st">"GSE272294"</span>, <span class="st">"GSE288147"</span>)</span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>p_comp <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>  share <span class="sc">~</span> gsm,</span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> demo_cohorts,</span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_composition</span>(</span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a>    <span class="at">lineage_col      =</span> <span class="st">"lineage"</span>,</span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a>    <span class="at">track_col        =</span> <span class="st">"group"</span>,</span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a>    <span class="at">facet_col        =</span> <span class="st">"dataset"</span>,</span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette          =</span> <span class="st">"nature"</span>,</span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>    <span class="at">lineage_name     =</span> <span class="st">"Leukocyte Lineage"</span>,</span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a>    <span class="at">track_name       =</span> <span class="st">"Clinical Cohort / Status"</span>,</span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_percentages =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Single-Cell Leukocyte Composition with Integrated Clinical Phenotype Track"</span>,</span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Lineage Fractions Across Allergic and Vascular Blood Series (NCBI GEO)"</span>,</span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Individual Blood Libraries (Grouped by Disease Strata)"</span>,</span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="st">"Percentage of Total Leukocytes"</span></span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>p_comp</span>
+<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paired Pre-vs-Post Intervention Trajectories: `type_slope()`</span></span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>For paired clinical cohorts (e.g. patients evaluated before and after targeted biologic therapy or lipid lowering), <span class="in">`type_slope()`</span> provides paired trajectory lines with horizontal reference thresholds:</span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a><span class="in">```{r paired-trajectory-demo, fig.width=8.0, fig.height=4.6}</span></span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a><span class="co"># Paired GZMK / GZMB balance in blood before and after treatment</span></span>
+<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a>paired_demo <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a>  <span class="at">donor     =</span> <span class="fu">rep</span>(<span class="fu">paste0</span>(<span class="st">"PT"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>), <span class="at">each =</span> <span class="dv">2</span>),</span>
+<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a>  <span class="at">timepoint =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Before"</span>, <span class="st">"After"</span>), <span class="dv">8</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Before"</span>, <span class="st">"After"</span>)),</span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a>  <span class="at">balance   =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.84</span>, <span class="sc">-</span><span class="fl">1.41</span>,  <span class="sc">-</span><span class="fl">1.80</span>, <span class="sc">-</span><span class="fl">0.10</span>,  <span class="sc">-</span><span class="fl">2.01</span>, <span class="sc">-</span><span class="fl">1.99</span>,  <span class="sc">-</span><span class="fl">1.49</span>, <span class="sc">-</span><span class="fl">1.52</span>,</span>
+<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a>                 <span class="fl">0.03</span>,  <span class="fl">0.38</span>,   <span class="fl">0.44</span>,  <span class="fl">0.12</span>,  <span class="sc">-</span><span class="fl">0.22</span>, <span class="sc">-</span><span class="fl">0.15</span>,   <span class="fl">1.49</span>,  <span class="fl">1.12</span>),</span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a>  <span class="at">cohort    =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Atopic Dermatitis (Dupilumab)"</span>, <span class="st">"Atherosclerosis (Lipid Lowering)"</span>), <span class="at">each =</span> <span class="dv">8</span>)</span>
+<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a>p_slope <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a>  balance <span class="sc">~</span> timepoint <span class="sc">|</span> cohort,</span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> paired_demo,</span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_slope</span>(</span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a>    <span class="at">pair                     =</span> <span class="st">"donor"</span>,</span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference_line           =</span> <span class="dv">0</span>,</span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference_line_linetype  =</span> <span class="st">"dashed"</span>,</span>
+<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference_line_linewidth =</span> <span class="fl">0.45</span>,</span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference_line_color     =</span> <span class="st">"grey50"</span>,</span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth                =</span> <span class="fl">0.85</span>,</span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size               =</span> <span class="fl">2.8</span></span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Paired Cellular Balance Before and After Therapy"</span>,</span>
+<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Horizontal Zero Line Marks GZMK+ vs GZMB+ Effector-Memory T-Cell Equivalence"</span>,</span>
+<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Clinical Time Point"</span>,</span>
+<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="fu">expression</span>(log[<span class="dv">2</span>]<span class="sc">~</span><span class="st">"(GZMK+ / GZMB+ Ratio)"</span>)</span>
+<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a>p_slope</span>
+<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
