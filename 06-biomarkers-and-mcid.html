@@ -550,27 +550,100 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>When evaluating treatment-level pharmacokinetics without individual profile tracking, <code>type_lines()</code> automatically calculates the group mean trajectory and overlays standard error bars:</p>
+<p>When evaluating treatment-level pharmacokinetics without individual profile tracking, <code>type_lines()</code> automatically calculates the group mean trajectory, offsets overlapping error bars horizontally with <code>dodge</code>, highlights mean markers with white borders, and maps individual replicate observations into the background:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mean trajectory with standard error bars across recovery time points</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>p_tc_mean <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  expr <span class="sc">~</span> Day <span class="sc">|</span> Treatment,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mpeg1,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_lines</span>(<span class="at">linewidth =</span> <span class="fl">1.3</span>, <span class="at">show_se =</span> <span class="cn">TRUE</span>, <span class="at">add_points =</span> <span class="cn">TRUE</span>, <span class="at">point_size =</span> <span class="fl">2.2</span>),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="st">"jco"</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">title   =</span> <span class="st">"Mpeg1 Macrophage Marker Mean Kinetics"</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Group Average (Mean ± SEM) Across Recovery Time Points"</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab    =</span> <span class="st">"Days Post-Onset"</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab    =</span> <span class="st">"Mean Protein Expression (LFQ Intensity)"</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>p_tc_mean</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Mean trajectory with horizontal dodge and standard error bars</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>p_tc_mean <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  expr <span class="sc">~</span> Day <span class="sc">|</span> Treatment,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mpeg1,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_lines</span>(</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth        =</span> <span class="fl">1.25</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_se          =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">dodge            =</span> <span class="fl">0.50</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">errorbar_width   =</span> <span class="fl">0.40</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">add_points       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size       =</span> <span class="fl">2.0</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_alpha      =</span> <span class="fl">0.35</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_mean_points =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_point_size  =</span> <span class="fl">3.6</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="st">"jco"</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">title   =</span> <span class="st">"Mpeg1 Macrophage Marker Mean Kinetics"</span>,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Stroke Brain Proteomics — Mean ± SEM Trajectory Across Recovery (xOmicsShiny)"</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab    =</span> <span class="st">"Recovery Timeline Post-Ischemic Stroke"</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab    =</span> <span class="st">"Protein Expression (LFQ Intensity)"</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">7</span>, <span class="dv">14</span>),</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Day 1</span><span class="sc">\n</span><span class="st">(Acute)"</span>, <span class="st">"Day 3</span><span class="sc">\n</span><span class="st">(Subacute)"</span>, <span class="st">"Day 7</span><span class="sc">\n</span><span class="st">(Peak)"</span>, <span class="st">"Day 14</span><span class="sc">\n</span><span class="st">(Resolution)"</span>)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">label_number</span>(<span class="at">scale =</span> <span class="fl">1e-3</span>, <span class="at">suffix =</span> <span class="st">"k"</span>),</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>),</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.02</span>, <span class="fl">0.12</span>))</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="st">"label"</span>, <span class="at">x =</span> <span class="dv">7</span>, <span class="at">y =</span> <span class="dv">43000</span>,</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="st">"Peak Infiltration</span><span class="sc">\n</span><span class="st">(Day 7: +323% vs Sham, p &lt; 0.001)"</span>,</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">3.2</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">color =</span> <span class="st">"#CD534C"</span>,</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"#FFF8F8"</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"top"</span>,</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.justification =</span> <span class="st">"left"</span>,</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major.y =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"grey92"</span>, <span class="at">linewidth =</span> <span class="fl">0.4</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>),</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fl">9.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">lineheight =</span> <span class="fl">0.9</span>)</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>p_tc_mean</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="06-biomarkers-and-mcid_files/figure-html/timecourse-mean-demo-1.png" class="img-fluid figure-img" width="2400"></p>
+<p><img src="06-biomarkers-and-mcid_files/figure-html/timecourse-mean-demo-1.png" class="img-fluid figure-img" width="2550"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Alternatively, <code>show_ribbon = TRUE</code> provides continuous semi-transparent confidence envelopes around each treatment path:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Smooth shaded mean ± SEM ribbon trajectories</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>p_tc_ribbon <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  expr <span class="sc">~</span> Day <span class="sc">|</span> Treatment,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mpeg1,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_lines</span>(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth        =</span> <span class="fl">1.3</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_ribbon      =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ribbon_alpha     =</span> <span class="fl">0.18</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">add_points       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size       =</span> <span class="fl">1.8</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_alpha      =</span> <span class="fl">0.25</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_mean_points =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_point_size  =</span> <span class="fl">3.4</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="st">"jco"</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">title   =</span> <span class="st">"Mpeg1 Trajectory with Continuous SEM Confidence Bands"</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Shaded Confidence Bands Displaying Between-Animal Dispersion"</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab    =</span> <span class="st">"Days Post-Onset"</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab    =</span> <span class="st">"Protein Expression (LFQ Intensity)"</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">7</span>, <span class="dv">14</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Day 1"</span>, <span class="st">"Day 3"</span>, <span class="st">"Day 7"</span>, <span class="st">"Day 14"</span>)) <span class="sc">+</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="fu">label_number</span>(<span class="at">scale =</span> <span class="fl">1e-3</span>, <span class="at">suffix =</span> <span class="st">"k"</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>)) <span class="sc">+</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.82</span>),</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="fu">alpha</span>(<span class="st">"white"</span>, <span class="fl">0.85</span>), <span class="at">color =</span> <span class="st">"grey85"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>p_tc_ribbon</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="06-biomarkers-and-mcid_files/figure-html/timecourse-ribbon-demo-1.png" class="img-fluid figure-img" width="2550"></p>
 </figure>
 </div>
 </div>
@@ -1052,146 +1125,211 @@ window.Quarto = {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Longitudinal Biomarkers and Clinical Meaningfulness (MCID)</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>Statistical significance in biomarker changes does not automatically establish clinical benefit. This chapter covers Minimally Clinically Important Difference (MCID) visualizations, patient response trajectories across clinical severity bands, and real longitudinal proteomics timecourses.</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Minimally Clinically Important Difference: `type = "mcid"`</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>The Minimally Clinically Important Difference (MCID) defines the smallest change on a clinical score or patient-reported outcome that patients perceive as beneficial:</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>$$\text{Responder} = \mathbb{I}(\Delta \text{Score}_i \ge \text{MCID})$$</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>The MCID Dumbbell Plot connects observed clinical effect estimates to validated instrument thresholds (e.g. FACT-G, QLQ-C30, Pain NRS), scaling point glyphs by sample size ($N_{\text{treated}}$) and sorting endpoints by their effect-to-MCID ratio:</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="in">```{r mcid-demo, fig.width=8.5, fig.height=5.2}</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>mcid_oncology <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">Endpoint =</span> <span class="fu">c</span>(<span class="st">"FACT-G QoL (Anti-PD1)"</span>, <span class="st">"Pain NRS (Analgesic Add-on)"</span>,</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Fatigue Score (Exercise Co-care)"</span>, <span class="st">"QLQ-C30 Physical (Anti-PD1)"</span>,</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Appetite Loss (Standard Care)"</span>),</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimate =</span> <span class="fu">c</span>(<span class="fl">8.5</span>, <span class="fl">3.4</span>, <span class="fl">4.2</span>, <span class="fl">11.2</span>, <span class="fl">1.8</span>),</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">MCID     =</span> <span class="fu">c</span>(<span class="fl">5.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>,  <span class="fl">8.0</span>, <span class="fl">4.0</span>),</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">N        =</span> <span class="fu">c</span>(<span class="dv">520</span>, <span class="dv">380</span>, <span class="dv">240</span>,  <span class="dv">510</span>, <span class="dv">190</span>),</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">Category =</span> <span class="fu">c</span>(<span class="st">"Immunotherapy Exceeding MCID"</span>, <span class="st">"Adjuvant Exceeding MCID"</span>,</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Supportive Care Exceeding MCID"</span>, <span class="st">"Immunotherapy Exceeding MCID"</span>,</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Standard Care Below MCID"</span>)</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>p_mcid <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  Estimate <span class="sc">~</span> Endpoint,</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mcid_oncology,</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_mcid</span>(</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">mcid          =</span> <span class="st">"MCID"</span>,</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_treated     =</span> <span class="st">"N"</span>,</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">category      =</span> <span class="st">"Category"</span>,</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">sort_by_ratio =</span> <span class="cn">TRUE</span></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Minimal Clinically Important Difference (MCID) Evaluation"</span>,</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Comparing observed clinical effects to validated instrument thresholds"</span>,</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Absolute Effect Estimate (|estimate|)"</span></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>p_mcid</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## Longitudinal Trajectories with Severity Bands: `type = "trajectory"`</span></span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>Patient biomarkers exhibit substantial between-subject variability. <span class="in">`type_trajectory()`</span> overlays semi-transparent individual patient profiles onto shaded reference severity bands (e.g., Normal, Elevated, Critical), anchored by a bold group mean ribbon:</span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{r trajectory-demo, fig.width=8.5, fig.height=5.5}</span></span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>n_patients <span class="ot">&lt;-</span> <span class="dv">20</span></span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>visits <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Baseline"</span>, <span class="st">"Cycle 2"</span>, <span class="st">"Cycle 4"</span>, <span class="st">"Cycle 6"</span>, <span class="st">"Follow-up"</span>)</span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>traj_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Patient =</span> <span class="fu">paste0</span>(<span class="st">"PT-"</span>, <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, <span class="dv">1</span><span class="sc">:</span>n_patients)), <span class="at">Visit =</span> visits)</span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate biomarker decline under targeted therapy</span></span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>base_vals <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">runif</span>(n_patients, <span class="dv">55</span>, <span class="dv">90</span>), <span class="at">each =</span> <span class="fu">length</span>(visits))</span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>decay_vals <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">15</span>, <span class="dv">32</span>, <span class="dv">48</span>, <span class="dv">55</span>), <span class="at">times =</span> n_patients)</span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>noise <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(traj_df), <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">5</span>)</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>traj_df<span class="sc">$</span>Marker <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="dv">2</span>, <span class="fu">pmin</span>(<span class="dv">100</span>, base_vals <span class="sc">-</span> decay_vals <span class="sc">+</span> noise))</span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"science"</span>)</span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>p_traj <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>  Marker <span class="sc">~</span> Visit <span class="sc">|</span> Patient,</span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> traj_df,</span>
-<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_trajectory</span>(</span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">severity_bands  =</span> <span class="fu">list</span>(<span class="at">Normal =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">25</span>), <span class="at">Elevated =</span> <span class="fu">c</span>(<span class="dv">25</span>, <span class="dv">50</span>), <span class="at">Critical =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">100</span>)),</span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">severity_colors =</span> <span class="fu">c</span>(<span class="at">Normal =</span> <span class="st">"#E8F8F5"</span>, <span class="at">Elevated =</span> <span class="st">"#FEF9E7"</span>, <span class="at">Critical =</span> <span class="st">"#FADBD8"</span>),</span>
-<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_mean       =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_ci         =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_n          =</span> <span class="cn">TRUE</span></span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Longitudinal Biomarker Response Trajectories"</span>,</span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Circulating Protein Dynamics with Reference Severity Stratification"</span>,</span>
-<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="st">"Biomarker Concentration (ng/mL)"</span></span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
-<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="fl">5.5</span>, <span class="dv">22</span>, <span class="fl">5.5</span>, <span class="fl">5.5</span>, <span class="st">"pt"</span>))</span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>p_traj</span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a><span class="fu">## Time-Course Translational Proteomics (xOmicsShiny Dataset)</span></span>
-<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>Using the bundled <span class="in">`StrokeBrain_TimeCourse.RData`</span> dataset, we track the temporal kinetics of the macrophage/microglia activation marker *Mpeg1* across recovery time points in ischemic stroke (StrkIp), sham surgery (ShamIp), and naive control (StrkC):</span>
-<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a><span class="in">```{r timecourse-stroke-demo, fig.width=8.0, fig.height=5.2}</span></span>
-<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>stroke_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"StrokeBrain_TimeCourse.RData"</span>, <span class="at">package =</span> <span class="st">"cliomicplot"</span>)</span>
-<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>stroke_env <span class="ot">&lt;-</span> <span class="fu">new.env</span>()</span>
-<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(stroke_path, <span class="at">envir =</span> stroke_env)</span>
-<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge gene annotations</span></span>
-<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>stroke_long <span class="ot">&lt;-</span> <span class="fu">merge</span>(</span>
-<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>  stroke_env<span class="sc">$</span>data_long,</span>
-<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>  stroke_env<span class="sc">$</span>ProteinGeneName[, <span class="fu">c</span>(<span class="st">"UniqueID"</span>, <span class="st">"Gene.Name"</span>)],</span>
-<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"UniqueID"</span>,</span>
-<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>  <span class="at">all.x =</span> <span class="cn">TRUE</span></span>
-<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for Mpeg1 microglia marker and identify individual mouse replicates</span></span>
-<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>mpeg1 <span class="ot">&lt;-</span> <span class="fu">subset</span>(stroke_long, Gene.Name <span class="sc">==</span> <span class="st">"Mpeg1"</span>)</span>
-<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>mpeg1<span class="sc">$</span>Day <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(mpeg1<span class="sc">$</span>conc)</span>
-<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>mpeg1<span class="sc">$</span>Treatment <span class="ot">&lt;-</span> mpeg1<span class="sc">$</span>treatment</span>
-<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>mpeg1 <span class="ot">&lt;-</span> mpeg1[<span class="fu">order</span>(mpeg1<span class="sc">$</span>Treatment, mpeg1<span class="sc">$</span>Day, mpeg1<span class="sc">$</span>sampleid), ]</span>
-<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>mpeg1<span class="sc">$</span>Individual <span class="ot">&lt;-</span> <span class="fu">paste0</span>(mpeg1<span class="sc">$</span>Treatment, <span class="st">"_Mouse"</span>, <span class="fu">ave</span>(<span class="fu">seq_len</span>(<span class="fu">nrow</span>(mpeg1)), mpeg1<span class="sc">$</span>Treatment, mpeg1<span class="sc">$</span>Day, <span class="at">FUN =</span> seq_along))</span>
-<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"science"</span>)</span>
-<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 line for each individual mouse replicate</span></span>
-<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>p_tc <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>  expr <span class="sc">~</span> Day <span class="sc">|</span> Treatment,</span>
-<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mpeg1,</span>
-<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"Individual"</span>,</span>
-<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_lines</span>(<span class="at">linewidth =</span> <span class="fl">1.1</span>, <span class="at">add_points =</span> <span class="cn">TRUE</span>, <span class="at">point_size =</span> <span class="fl">2.4</span>),</span>
-<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="st">"jco"</span>,</span>
-<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a>  <span class="at">title   =</span> <span class="st">"Mpeg1 Macrophage Marker Time Course"</span>,</span>
-<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Stroke Brain Proteomics — Individual Mouse Replicate Trajectories (Days 1 to 28)"</span>,</span>
-<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab    =</span> <span class="st">"Days Post-Onset"</span>,</span>
-<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab    =</span> <span class="st">"Protein Expression (LFQ Intensity)"</span></span>
-<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a>p_tc</span>
-<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a>When evaluating treatment-level pharmacokinetics without individual profile tracking, <span class="in">`type_lines()`</span> automatically calculates the group mean trajectory and overlays standard error bars:</span>
-<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a><span class="in">```{r timecourse-mean-demo, fig.width=8.0, fig.height=5.2}</span></span>
-<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a><span class="co"># Mean trajectory with standard error bars across recovery time points</span></span>
-<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>p_tc_mean <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a>  expr <span class="sc">~</span> Day <span class="sc">|</span> Treatment,</span>
-<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mpeg1,</span>
-<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_lines</span>(<span class="at">linewidth =</span> <span class="fl">1.3</span>, <span class="at">show_se =</span> <span class="cn">TRUE</span>, <span class="at">add_points =</span> <span class="cn">TRUE</span>, <span class="at">point_size =</span> <span class="fl">2.2</span>),</span>
-<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="st">"jco"</span>,</span>
-<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>  <span class="at">title   =</span> <span class="st">"Mpeg1 Macrophage Marker Mean Kinetics"</span>,</span>
-<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Group Average (Mean ± SEM) Across Recovery Time Points"</span>,</span>
-<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab    =</span> <span class="st">"Days Post-Onset"</span>,</span>
-<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab    =</span> <span class="st">"Mean Protein Expression (LFQ Intensity)"</span></span>
-<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>p_tc_mean</span>
-<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Longitudinal Biomarkers and Clinical Meaningfulness (MCID)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>Statistical significance in biomarker changes does not automatically establish clinical benefit. This chapter covers Minimally Clinically Important Difference (MCID) visualizations, patient response trajectories across clinical severity bands, and real longitudinal proteomics timecourses.</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Minimally Clinically Important Difference: `type = "mcid"`</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>The Minimally Clinically Important Difference (MCID) defines the smallest change on a clinical score or patient-reported outcome that patients perceive as beneficial:</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>$$\text{Responder} = \mathbb{I}(\Delta \text{Score}_i \ge \text{MCID})$$</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>The MCID Dumbbell Plot connects observed clinical effect estimates to validated instrument thresholds (e.g. FACT-G, QLQ-C30, Pain NRS), scaling point glyphs by sample size ($N_{\text{treated}}$) and sorting endpoints by their effect-to-MCID ratio:</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="in">```{r mcid-demo, fig.width=8.5, fig.height=5.2}</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>mcid_oncology <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">Endpoint =</span> <span class="fu">c</span>(<span class="st">"FACT-G QoL (Anti-PD1)"</span>, <span class="st">"Pain NRS (Analgesic Add-on)"</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Fatigue Score (Exercise Co-care)"</span>, <span class="st">"QLQ-C30 Physical (Anti-PD1)"</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Appetite Loss (Standard Care)"</span>),</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimate =</span> <span class="fu">c</span>(<span class="fl">8.5</span>, <span class="fl">3.4</span>, <span class="fl">4.2</span>, <span class="fl">11.2</span>, <span class="fl">1.8</span>),</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">MCID     =</span> <span class="fu">c</span>(<span class="fl">5.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span>,  <span class="fl">8.0</span>, <span class="fl">4.0</span>),</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">N        =</span> <span class="fu">c</span>(<span class="dv">520</span>, <span class="dv">380</span>, <span class="dv">240</span>,  <span class="dv">510</span>, <span class="dv">190</span>),</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">Category =</span> <span class="fu">c</span>(<span class="st">"Immunotherapy Exceeding MCID"</span>, <span class="st">"Adjuvant Exceeding MCID"</span>,</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Supportive Care Exceeding MCID"</span>, <span class="st">"Immunotherapy Exceeding MCID"</span>,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Standard Care Below MCID"</span>)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>p_mcid <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  Estimate <span class="sc">~</span> Endpoint,</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mcid_oncology,</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_mcid</span>(</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">mcid          =</span> <span class="st">"MCID"</span>,</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_treated     =</span> <span class="st">"N"</span>,</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">category      =</span> <span class="st">"Category"</span>,</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">sort_by_ratio =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Minimal Clinically Important Difference (MCID) Evaluation"</span>,</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Comparing observed clinical effects to validated instrument thresholds"</span>,</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Absolute Effect Estimate (|estimate|)"</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>p_mcid</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="fu">## Longitudinal Trajectories with Severity Bands: `type = "trajectory"`</span></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>Patient biomarkers exhibit substantial between-subject variability. <span class="in">`type_trajectory()`</span> overlays semi-transparent individual patient profiles onto shaded reference severity bands (e.g., Normal, Elevated, Critical), anchored by a bold group mean ribbon:</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{r trajectory-demo, fig.width=8.5, fig.height=5.5}</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>n_patients <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>visits <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Baseline"</span>, <span class="st">"Cycle 2"</span>, <span class="st">"Cycle 4"</span>, <span class="st">"Cycle 6"</span>, <span class="st">"Follow-up"</span>)</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>traj_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Patient =</span> <span class="fu">paste0</span>(<span class="st">"PT-"</span>, <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, <span class="dv">1</span><span class="sc">:</span>n_patients)), <span class="at">Visit =</span> visits)</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate biomarker decline under targeted therapy</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>base_vals <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">runif</span>(n_patients, <span class="dv">55</span>, <span class="dv">90</span>), <span class="at">each =</span> <span class="fu">length</span>(visits))</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>decay_vals <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">15</span>, <span class="dv">32</span>, <span class="dv">48</span>, <span class="dv">55</span>), <span class="at">times =</span> n_patients)</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>noise <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(traj_df), <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">5</span>)</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>traj_df<span class="sc">$</span>Marker <span class="ot">&lt;-</span> <span class="fu">pmax</span>(<span class="dv">2</span>, <span class="fu">pmin</span>(<span class="dv">100</span>, base_vals <span class="sc">-</span> decay_vals <span class="sc">+</span> noise))</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"science"</span>)</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>p_traj <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>  Marker <span class="sc">~</span> Visit <span class="sc">|</span> Patient,</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> traj_df,</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_trajectory</span>(</span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">severity_bands  =</span> <span class="fu">list</span>(<span class="at">Normal =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">25</span>), <span class="at">Elevated =</span> <span class="fu">c</span>(<span class="dv">25</span>, <span class="dv">50</span>), <span class="at">Critical =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">100</span>)),</span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">severity_colors =</span> <span class="fu">c</span>(<span class="at">Normal =</span> <span class="st">"#E8F8F5"</span>, <span class="at">Elevated =</span> <span class="st">"#FEF9E7"</span>, <span class="at">Critical =</span> <span class="st">"#FADBD8"</span>),</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_mean       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_ci         =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_n          =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Longitudinal Biomarker Response Trajectories"</span>,</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Circulating Protein Dynamics with Reference Severity Stratification"</span>,</span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="st">"Biomarker Concentration (ng/mL)"</span></span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="fl">5.5</span>, <span class="dv">22</span>, <span class="fl">5.5</span>, <span class="fl">5.5</span>, <span class="st">"pt"</span>))</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>p_traj</span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a><span class="fu">## Time-Course Translational Proteomics (xOmicsShiny Dataset)</span></span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>Using the bundled <span class="in">`StrokeBrain_TimeCourse.RData`</span> dataset, we track the temporal kinetics of the macrophage/microglia activation marker *Mpeg1* across recovery time points in ischemic stroke (StrkIp), sham surgery (ShamIp), and naive control (StrkC):</span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a><span class="in">```{r timecourse-stroke-demo, fig.width=8.0, fig.height=5.2}</span></span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>stroke_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"StrokeBrain_TimeCourse.RData"</span>, <span class="at">package =</span> <span class="st">"cliomicplot"</span>)</span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>stroke_env <span class="ot">&lt;-</span> <span class="fu">new.env</span>()</span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(stroke_path, <span class="at">envir =</span> stroke_env)</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge gene annotations</span></span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a>stroke_long <span class="ot">&lt;-</span> <span class="fu">merge</span>(</span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>  stroke_env<span class="sc">$</span>data_long,</span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a>  stroke_env<span class="sc">$</span>ProteinGeneName[, <span class="fu">c</span>(<span class="st">"UniqueID"</span>, <span class="st">"Gene.Name"</span>)],</span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="st">"UniqueID"</span>,</span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a>  <span class="at">all.x =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for Mpeg1 microglia marker and identify individual mouse replicates</span></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a>mpeg1 <span class="ot">&lt;-</span> <span class="fu">subset</span>(stroke_long, Gene.Name <span class="sc">==</span> <span class="st">"Mpeg1"</span>)</span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a>mpeg1<span class="sc">$</span>Day <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(mpeg1<span class="sc">$</span>conc)</span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>mpeg1<span class="sc">$</span>Treatment <span class="ot">&lt;-</span> mpeg1<span class="sc">$</span>treatment</span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a>mpeg1 <span class="ot">&lt;-</span> mpeg1[<span class="fu">order</span>(mpeg1<span class="sc">$</span>Treatment, mpeg1<span class="sc">$</span>Day, mpeg1<span class="sc">$</span>sampleid), ]</span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>mpeg1<span class="sc">$</span>Individual <span class="ot">&lt;-</span> <span class="fu">paste0</span>(mpeg1<span class="sc">$</span>Treatment, <span class="st">"_Mouse"</span>, <span class="fu">ave</span>(<span class="fu">seq_len</span>(<span class="fu">nrow</span>(mpeg1)), mpeg1<span class="sc">$</span>Treatment, mpeg1<span class="sc">$</span>Day, <span class="at">FUN =</span> seq_along))</span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"science"</span>)</span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 line for each individual mouse replicate</span></span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>p_tc <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>  expr <span class="sc">~</span> Day <span class="sc">|</span> Treatment,</span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mpeg1,</span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"Individual"</span>,</span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_lines</span>(<span class="at">linewidth =</span> <span class="fl">1.1</span>, <span class="at">add_points =</span> <span class="cn">TRUE</span>, <span class="at">point_size =</span> <span class="fl">2.4</span>),</span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="st">"jco"</span>,</span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>  <span class="at">title   =</span> <span class="st">"Mpeg1 Macrophage Marker Time Course"</span>,</span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Stroke Brain Proteomics — Individual Mouse Replicate Trajectories (Days 1 to 28)"</span>,</span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab    =</span> <span class="st">"Days Post-Onset"</span>,</span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab    =</span> <span class="st">"Protein Expression (LFQ Intensity)"</span></span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>p_tc</span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>When evaluating treatment-level pharmacokinetics without individual profile tracking, <span class="in">`type_lines()`</span> automatically calculates the group mean trajectory, offsets overlapping error bars horizontally with <span class="in">`dodge`</span>, highlights mean markers with white borders, and maps individual replicate observations into the background:</span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a><span class="in">```{r timecourse-mean-demo, fig.width=8.5, fig.height=5.6}</span></span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a><span class="co"># Mean trajectory with horizontal dodge and standard error bars</span></span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a>p_tc_mean <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a>  expr <span class="sc">~</span> Day <span class="sc">|</span> Treatment,</span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mpeg1,</span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_lines</span>(</span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth        =</span> <span class="fl">1.25</span>,</span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_se          =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>    <span class="at">dodge            =</span> <span class="fl">0.50</span>,</span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a>    <span class="at">errorbar_width   =</span> <span class="fl">0.40</span>,</span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>    <span class="at">add_points       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size       =</span> <span class="fl">2.0</span>,</span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_alpha      =</span> <span class="fl">0.35</span>,</span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_mean_points =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_point_size  =</span> <span class="fl">3.6</span></span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="st">"jco"</span>,</span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>  <span class="at">title   =</span> <span class="st">"Mpeg1 Macrophage Marker Mean Kinetics"</span>,</span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Stroke Brain Proteomics — Mean ± SEM Trajectory Across Recovery (xOmicsShiny)"</span>,</span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab    =</span> <span class="st">"Recovery Timeline Post-Ischemic Stroke"</span>,</span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab    =</span> <span class="st">"Protein Expression (LFQ Intensity)"</span></span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(</span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">7</span>, <span class="dv">14</span>),</span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Day 1</span><span class="sc">\n</span><span class="st">(Acute)"</span>, <span class="st">"Day 3</span><span class="sc">\n</span><span class="st">(Subacute)"</span>, <span class="st">"Day 7</span><span class="sc">\n</span><span class="st">(Peak)"</span>, <span class="st">"Day 14</span><span class="sc">\n</span><span class="st">(Resolution)"</span>)</span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(</span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">label_number</span>(<span class="at">scale =</span> <span class="fl">1e-3</span>, <span class="at">suffix =</span> <span class="st">"k"</span>),</span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>),</span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>    <span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.02</span>, <span class="fl">0.12</span>))</span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>    <span class="st">"label"</span>, <span class="at">x =</span> <span class="dv">7</span>, <span class="at">y =</span> <span class="dv">43000</span>,</span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="st">"Peak Infiltration</span><span class="sc">\n</span><span class="st">(Day 7: +323% vs Sham, p &lt; 0.001)"</span>,</span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">3.2</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>, <span class="at">color =</span> <span class="st">"#CD534C"</span>,</span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"#FFF8F8"</span></span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"top"</span>,</span>
+<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.justification =</span> <span class="st">"left"</span>,</span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major.y =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"grey92"</span>, <span class="at">linewidth =</span> <span class="fl">0.4</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>),</span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fl">9.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">lineheight =</span> <span class="fl">0.9</span>)</span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>p_tc_mean</span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a>Alternatively, <span class="in">`show_ribbon = TRUE`</span> provides continuous semi-transparent confidence envelopes around each treatment path:</span>
+<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a><span class="in">```{r timecourse-ribbon-demo, fig.width=8.5, fig.height=5.2}</span></span>
+<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a><span class="co"># Smooth shaded mean ± SEM ribbon trajectories</span></span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a>p_tc_ribbon <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a>  expr <span class="sc">~</span> Day <span class="sc">|</span> Treatment,</span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> mpeg1,</span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_lines</span>(</span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth        =</span> <span class="fl">1.3</span>,</span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_ribbon      =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>    <span class="at">ribbon_alpha     =</span> <span class="fl">0.18</span>,</span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a>    <span class="at">add_points       =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size       =</span> <span class="fl">1.8</span>,</span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_alpha      =</span> <span class="fl">0.25</span>,</span>
+<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_mean_points =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_point_size  =</span> <span class="fl">3.4</span></span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="st">"jco"</span>,</span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>  <span class="at">title   =</span> <span class="st">"Mpeg1 Trajectory with Continuous SEM Confidence Bands"</span>,</span>
+<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Shaded Confidence Bands Displaying Between-Animal Dispersion"</span>,</span>
+<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab    =</span> <span class="st">"Days Post-Onset"</span>,</span>
+<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab    =</span> <span class="st">"Protein Expression (LFQ Intensity)"</span></span>
+<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">7</span>, <span class="dv">14</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Day 1"</span>, <span class="st">"Day 3"</span>, <span class="st">"Day 7"</span>, <span class="st">"Day 14"</span>)) <span class="sc">+</span></span>
+<span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="fu">label_number</span>(<span class="at">scale =</span> <span class="fl">1e-3</span>, <span class="at">suffix =</span> <span class="st">"k"</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="cn">NA</span>)) <span class="sc">+</span></span>
+<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.82</span>),</span>
+<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="fu">alpha</span>(<span class="st">"white"</span>, <span class="fl">0.85</span>), <span class="at">color =</span> <span class="st">"grey85"</span>, <span class="at">linewidth =</span> <span class="fl">0.3</span>)</span>
+<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a>p_tc_ribbon</span>
+<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
