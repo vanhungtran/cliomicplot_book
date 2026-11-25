@@ -1,6 +1,6 @@
-# Statistical Genetics and Microbiome GWAS (mGWAS)
+# Statistical Genetics and Multi-Omics Functional Mapping
 
-Genome-Wide Association Studies (GWAS) and Microbial GWAS (mGWAS) evaluate variant associations with clinical phenotypes or microbial traits across chromosomes. `cliomicplot` provides single-chromosome and multi-chromosome Manhattan architectures.
+Genome-Wide Association Studies (GWAS), Microbial GWAS (mGWAS), and Proteomic Quantitative Trait Loci (pQTL) map genetic variants to organism-level phenotypes, microbial virulence, and molecular cellular targets. `cliomicplot` provides chromosomal Manhattan architectures, two-sample Mendelian Randomization colocalization matrices, single-cell lineage composition tracks, and paired intervention trajectories.
 
 ## Multi-Chromosome Human GWAS: `p ~ bp | chr`
 
@@ -80,4 +80,121 @@ p_mgwas <- cliplot(
   title  = "Microbial GWAS: Virulence Variants Associated with Disease Severity"
 )
 p_mgwas
+```
+
+## Cis-pQTL Mendelian Randomization and Colocalization: `type_mr_coloc()`
+
+Translating GWAS risk variants into actionable therapeutic targets requires distinguishing causal proteins from bystander biomarkers. Two-sample Mendelian Randomization (MR) uses cis-protein quantitative trait loci (cis-pQTLs) as genetic instruments:
+
+$$b_{\text{MR}} = \frac{\hat{\beta}_{\text{outcome}}}{\hat{\beta}_{\text{exposure}}}$$
+
+The standard error is estimated using the second-order delta method:
+
+$$\text{SE}(b_{\text{MR}}) \approx \sqrt{\frac{\sigma_y^2}{\beta_x^2} + \frac{\beta_y^2 \sigma_x^2}{\beta_x^4}}$$
+
+Because high linkage disequilibrium (LD) can cause distinct causal variants to appear correlated (especially within the Major Histocompatibility Complex, MHC/HLA), Bayesian colocalization (*coloc.abf*) calculates posterior probabilities for five competing hypotheses:
+
+- **$H_0$**: Neither trait has a genetic association in the region.
+- **$H_1$ / $H_2$**: Only the molecular exposure ($H_1$) or disease outcome ($H_2$) is associated.
+- **$H_3$**: Both traits are associated, but driven by **two distinct causal variants** ($\text{PP.H3} \ge 0.80$). This indicates an LD artifact or pleiotropic confounding.
+- **$H_4$**: Both traits share **one common causal variant** ($\text{PP.H4} \ge 0.80$).
+
+`type_mr_coloc()` integrates these statistical criteria into a publication-ready matrix:
+
+```{r pqtl-mr-coloc-demo, fig.width=8.8, fig.height=6.2}
+data(pqtl_mr_coloc)
+
+# Cis-pQTL MR & Colocalization heatmap (UKB-PPP to FinnGen R12)
+p_mr <- cliplot(
+  symbol ~ label_short,
+  data = pqtl_mr_coloc,
+  type = type_mr_coloc(
+    set_col              = "set_label",
+    family_col           = "family_label",
+    p_threshold          = 0.05,
+    bonferroni           = TRUE,
+    coloc_threshold      = 0.80,
+    discordant_threshold = 0.80,
+    text_size            = 1.9,
+    glyph_size           = 0.95
+  ),
+  title    = "Cis-pQTL Mendelian Randomization & Colocalization Matrix",
+  subtitle = "Plasma Proteome Signatures of CD8 T-Cell Aging States vs Clinical Endpoints (Terekhova et al., Immunity 2026)",
+  theme    = "minimal"
+)
+p_mr
+```
+
+In this analysis:
+- **IL7R**: Carries robust colocalization ($\text{PP.H4} > 0.95$) with atopic dermatitis ($\text{OR} = 1.075$, $P = 9.3 \times 10^{-13}$), asthma ($\text{OR} = 1.045$, $P = 2.1 \times 10^{-8}$), and psoriasis ($\text{OR} = 1.075$, $P = 2.6 \times 10^{-6}$) through missense variant rs6897932.
+- **CD27**: Associated with increased risk of heart failure ($\text{OR} = 1.178$, $P = 4.7 \times 10^{-6}$, $\text{PP.H4} = 0.990$) via rs25680.
+- **LTB**: Displays extreme significance ($P = 1.2 \times 10^{-29}$ for rheumatoid arthritis, $P = 3.4 \times 10^{-26}$ for type 1 diabetes) but $\text{PP.H3} = 1.000$. Because LTB resides in the MHC, these associations represent LD artifacts and are appropriately displayed in muted italicized gray text.
+
+## Single-Cell Immune Lineage Composition: `type_composition()`
+
+Single-cell transcriptomics often tracks changes in cellular proportions across patient cohorts and treatment arms. However, standard ggplot2 limitations allow only one fill scale per plot, preventing concurrent visualization of cell lineages and patient clinical phenotypes.
+
+`type_composition()` resolves this by plotting stacked leukocyte proportions with an independent phenotypic metadata track along the base of the bars:
+
+```{r cell-composition-demo, fig.width=8.8, fig.height=5.6}
+data(immune_cell_composition)
+
+# Focus on three clinical series (atopic dermatitis, vascular disease, asthma)
+demo_cohorts <- subset(
+  immune_cell_composition,
+  dataset %in% c("GSE183953", "GSE272294", "GSE288147")
+)
+
+p_comp <- cliplot(
+  share ~ gsm,
+  data = demo_cohorts,
+  type = type_composition(
+    lineage_col      = "lineage",
+    track_col        = "group",
+    facet_col        = "dataset",
+    palette          = "nature",
+    lineage_name     = "Leukocyte Lineage",
+    track_name       = "Clinical Cohort / Status",
+    show_percentages = TRUE
+  ),
+  title    = "Single-Cell Leukocyte Composition with Integrated Clinical Phenotype Track",
+  subtitle = "Lineage Fractions Across Allergic and Vascular Blood Series (NCBI GEO)",
+  xlab     = "Individual Blood Libraries (Grouped by Disease Strata)",
+  ylab     = "Percentage of Total Leukocytes"
+)
+p_comp
+```
+
+## Paired Pre-vs-Post Intervention Trajectories: `type_slope()`
+
+For paired clinical cohorts (e.g. patients evaluated before and after targeted biologic therapy or lipid lowering), `type_slope()` provides paired trajectory lines with horizontal reference thresholds:
+
+```{r paired-trajectory-demo, fig.width=8.0, fig.height=4.6}
+# Paired GZMK / GZMB balance in blood before and after treatment
+paired_demo <- data.frame(
+  donor     = rep(paste0("PT", 1:8), each = 2),
+  timepoint = factor(rep(c("Before", "After"), 8), levels = c("Before", "After")),
+  balance   = c(-0.84, -1.41,  -1.80, -0.10,  -2.01, -1.99,  -1.49, -1.52,
+                 0.03,  0.38,   0.44,  0.12,  -0.22, -0.15,   1.49,  1.12),
+  cohort    = rep(c("Atopic Dermatitis (Dupilumab)", "Atherosclerosis (Lipid Lowering)"), each = 8)
+)
+
+p_slope <- cliplot(
+  balance ~ timepoint | cohort,
+  data = paired_demo,
+  type = type_slope(
+    pair                     = "donor",
+    reference_line           = 0,
+    reference_line_linetype  = "dashed",
+    reference_line_linewidth = 0.45,
+    reference_line_color     = "grey50",
+    linewidth                = 0.85,
+    point_size               = 2.8
+  ),
+  title    = "Paired Cellular Balance Before and After Therapy",
+  subtitle = "Horizontal Zero Line Marks GZMK+ vs GZMB+ Effector-Memory T-Cell Equivalence",
+  xlab     = "Clinical Time Point",
+  ylab     = expression(log[2]~"(GZMK+ / GZMB+ Ratio)")
+)
+p_slope
 ```
