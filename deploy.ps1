@@ -7,6 +7,8 @@ Write-Host " Building Clinical & Omics Data Visualization Guide Book   " -Foregr
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host ""
 
+Set-Location $PSScriptRoot
+
 # Ensure Quarto uses working R 4.6.1
 if (Test-Path "C:\Program Files\R\R-4.6.1\bin\x64\Rscript.exe") {
     $env:QUARTO_R = "C:\Program Files\R\R-4.6.1\bin\x64\Rscript.exe"

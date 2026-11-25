@@ -109,6 +109,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -340,6 +383,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#style-6-concentric-orbital-ring-architecture" id="toc-style-6-concentric-orbital-ring-architecture" class="nav-link" data-scroll-target="#style-6-concentric-orbital-ring-architecture"><span class="header-section-number">12.2.1</span> Style 6: Concentric Orbital Ring Architecture</a></li>
   <li><a href="#style-7-bipolar-magnetic-dipole-layout" id="toc-style-7-bipolar-magnetic-dipole-layout" class="nav-link" data-scroll-target="#style-7-bipolar-magnetic-dipole-layout"><span class="header-section-number">12.2.2</span> Style 7: Bipolar Magnetic Dipole Layout</a></li>
   <li><a href="#style-8-science-jewel-toned-palette" id="toc-style-8-science-jewel-toned-palette" class="nav-link" data-scroll-target="#style-8-science-jewel-toned-palette"><span class="header-section-number">12.2.3</span> Style 8: Science Jewel-Toned Palette</a></li>
+  <li><a href="#style-9-modular-polygon-ring-layout-polygonrrclusterg-type_polygon_network" id="toc-style-9-modular-polygon-ring-layout-polygonrrclusterg-type_polygon_network" class="nav-link" data-scroll-target="#style-9-modular-polygon-ring-layout-polygonrrclusterg-type_polygon_network"><span class="header-section-number">12.2.4</span> Style 9: Modular Polygon Ring Layout (<code>PolygonRrClusterG</code>, <code>type_polygon_network()</code>)</a></li>
+  <li><a href="#style-10-transkingdom-multi-omics-bipartite-networks-type_bipartite" id="toc-style-10-transkingdom-multi-omics-bipartite-networks-type_bipartite" class="nav-link" data-scroll-target="#style-10-transkingdom-multi-omics-bipartite-networks-type_bipartite"><span class="header-section-number">12.2.5</span> Style 10: Transkingdom &amp; Multi-Omics Bipartite Networks (<code>type_bipartite()</code>)</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/12-topological-network-styles.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -536,6 +581,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div>
 <figure class="figure">
 <p><img src="12-topological-network-styles_files/figure-html/science-jewel-demo-1.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="style-9-modular-polygon-ring-layout-polygonrrclusterg-type_polygon_network" class="level3" data-number="12.2.4">
+<h3 data-number="12.2.4" class="anchored" data-anchor-id="style-9-modular-polygon-ring-layout-polygonrrclusterg-type_polygon_network"><span class="header-section-number">12.2.4</span> Style 9: Modular Polygon Ring Layout (<code>PolygonRrClusterG</code>, <code>type_polygon_network()</code>)</h3>
+<p>Community co-occurrence networks frequently partition into distinct functional modules. Placing module members along circular rings positioned at the vertices of a macro-polygon (<code>PolygonClusterG</code> and <code>PolygonRrClusterG</code> in <code>ggClusterNet 2</code>, Wen et al.&nbsp;<em>iMeta</em> 2025) cleanly separates dense intra-module edges from inter-cluster links.</p>
+<p>In <code>type_polygon_network(adaptive_radius = TRUE)</code>, module ring radii scale with <span class="math inline">\sqrt{N_k / \bar{N}}</span>, allocating area proportional to module richness:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p_poly <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">type  =</span> <span class="fu">type_polygon_network</span>(<span class="at">adaptive_radius =</span> <span class="cn">TRUE</span>, <span class="at">label_size =</span> <span class="fl">2.4</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Modular Polygon Ring Co-Occurrence Topology (PolygonRrClusterG)"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>p_poly</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12-topological-network-styles_files/figure-html/polygon-ring-demo-1.png" class="img-fluid figure-img" width="2250"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="style-10-transkingdom-multi-omics-bipartite-networks-type_bipartite" class="level3" data-number="12.2.5">
+<h3 data-number="12.2.5" class="anchored" data-anchor-id="style-10-transkingdom-multi-omics-bipartite-networks-type_bipartite"><span class="header-section-number">12.2.5</span> Style 10: Transkingdom &amp; Multi-Omics Bipartite Networks (<code>type_bipartite()</code>)</h3>
+<p>Cross-domain associations—such as interactions between bacterial and fungal communities, or gut microbiota coupled with serum metabolomics—require bipartite layouts with signed correlation edges:</p>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>p_bip_net <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">type  =</span> <span class="fu">type_bipartite</span>(<span class="at">domain_a =</span> <span class="st">"Gut Microbiota"</span>, <span class="at">domain_b =</span> <span class="st">"Serum Metabolites"</span>, <span class="at">layout =</span> <span class="st">"bipolar"</span>),</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Transkingdom Cross-Domain Network (Microbiota vs Metabolites)"</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>p_bip_net</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="12-topological-network-styles_files/figure-html/bipartite-style-demo-1.png" class="img-fluid figure-img" width="2400"></p>
 </figure>
 </div>
 </div>
@@ -1018,88 +1106,114 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Multi-Group Comparative Networks Across 8 Journal Styles</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>Visualizing topological differences across multiple conditions requires layout algorithms that distinguish intra-network connections from cross-network alignments. <span class="in">`cliplot_cross_network_graph()`</span> implements 8 distinct journal layout presets.</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## The 8 Topological Layout Styles</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Preset <span class="pp">|</span> Layout Architecture <span class="pp">|</span> Target Application <span class="pp">|</span> Visual Characteristics <span class="pp">|</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|:---|:---|</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`force`</span> <span class="pp">|</span> Force-directed Fruchterman-Reingold <span class="pp">|</span> Organic community clustering <span class="pp">|</span> Spring-embedded repulsion, edge-weighted bundling <span class="pp">|</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`hierarchical`</span><span class="pp">|</span> Stratified flow / tree <span class="pp">|</span> Upstream/downstream causal pathways <span class="pp">|</span> Linear vertical/horizontal flow across tiers <span class="pp">|</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`bipartite`</span> <span class="pp">|</span> Dual parallel vertical axes <span class="pp">|</span> Host-microbe or Drug-target pairing <span class="pp">|</span> Two opposing columns with cross-links between them <span class="pp">|</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`radial`</span> <span class="pp">|</span> Central hub-and-spoke <span class="pp">|</span> Keystone taxa / master regulator analysis<span class="pp">|</span> Central keystone circle with peripheral satellites <span class="pp">|</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`lancet`</span> <span class="pp">|</span> Lancet minimal editorial <span class="pp">|</span> High-impact clinical journals <span class="pp">|</span> Muted grey palette, ultra-clean monochrome framing <span class="pp">|</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`concentric`</span> <span class="pp">|</span> Concentric circular orbital rings <span class="pp">|</span> Multi-layered molecular hierarchy <span class="pp">|</span> Dashed orbital guide tracks, radial alignment <span class="pp">|</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`bipolar`</span> <span class="pp">|</span> Opposing magnetic dipolar fields <span class="pp">|</span> Case vs Control topological rewiring <span class="pp">|</span> Polar coordinate layout with divergent magnetic poles <span class="pp">|</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`science`</span> <span class="pp">|</span> Jewel-toned Science palette <span class="pp">|</span> *Science*, *Science Advances* <span class="pp">|</span> Sapphire Navy, Ruby Crimson, Emerald, Amethyst <span class="pp">|</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## Node-Level Cross-Network Graph</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{r cross-network-styles-demo, fig.width=8.0, fig.height=7.2}</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate reproducible cross-network graph data</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>demo_net <span class="ot">&lt;-</span> <span class="fu">generate_demo_cross_network</span>()</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Style 1: Force-directed Nature style</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>p_force <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross_edges =</span> demo_net<span class="sc">$</span>cross_edges,</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">level       =</span> <span class="st">"node"</span>,</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset      =</span> <span class="st">"nature"</span>,</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig      =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"Cross-Network Topological Architecture (Nature Style)"</span></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>p_force</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="fu">### Style 6: Concentric Orbital Ring Architecture</span></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{r concentric-demo, fig.width=8.0, fig.height=7.2}</span></span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>p_conc <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross_edges =</span> demo_net<span class="sc">$</span>cross_edges,</span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">level       =</span> <span class="st">"node"</span>,</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset      =</span> <span class="st">"concentric"</span>,</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig      =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"Concentric Circular Multi-Ring Architecture"</span></span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>p_conc</span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="fu">### Style 7: Bipolar Magnetic Dipole Layout</span></span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bipolar-demo, fig.width=8.0, fig.height=7.2}</span></span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>p_bip <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross_edges =</span> demo_net<span class="sc">$</span>cross_edges,</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">level       =</span> <span class="st">"node"</span>,</span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset      =</span> <span class="st">"bipolar"</span>,</span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig      =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"Bipolar Differential Co-Occurrence Network"</span></span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>p_bip</span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="fu">### Style 8: Science Jewel-Toned Palette</span></span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r science-jewel-demo, fig.width=8.0, fig.height=7.2}</span></span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>p_sci <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
-<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross_edges =</span> demo_net<span class="sc">$</span>cross_edges,</span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">level       =</span> <span class="st">"node"</span>,</span>
-<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset      =</span> <span class="st">"science"</span>,</span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig      =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"Jewel-Toned Comparative Network Architecture (Science Style)"</span></span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>p_sci</span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Multi-Group Comparative Networks Across 8 Journal Styles</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>Visualizing topological differences across multiple conditions requires layout algorithms that distinguish intra-network connections from cross-network alignments. <span class="in">`cliplot_cross_network_graph()`</span> implements 8 distinct journal layout presets.</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## The 8 Topological Layout Styles</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Preset <span class="pp">|</span> Layout Architecture <span class="pp">|</span> Target Application <span class="pp">|</span> Visual Characteristics <span class="pp">|</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|:---|:---|</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`force`</span> <span class="pp">|</span> Force-directed Fruchterman-Reingold <span class="pp">|</span> Organic community clustering <span class="pp">|</span> Spring-embedded repulsion, edge-weighted bundling <span class="pp">|</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`hierarchical`</span><span class="pp">|</span> Stratified flow / tree <span class="pp">|</span> Upstream/downstream causal pathways <span class="pp">|</span> Linear vertical/horizontal flow across tiers <span class="pp">|</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`bipartite`</span> <span class="pp">|</span> Dual parallel vertical axes <span class="pp">|</span> Host-microbe or Drug-target pairing <span class="pp">|</span> Two opposing columns with cross-links between them <span class="pp">|</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`radial`</span> <span class="pp">|</span> Central hub-and-spoke <span class="pp">|</span> Keystone taxa / master regulator analysis<span class="pp">|</span> Central keystone circle with peripheral satellites <span class="pp">|</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`lancet`</span> <span class="pp">|</span> Lancet minimal editorial <span class="pp">|</span> High-impact clinical journals <span class="pp">|</span> Muted grey palette, ultra-clean monochrome framing <span class="pp">|</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`concentric`</span> <span class="pp">|</span> Concentric circular orbital rings <span class="pp">|</span> Multi-layered molecular hierarchy <span class="pp">|</span> Dashed orbital guide tracks, radial alignment <span class="pp">|</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`bipolar`</span> <span class="pp">|</span> Opposing magnetic dipolar fields <span class="pp">|</span> Case vs Control topological rewiring <span class="pp">|</span> Polar coordinate layout with divergent magnetic poles <span class="pp">|</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`science`</span> <span class="pp">|</span> Jewel-toned Science palette <span class="pp">|</span> *Science*, *Science Advances* <span class="pp">|</span> Sapphire Navy, Ruby Crimson, Emerald, Amethyst <span class="pp">|</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## Node-Level Cross-Network Graph</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{r cross-network-styles-demo, fig.width=8.0, fig.height=7.2}</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate reproducible cross-network graph data</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>demo_net <span class="ot">&lt;-</span> <span class="fu">generate_demo_cross_network</span>()</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Style 1: Force-directed Nature style</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>p_force <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross_edges =</span> demo_net<span class="sc">$</span>cross_edges,</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">level       =</span> <span class="st">"node"</span>,</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset      =</span> <span class="st">"nature"</span>,</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig      =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"Cross-Network Topological Architecture (Nature Style)"</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>p_force</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="fu">### Style 6: Concentric Orbital Ring Architecture</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{r concentric-demo, fig.width=8.0, fig.height=7.2}</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>p_conc <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross_edges =</span> demo_net<span class="sc">$</span>cross_edges,</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">level       =</span> <span class="st">"node"</span>,</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset      =</span> <span class="st">"concentric"</span>,</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig      =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"Concentric Circular Multi-Ring Architecture"</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>p_conc</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a><span class="fu">### Style 7: Bipolar Magnetic Dipole Layout</span></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bipolar-demo, fig.width=8.0, fig.height=7.2}</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>p_bip <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross_edges =</span> demo_net<span class="sc">$</span>cross_edges,</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">level       =</span> <span class="st">"node"</span>,</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset      =</span> <span class="st">"bipolar"</span>,</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig      =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"Bipolar Differential Co-Occurrence Network"</span></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>p_bip</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a><span class="fu">### Style 8: Science Jewel-Toned Palette</span></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r science-jewel-demo, fig.width=8.0, fig.height=7.2}</span></span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>p_sci <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross_edges =</span> demo_net<span class="sc">$</span>cross_edges,</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">level       =</span> <span class="st">"node"</span>,</span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset      =</span> <span class="st">"science"</span>,</span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>  <span class="at">scifig      =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"Jewel-Toned Comparative Network Architecture (Science Style)"</span></span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>p_sci</span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a><span class="fu">### Style 9: Modular Polygon Ring Layout (`PolygonRrClusterG`, `type_polygon_network()`)</span></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>Community co-occurrence networks frequently partition into distinct functional modules. Placing module members along circular rings positioned at the vertices of a macro-polygon (<span class="in">`PolygonClusterG`</span> and <span class="in">`PolygonRrClusterG`</span> in <span class="in">`ggClusterNet 2`</span>, Wen et al. *iMeta* 2025) cleanly separates dense intra-module edges from inter-cluster links.</span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>In <span class="in">`type_polygon_network(adaptive_radius = TRUE)`</span>, module ring radii scale with $\sqrt{N_k / \bar{N}}$, allocating area proportional to module richness:</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a><span class="in">```{r polygon-ring-demo, fig.width=7.5, fig.height=7.5}</span></span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>p_poly <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>  <span class="at">type  =</span> <span class="fu">type_polygon_network</span>(<span class="at">adaptive_radius =</span> <span class="cn">TRUE</span>, <span class="at">label_size =</span> <span class="fl">2.4</span>),</span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Modular Polygon Ring Co-Occurrence Topology (PolygonRrClusterG)"</span></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>p_poly</span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a><span class="fu">### Style 10: Transkingdom &amp; Multi-Omics Bipartite Networks (`type_bipartite()`)</span></span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>Cross-domain associations—such as interactions between bacterial and fungal communities, or gut microbiota coupled with serum metabolomics—require bipartite layouts with signed correlation edges:</span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bipartite-style-demo, fig.width=8.0, fig.height=6.2}</span></span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>p_bip_net <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">type  =</span> <span class="fu">type_bipartite</span>(<span class="at">domain_a =</span> <span class="st">"Gut Microbiota"</span>, <span class="at">domain_b =</span> <span class="st">"Serum Metabolites"</span>, <span class="at">layout =</span> <span class="st">"bipolar"</span>),</span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Transkingdom Cross-Domain Network (Microbiota vs Metabolites)"</span></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>p_bip_net</span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

@@ -80,3 +80,29 @@ p_sci <- cliplot_cross_network_graph(
 )
 p_sci
 ```
+
+### Style 9: Modular Polygon Ring Layout (`PolygonRrClusterG`, `type_polygon_network()`)
+
+Community co-occurrence networks frequently partition into distinct functional modules. Placing module members along circular rings positioned at the vertices of a macro-polygon (`PolygonClusterG` and `PolygonRrClusterG` in `ggClusterNet 2`, Wen et al. *iMeta* 2025) cleanly separates dense intra-module edges from inter-cluster links.
+
+In `type_polygon_network(adaptive_radius = TRUE)`, module ring radii scale with $\sqrt{N_k / \bar{N}}$, allocating area proportional to module richness:
+
+```{r polygon-ring-demo, fig.width=7.5, fig.height=7.5}
+p_poly <- cliplot(
+  type  = type_polygon_network(adaptive_radius = TRUE, label_size = 2.4),
+  title = "Modular Polygon Ring Co-Occurrence Topology (PolygonRrClusterG)"
+)
+p_poly
+```
+
+### Style 10: Transkingdom & Multi-Omics Bipartite Networks (`type_bipartite()`)
+
+Cross-domain associations—such as interactions between bacterial and fungal communities, or gut microbiota coupled with serum metabolomics—require bipartite layouts with signed correlation edges:
+
+```{r bipartite-style-demo, fig.width=8.0, fig.height=6.2}
+p_bip_net <- cliplot(
+  type  = type_bipartite(domain_a = "Gut Microbiota", domain_b = "Serum Metabolites", layout = "bipolar"),
+  title = "Transkingdom Cross-Domain Network (Microbiota vs Metabolites)"
+)
+p_bip_net
+```

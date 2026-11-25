@@ -75,3 +75,52 @@ cliplot_network_robustness(
   title = "Network Robustness Under Progressive Node Removal"
 )
 ```
+
+## Zi-Pi Keystone Ecological Role Plot: `type = "zipi"`
+
+Keystone taxa play disproportionately vital roles in maintaining community structure. The Zi-Pi classification framework (Guimerà & Amaral, *Nature* 2005; Deng et al., *Science* 2012; Tao Wen et al., *iMeta* 2025) maps within-module connectivity z-score ($Z_i$) against among-module participation coefficient ($P_i$):
+
+- **Within-module connectivity ($Z_i$)**:
+  $$Z_i = \frac{k_{i, s_i} - \bar{k}_{s_i}}{\sigma_{k_{s_i}}}$$
+  where $k_{i, s_i}$ is the degree of node $i$ inside its own module $s_i$, $\bar{k}_{s_i}$ is the mean intra-module degree, and $\sigma_{k_{s_i}}$ is the standard deviation.
+
+- **Participation coefficient ($P_i$)**:
+  $$P_i = 1 - \sum_{s=1}^{N_M} \left( \frac{k_{i, s}}{k_i} \right)^2$$
+  where $k_{i, s}$ is the number of links from node $i$ to module $s$, and $k_i$ is the total degree of node $i$.
+
+Standard cutoffs ($Z = 2.5, P = 0.62$) partition the plane into four topological roles:
+1. **Peripherals** ($Z_i \le 2.5, P_i \le 0.62$): Module specialists with few inter-module links.
+2. **Connectors** ($Z_i \le 2.5, P_i > 0.62$): Generalists linking distinct modules.
+3. **Module hubs** ($Z_i > 2.5, P_i \le 0.62$): Highly connected specialists inside their module.
+4. **Network hubs** ($Z_i > 2.5, P_i > 0.62$): Super-generalists critical to global network integrity.
+
+`type_zipi()` automates role classification, renders soft shaded background quadrants, adds marginal density rugs, and labels keystone taxa with collision-free text:
+
+```{r zipi-book-demo, fig.width=7.5, fig.height=5.2}
+set.seed(42)
+n_taxa <- 45
+zipi_df <- data.frame(
+  taxa   = paste0("ASV_", sprintf("%02d", seq_len(n_taxa))),
+  Zi     = c(rnorm(38, mean = -0.2, sd = 0.9), rnorm(4, mean = 2.9, sd = 0.3), rnorm(3, mean = 2.8, sd = 0.4)),
+  Pi     = c(runif(35, 0.05, 0.55), runif(4, 0.65, 0.85), runif(3, 0.15, 0.45), runif(3, 0.68, 0.92)),
+  Phylum = sample(c("Bacteroidetes", "Firmicutes", "Actinobacteria", "Proteobacteria"), n_taxa, replace = TRUE),
+  stringsAsFactors = FALSE
+)
+
+p_zipi <- cliplot(
+  Zi ~ Pi,
+  data  = zipi_df,
+  type  = type_zipi(point_size = 3.2, label_top = 6),
+  title = "Microbial Keystone Hub Identification (Zi-Pi Role Classification)"
+)
+p_zipi
+```
+
+## Ecological Network Edge-Sign Dynamics: `type = "edge_dynamics"`
+
+The balance of positive co-occurrences (mutualism, cross-feeding, or shared environmental preference) versus negative correlations (competitive exclusion, predation, or niche differentiation) quantifies ecological community stability across clinical phenotypes or treatment arms (Faust & Raes 2012; Wen et al. *iMeta* 2025):
+
+```{r edge-dynamics-book, fig.width=7.0, fig.height=4.8}
+p_edge <- cliplot(type = type_edge_dynamics(mode = "stack"))
+p_edge
+```

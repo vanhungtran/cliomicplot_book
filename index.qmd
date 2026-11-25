@@ -31,7 +31,7 @@ packageVersion("cliomicplot")
 - **Part I — Graphic Grammar and Design System**: The unified `cliplot()` formula syntax, theme resolvers, and journal styling presets conforming to AI4SciFig publication gates.
 - **Part II — Clinical Trials and Survival Analysis**: Time-to-event curves, subgroup treatment effects, oncology response tracking, and minimally clinically important difference (MCID) modeling.
 - **Part III — High-Dimensional Omics Visualizations**: Volcano plots, pathway enrichment running scores, microbiome GWAS Manhattan architectures, and taxonomic dyad sharing.
-- **Part IV — Systems Biology and Coupled Multi-Network Architectures**: Cross-network module overlap ($RF$, Jaccard), multi-group network layouts across 8 journal styles, multi-domain environmental coupling across 7 presets, module preservation, and permutation testing.
+- **Part IV — Systems Biology and Coupled Multi-Network Architectures**: Cross-network module overlap ($RF$, Jaccard), multi-group network layouts across 10 journal styles, modular polygon rings (`PolygonRrClusterG`), transkingdom bipartite networks, triangular environmental Mantel links, Zi-Pi keystone hub classification, ecological edge-sign dynamics, module preservation, and permutation testing.
 - **Part V — Publication Composites and Applied Case Studies**: Figure assembly with `patchwork` and reproducible workflows for atopic dermatitis and immuno-oncology.
 
 ## Reproducibility Setup

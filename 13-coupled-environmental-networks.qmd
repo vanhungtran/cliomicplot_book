@@ -151,3 +151,17 @@ p_env_bip <- cliplot_env_network(
 )
 p_env_bip
 ```
+
+## Triangular Correlation Heatmap with Curved Mantel Links: `type = "mantel_triangle"`
+
+While the 4-corner canvas of `cliplot_env_network()` accommodates up to four independent environmental domains simultaneously, ecological microbiome studies frequently link pairwise environmental variables with target taxonomic phyla using lower-triangular correlation heatmaps and curved Mantel test arcs (`MatCorPlot2` in `ggClusterNet 2`, Wen et al. *iMeta* 2025; `linkET`).
+
+`type_mantel_triangle()` pairs in-tile correlation values ($r$) and significance asterisks with smooth bezier arcs scaled by Mantel correlation magnitude and colored by $p$-value tiers:
+
+```{r mantel-triangle-book, fig.width=8.0, fig.height=5.8}
+p_mantel <- cliplot(
+  type  = type_mantel_triangle(label_size = 2.8, node_size = 3.8),
+  title = "Environmental Factors Coupled with Microbial Phyla (Mantel Correlation)"
+)
+p_mantel
+```
