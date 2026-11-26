@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>20&nbsp; Leakage-Controlled Machine Learning &amp; Multi-Omics Target Prioritization – Clinical and Omics Data Visualization in R</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./19-case-study-nature-communications.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./16-assembling-composites.html">Part V — Publication Composites and Applied Case Studies</a></li><li class="breadcrumb-item"><a href="./20-case-study-leakage-benchmark.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Leakage-Controlled Machine Learning &amp; Multi-Omics Target Prioritization</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Clinical and Omics Data Visualization in R</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/vanhungtran/cliomicplot_book" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I — Graphic Grammar and Design System</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-grammar-and-api.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Graphic Grammar and Core API</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-journal-themes-and-scifig.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Journal Themes and Publication Quality Gates</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II — Clinical Trials and Survival Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-survival-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Survival Analysis and Time-to-Event Graphics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-treatment-effects.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Treatment Effects and Subgroup Forest Plots</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-oncology-trajectories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Oncology Trajectories: Waterfall and Swimmer Plots</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-biomarkers-and-mcid.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Longitudinal Biomarkers and Clinical Meaningfulness (MCID)</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III — High-Dimensional Omics Visualizations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-differential-expression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Differential Expression: Volcano Plots and DEG Contrasts</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-pathway-enrichment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Pathway Enrichment and Multi-Omics Abundance Profiles</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-genomics-and-mgwas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Statistical Genetics and Multi-Omics Functional Mapping</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10-microbiome-and-dyad-sharing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Microbiome Abundance and Dyad Sharing Visualizations</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part IV — Systems Biology and Coupled Multi-Network Architectures</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11-cross-condition-networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Cross-Condition Network Module Comparison and Trait Association</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12-topological-network-styles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Multi-Group Comparative Networks Across 8 Journal Styles</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13-coupled-environmental-networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Central Networks Coupled with Multi-Domain Environmental Heatmaps</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14-preservation-and-robustness.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Module Preservation and Targeted Attack Robustness</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15-empirical-linkage-and-permutations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Empirical Linkage Engines and Permutation Testing</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part V — Publication Composites and Applied Case Studies</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16-assembling-composites.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Assembling Multi-Panel Publication Composites</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./17-case-study-atopic-dermatitis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./18-case-study-cancer-immunotherapy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Case Study: Immuno-Oncology Biomarkers and Trial Endpoints</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./19-case-study-nature-communications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Replicating Multi-Modal Omics: Nature Communications Case Study</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./20-case-study-leakage-benchmark.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Leakage-Controlled Machine Learning &amp; Multi-Omics Target Prioritization</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="2">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#study-architecture-5-tier-data-governance" id="toc-study-architecture-5-tier-data-governance" class="nav-link active" data-scroll-target="#study-architecture-5-tier-data-governance"><span class="header-section-number">20.1</span> 1. Study Architecture &amp; 5-Tier Data Governance</a>
+  <ul class="collapse">
+  <li><a href="#grammar-assembly" id="toc-grammar-assembly" class="nav-link" data-scroll-target="#grammar-assembly"><span class="header-section-number">20.1.1</span> Grammar &amp; Assembly</a></li>
+  </ul></li>
+  <li><a href="#leakage-decomposition-exact-shapley-attribution" id="toc-leakage-decomposition-exact-shapley-attribution" class="nav-link" data-scroll-target="#leakage-decomposition-exact-shapley-attribution"><span class="header-section-number">20.2</span> 2. Leakage Decomposition &amp; Exact Shapley Attribution</a>
+  <ul class="collapse">
+  <li><a href="#attribution-mechanics" id="toc-attribution-mechanics" class="nav-link" data-scroll-target="#attribution-mechanics"><span class="header-section-number">20.2.1</span> Attribution Mechanics</a></li>
+  </ul></li>
+  <li><a href="#multi-tier-ad-benchmark-null-bands" id="toc-multi-tier-ad-benchmark-null-bands" class="nav-link" data-scroll-target="#multi-tier-ad-benchmark-null-bands"><span class="header-section-number">20.3</span> 3. Multi-Tier AD Benchmark &amp; Null Bands</a>
+  <ul class="collapse">
+  <li><a href="#key-visual-features" id="toc-key-visual-features" class="nav-link" data-scroll-target="#key-visual-features"><span class="header-section-number">20.3.1</span> Key Visual Features</a></li>
+  </ul></li>
+  <li><a href="#attention-confounding-matched-controls" id="toc-attention-confounding-matched-controls" class="nav-link" data-scroll-target="#attention-confounding-matched-controls"><span class="header-section-number">20.4</span> 4. Attention Confounding &amp; Matched Controls</a></li>
+  <li><a href="#historical-time-splits-pan-disease-generalizability" id="toc-historical-time-splits-pan-disease-generalizability" class="nav-link" data-scroll-target="#historical-time-splits-pan-disease-generalizability"><span class="header-section-number">20.5</span> 5. Historical Time-Splits &amp; Pan-Disease Generalizability</a>
+  <ul class="collapse">
+  <li><a href="#partially-retrospective-time-split-figure-5" id="toc-partially-retrospective-time-split-figure-5" class="nav-link" data-scroll-target="#partially-retrospective-time-split-figure-5"><span class="header-section-number">20.5.1</span> Partially Retrospective Time-Split (Figure 5)</a></li>
+  <li><a href="#pan-disease-generalizability-figure-6" id="toc-pan-disease-generalizability-figure-6" class="nav-link" data-scroll-target="#pan-disease-generalizability-figure-6"><span class="header-section-number">20.5.2</span> Pan-Disease Generalizability (Figure 6)</a></li>
+  </ul></li>
+  <li><a href="#summary-of-figures-and-reproducibility" id="toc-summary-of-figures-and-reproducibility" class="nav-link" data-scroll-target="#summary-of-figures-and-reproducibility"><span class="header-section-number">20.6</span> 6. Summary of Figures and Reproducibility</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/20-case-study-leakage-benchmark.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./16-assembling-composites.html">Part V — Publication Composites and Applied Case Studies</a></li><li class="breadcrumb-item"><a href="./20-case-study-leakage-benchmark.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Leakage-Controlled Machine Learning &amp; Multi-Omics Target Prioritization</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Leakage-Controlled Machine Learning &amp; Multi-Omics Target Prioritization</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This case study demonstrates the replication and grammar specification of publication figures from the leakage-controlled multi-omics drug target prioritization benchmark (<em>Liu et al.</em>, <em>multiomics_paper</em>).</p>
+<p>Using the 5-tier data governance architecture, 20,097 protein-coding gene universe, and Open Targets clinical precedence labels, we demonstrate how <code>cliomicplot</code> implements attribution plots (<code>type_attribution()</code>, <code>type_shapley()</code>, <code>type_stepwise()</code>), multi-tier benchmark bar charts (<code>type_benchmark_bars()</code>), permutation null distribution reference bands, and the open L-frame publication theme (<code>theme_cli_benchmark()</code>).</p>
+<hr>
+<section id="study-architecture-5-tier-data-governance" class="level2" data-number="20.1">
+<h2 data-number="20.1" class="anchored" data-anchor-id="study-architecture-5-tier-data-governance"><span class="header-section-number">20.1</span> 1. Study Architecture &amp; 5-Tier Data Governance</h2>
+<p>Machine learning models for drug target prioritization frequently suffer from data leakage and literature confounding:</p>
+<ol type="1">
+<li><strong>5-Tier Governance Architecture</strong>:
+<ul>
+<li><strong>Tier B (Biology)</strong>: Genetics, disease transcriptomics, perturbation screens, constraint (<code>#0F4D92</code>).</li>
+<li><strong>Tier D (Druggability)</strong>: AlphaFold structural metrics, cellular localisation, protein family (<code>#42949E</code>).</li>
+<li><strong>Tier A (Research Attention)</strong>: PubMed citation volume, curated network degree, text-mining counts (<code>#9A4D8E</code>).</li>
+<li><strong>Tier C (Clinical Outside Target Disease)</strong>: Approved indications and clinical development outside Atopic Dermatitis (<code>#E9A6A1</code>).</li>
+<li><strong>Tier L (Label-Containing)</strong>: Direct target disease trial evidence and clinical pipeline databases (<code>#B64342</code>).</li>
+</ul></li>
+<li><strong>Programmatic Truth Labels</strong>: Open Targets clinical precedence for Atopic Dermatitis Phase 3+ targets (28 confirmed targets), recording the first trial reach year.</li>
+<li><strong>Rigorous Validation Designs</strong>: 5-fold grouped cross-validation repeated 20 times (LOGO CV over drug target families), retrospective temporal time-splits, and pan-disease cross-fitting.</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/leakage_benchmark/fig1_design_labels_audit.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption>Figure 1: Design schematic (a), label audit (b), univariate feature leakage beeswarm (c), and target discovery timeline (d).</figcaption>
+</figure>
+</div>
+<section id="grammar-assembly" class="level3" data-number="20.1.1">
+<h3 data-number="20.1.1" class="anchored" data-anchor-id="grammar-assembly"><span class="header-section-number">20.1.1</span> Grammar &amp; Assembly</h3>
+<ul>
+<li><strong>Panel 1b</strong>: Horizontal bar audit contrasting curated legacy lists against programmatic clinical precedence.</li>
+<li><strong>Panel 1c</strong>: Univariate AUROC strip/beeswarm with DeLong 95% confidence intervals and horizontal tier median markers.</li>
+<li><strong>Panel 1d</strong>: Timeline scatter plot tracing Phase 3 entry years across target families.</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 1b: Label Audit (Discrepancies Between Hand-Curated and Programmatic Labels)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>df_audit <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">category =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"Kept in Label"</span>, <span class="st">"Dropped: Phase &lt;= 2 Only"</span>, </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Dropped: Drugged Elsewhere"</span>, <span class="st">"Dropped: Never Drugged"</span>, </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Added: AD Phase 3+"</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">rev</span>(<span class="fu">c</span>(<span class="st">"Kept in Label"</span>, <span class="st">"Dropped: Phase &lt;= 2 Only"</span>, </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"Dropped: Drugged Elsewhere"</span>, <span class="st">"Dropped: Never Drugged"</span>, </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"Added: AD Phase 3+"</span>))),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">count =</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">6</span>),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#0F4D92"</span>, <span class="st">"#F6CFCB"</span>, <span class="st">"#E9A6A1"</span>, <span class="st">"#B64342"</span>, <span class="st">"#8BCF8B"</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>p_fig1b <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_audit, <span class="fu">aes</span>(<span class="at">x =</span> count, <span class="at">y =</span> category, <span class="at">fill =</span> fill_color)) <span class="sc">+</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">width =</span> <span class="fl">0.65</span>) <span class="sc">+</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> count), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.3</span>, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_identity</span>() <span class="sc">+</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">26</span>), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Number of Genes"</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">title =</span> <span class="st">"Original 34-Gene Label vs. Programmatic Precedence"</span>) <span class="sc">+</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_cli_benchmark</span>(<span class="at">base_size =</span> <span class="dv">10</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 1c: Univariate Feature Leakage Audit by Governance Tier</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>df_univariate <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">tier =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"B"</span>, <span class="st">"D"</span>, <span class="st">"A"</span>, <span class="st">"C"</span>, <span class="st">"L"</span>), <span class="at">each =</span> <span class="dv">25</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"B"</span>, <span class="st">"D"</span>, <span class="st">"A"</span>, <span class="st">"C"</span>, <span class="st">"L"</span>)),</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="fl">0.55</span>, <span class="fl">0.04</span>), <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="fl">0.54</span>, <span class="fl">0.03</span>), <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="fl">0.68</span>, <span class="fl">0.06</span>),</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="fl">0.72</span>, <span class="fl">0.05</span>), <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="fl">0.94</span>, <span class="fl">0.03</span>))</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>p_fig1c <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  auroc <span class="sc">~</span> tier,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df_univariate,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"jitter"</span>,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="st">"figures4papers"</span>,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="st">"benchmark"</span>,</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Per-Feature Leakage Audit Across Governance Tiers"</span>,</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"Univariate AUROC (Direction-Corrected)"</span>,</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Feature Governance Tier"</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#767676"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+</section>
+</section>
+<section id="leakage-decomposition-exact-shapley-attribution" class="level2" data-number="20.2">
+<h2 data-number="20.2" class="anchored" data-anchor-id="leakage-decomposition-exact-shapley-attribution"><span class="header-section-number">20.2</span> 2. Leakage Decomposition &amp; Exact Shapley Attribution</h2>
+<p>To isolate how much predictive performance arises from true biology versus leakage mechanisms, the benchmark evaluates the full factorial of 7 mechanisms (<span class="math inline">2^7 = 128</span> distinct model configurations):</p>
+<ul>
+<li><strong>L</strong>: Label-containing clinical evidence.</li>
+<li><strong>C</strong>: Drug development outside the target disease.</li>
+<li><strong>A</strong>: Research attention and publication volume.</li>
+<li><strong>O</strong>: Hand-typed 34-gene training labels.</li>
+<li><strong>U</strong>: Positives forced into candidate gene universe.</li>
+<li><strong>Z</strong>: Zero-filling of missing values.</li>
+<li><strong>R</strong>: Ungrouped cross-validation (target family leakage).</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/leakage_benchmark/fig2_leakage_decomposition.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption>Figure 2: Original pipeline reproduction (a), stepwise removal waterfall (b), dual attribution contrast (c), and exact Shapley values (d).</figcaption>
+</figure>
+</div>
+<section id="attribution-mechanics" class="level3" data-number="20.2.1">
+<h3 data-number="20.2.1" class="anchored" data-anchor-id="attribution-mechanics"><span class="header-section-number">20.2.1</span> Attribution Mechanics</h3>
+<ul>
+<li><strong>Stepwise Ablation Curve (<code>style = "stepwise"</code>)</strong>: Tracks the progressive deterioration of AUROC from 0.990 down to 0.861 as mechanisms are ablated sequentially.</li>
+<li><strong>Dual Attribution Contrast (<code>style = "contrast"</code>)</strong>: Compares the impact of each mechanism when removed from a fully leaky configuration versus when added to an unaugmented clean configuration.</li>
+<li><strong>Exact Shapley Values (<code>style = "shapley"</code>)</strong>: Calculates the configuration-averaged marginal contribution of each mechanism across all 128 factorial combinations.</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 2b: Stepwise Leakage Removal Curve</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df_waterfall <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">step =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"All Mechanisms On"</span>, <span class="st">"− Label Features"</span>, <span class="st">"− Drug Dev. Elsewhere"</span>, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"− Attention Features"</span>, <span class="st">"− 34-Gene Label"</span>, <span class="st">"− Forced Universe"</span>, </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"− Zero-Fill"</span>, <span class="st">"Clean Biology"</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"All Mechanisms On"</span>, <span class="st">"− Label Features"</span>, <span class="st">"− Drug Dev. Elsewhere"</span>, </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"− Attention Features"</span>, <span class="st">"− 34-Gene Label"</span>, <span class="st">"− Forced Universe"</span>, </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"− Zero-Fill"</span>, <span class="st">"Clean Biology"</span>)),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc    =</span> <span class="fu">c</span>(<span class="fl">0.990</span>, <span class="fl">0.989</span>, <span class="fl">0.985</span>, <span class="fl">0.951</span>, <span class="fl">0.929</span>, <span class="fl">0.833</span>, <span class="fl">0.842</span>, <span class="fl">0.861</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc_lo =</span> <span class="fu">c</span>(<span class="fl">0.982</span>, <span class="fl">0.980</span>, <span class="fl">0.972</span>, <span class="fl">0.910</span>, <span class="fl">0.874</span>, <span class="fl">0.760</span>, <span class="fl">0.782</span>, <span class="fl">0.778</span>),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc_hi =</span> <span class="fu">c</span>(<span class="fl">0.997</span>, <span class="fl">0.996</span>, <span class="fl">0.994</span>, <span class="fl">0.981</span>, <span class="fl">0.976</span>, <span class="fl">0.891</span>, <span class="fl">0.897</span>, <span class="fl">0.922</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>p_fig2b <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  auroc <span class="sc">~</span> step,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df_waterfall,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_attribution</span>(</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="st">"stepwise"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference_line =</span> <span class="fl">0.5</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">error_low =</span> <span class="st">"auroc_lo"</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">error_high =</span> <span class="st">"auroc_hi"</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">color_pos =</span> <span class="st">"#0F4D92"</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size =</span> <span class="fl">4.0</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="st">"benchmark"</span>,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Sequential Removal of Leakage Mechanisms"</span>,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"Cross-Validated AUROC (Gradient Boosting)"</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Ablation Step"</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 2d: Exact Shapley Contributions Across Learners</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>df_shapley <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">mechanism =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Label Features (L)"</span>, <span class="st">"Drug Dev. Elsewhere (C)"</span>, </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Research Attention (A)"</span>, <span class="st">"34-Gene Label (O)"</span>, </span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Forced Gene List (U)"</span>, <span class="st">"Ungrouped CV (R)"</span>, </span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Zero-Fill (Z)"</span>), <span class="dv">2</span>),</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">shapley   =</span> <span class="fu">c</span>(<span class="fl">0.0318</span>, <span class="fl">0.0195</span>, <span class="fl">0.0279</span>, <span class="fl">0.0294</span>, <span class="fl">0.0211</span>, <span class="fl">0.0034</span>, <span class="sc">-</span><span class="fl">0.0077</span>,</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>                <span class="fl">0.0385</span>, <span class="fl">0.0241</span>, <span class="fl">0.0312</span>, <span class="fl">0.0265</span>, <span class="fl">0.0189</span>, <span class="fl">0.0041</span>, <span class="sc">-</span><span class="fl">0.0052</span>),</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">learner   =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"hgb"</span>, <span class="st">"lr"</span>), <span class="at">each =</span> <span class="dv">7</span>)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>p_fig2d <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>  shapley <span class="sc">~</span> mechanism <span class="sc">|</span> learner,</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df_shapley,</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_attribution</span>(</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="st">"shapley"</span>,</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference_line =</span> <span class="dv">0</span>,</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">annotate =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">learner_colors =</span> <span class="fu">c</span>(<span class="at">hgb =</span> <span class="st">"#0F4D92"</span>, <span class="at">lr =</span> <span class="st">"#B64342"</span>)</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="st">"benchmark"</span>,</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Shapley Attribution Averaged Over All 128 Set-Ups"</span>,</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Leakage Mechanism"</span>,</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"Marginal Contribution to AUROC"</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+</section>
+</section>
+<section id="multi-tier-ad-benchmark-null-bands" class="level2" data-number="20.3">
+<h2 data-number="20.3" class="anchored" data-anchor-id="multi-tier-ad-benchmark-null-bands"><span class="header-section-number">20.3</span> 3. Multi-Tier AD Benchmark &amp; Null Bands</h2>
+<p>Figure 3 presents the primary benchmark of models trained across governance tiers under 5-fold grouped cross-validation:</p>
+<ul>
+<li><strong>M-B</strong>: Biology features only.</li>
+<li><strong>M-D</strong>: Druggability features only.</li>
+<li><strong>M-BD</strong>: Biology + Druggability.</li>
+<li><strong>M-BD+N</strong>: Biology + Druggability + in-fold protein-protein interaction network propagation.</li>
+<li><strong>M-A</strong>: Research attention features only.</li>
+<li><strong>M-BA</strong>: Biology + Attention.</li>
+<li><strong>M-BDA</strong>: Biology + Druggability + Attention.</li>
+<li><strong>M-C</strong>: Drug development outside Atopic Dermatitis.</li>
+<li><strong>M-BDAC</strong>: Biology + Druggability + Attention + Outside Indications.</li>
+<li><strong>M-L / M-ALL</strong>: Models incorporating label-containing features.</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/leakage_benchmark/fig3_ad_tier_benchmark.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption>Figure 3: Tiered model benchmark AUROC with grouped-jackknife CIs and permutation null band (a), log-scale AP lift (b), and cumulative target recovery curves (c).</figcaption>
+</figure>
+</div>
+<section id="key-visual-features" class="level3" data-number="20.3.1">
+<h3 data-number="20.3.1" class="anchored" data-anchor-id="key-visual-features"><span class="header-section-number">20.3.1</span> Key Visual Features</h3>
+<ol type="1">
+<li><strong>Permutation Null Distribution Band</strong>: Drawn as a neutral shaded horizontal ribbon (<code>#CFCECE</code>, alpha = 0.45) spanning <span class="math inline">[0.505, 0.549]</span>, denoting empirical chance.</li>
+<li><strong>Leave-One-Group-Out Jackknife Whiskers</strong>: Black capped whiskers denoting 95% confidence intervals over grouped drug target families.</li>
+<li><strong>Logarithmic Scaling for Average Precision Lift</strong>: Captures performance elevation ranging from near-chance (<span class="math inline">1.8\times</span>) up to <span class="math inline">700\times</span> prevalence lift.</li>
+<li><strong>Target Review Budget Curves</strong>: Compares cumulative targets recovered as review capacity scales from <span class="math inline">k = 1</span> to <span class="math inline">5000</span> candidate genes.</li>
+</ol>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 3a: AUROC Across Model Tiers with Permutation Null Band</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df_models <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">feature_set =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"M-B"</span>, <span class="st">"M-D"</span>, <span class="st">"M-BD"</span>, <span class="st">"M-BD+N"</span>, <span class="st">"M-A"</span>, <span class="st">"M-BA"</span>, <span class="st">"M-BDA"</span>, <span class="st">"M-C"</span>, <span class="st">"M-BDAC"</span>, <span class="st">"M-L"</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"M-B"</span>, <span class="st">"M-D"</span>, <span class="st">"M-BD"</span>, <span class="st">"M-BD+N"</span>, <span class="st">"M-A"</span>, <span class="st">"M-BA"</span>, <span class="st">"M-BDA"</span>, <span class="st">"M-C"</span>, <span class="st">"M-BDAC"</span>, <span class="st">"M-L"</span>)),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc       =</span> <span class="fu">c</span>(<span class="fl">0.772</span>, <span class="fl">0.766</span>, <span class="fl">0.860</span>, <span class="fl">0.865</span>, <span class="fl">0.911</span>, <span class="fl">0.925</span>, <span class="fl">0.962</span>, <span class="fl">0.892</span>, <span class="fl">0.961</span>, <span class="fl">0.980</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc_lo    =</span> <span class="fu">c</span>(<span class="fl">0.689</span>, <span class="fl">0.683</span>, <span class="fl">0.781</span>, <span class="fl">0.792</span>, <span class="fl">0.838</span>, <span class="fl">0.862</span>, <span class="fl">0.910</span>, <span class="fl">0.816</span>, <span class="fl">0.915</span>, <span class="fl">0.940</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc_hi    =</span> <span class="fu">c</span>(<span class="fl">0.847</span>, <span class="fl">0.839</span>, <span class="fl">0.919</span>, <span class="fl">0.928</span>, <span class="fl">0.971</span>, <span class="fl">0.978</span>, <span class="fl">0.991</span>, <span class="fl">0.956</span>, <span class="fl">0.990</span>, <span class="fl">1.000</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">tier_color  =</span> <span class="fu">c</span>(<span class="st">"#0F4D92"</span>, <span class="st">"#42949E"</span>, <span class="st">"#3775BA"</span>, <span class="st">"#8BCF8B"</span>, <span class="st">"#9A4D8E"</span>, </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"#B370AB"</span>, <span class="st">"#C892C2"</span>, <span class="st">"#E9A6A1"</span>, <span class="st">"#F6CFCB"</span>, <span class="st">"#B64342"</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>p_fig3a <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  auroc <span class="sc">~</span> feature_set,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df_models,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_benchmark_bars</span>(</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">null_band       =</span> <span class="fu">c</span>(<span class="fl">0.505</span>, <span class="fl">0.549</span>),</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">error_low       =</span> <span class="st">"auroc_lo"</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">error_high      =</span> <span class="st">"auroc_hi"</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">value_labels    =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_sep_lines =</span> <span class="fu">c</span>(<span class="st">"M-A"</span>, <span class="st">"M-C"</span>, <span class="st">"M-L"</span>),</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">bar_width       =</span> <span class="fl">0.72</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> df_models<span class="sc">$</span>tier_color,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="st">"benchmark"</span>,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Multi-Tier Target Prioritisation Benchmark (Atopic Dermatitis)"</span>,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"AUROC (Grouped Jackknife 95% CI)"</span>,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Model Governance Tier"</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 3c: Target Recovery Budget Curves</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>df_budget <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>, <span class="dv">2000</span>, <span class="dv">5000</span>), <span class="dv">4</span>),</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">targets =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">12</span>, <span class="dv">16</span>, <span class="dv">21</span>, <span class="dv">26</span>,       <span class="co"># M-B (Biology)</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>              <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">12</span>, <span class="dv">16</span>, <span class="dv">20</span>, <span class="dv">24</span>, <span class="dv">26</span>, <span class="dv">28</span>,      <span class="co"># M-BDA (Biology + Druggability + Attention)</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>              <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">12</span>, <span class="dv">19</span>,          <span class="co"># M-0 (Chance)</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>              <span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">11</span>, <span class="dv">15</span>, <span class="dv">19</span>, <span class="dv">23</span>, <span class="dv">26</span>, <span class="dv">28</span>, <span class="dv">28</span>),    <span class="co"># M-ALL (Full Model)</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Biology (B)"</span>, <span class="st">"B+D+A"</span>, <span class="st">"Chance"</span>, <span class="st">"All Features"</span>), <span class="at">each =</span> <span class="dv">9</span>)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>p_fig3c <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_budget, <span class="fu">aes</span>(<span class="at">x =</span> k, <span class="at">y =</span> targets, <span class="at">color =</span> model)) <span class="sc">+</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">1000</span>, <span class="dv">5000</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"10"</span>, <span class="st">"100"</span>, <span class="st">"1,000"</span>, <span class="st">"5,000"</span>)) <span class="sc">+</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">100</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">color =</span> <span class="st">"#767676"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Biology (B)"</span> <span class="ot">=</span> <span class="st">"#0F4D92"</span>, <span class="st">"B+D+A"</span> <span class="ot">=</span> <span class="st">"#9A4D8E"</span>, </span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Chance"</span> <span class="ot">=</span> <span class="st">"#767676"</span>, <span class="st">"All Features"</span> <span class="ot">=</span> <span class="st">"#B64342"</span>)) <span class="sc">+</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Genes Reviewed (Top k)"</span>, <span class="at">y =</span> <span class="st">"Targets Recovered"</span>, <span class="at">title =</span> <span class="st">"Target Recovery by Review Budget"</span>) <span class="sc">+</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_cli_benchmark</span>(<span class="at">base_size =</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+</section>
+</section>
+<section id="attention-confounding-matched-controls" class="level2" data-number="20.4">
+<h2 data-number="20.4" class="anchored" data-anchor-id="attention-confounding-matched-controls"><span class="header-section-number">20.4</span> 4. Attention Confounding &amp; Matched Controls</h2>
+<p>Figure 4 examines how literature attention inflates apparent model performance:</p>
+<ul>
+<li><strong>Panel 4a</strong>: Target discrimination evaluated against matched negative controls (unmatched controls vs.&nbsp;controls matched on PubMed paper volume vs.&nbsp;controls matched on attention-model scores).</li>
+<li><strong>Panel 4b</strong>: Target frequency distribution across PubMed publication quintiles, showing that approved targets are overwhelmingly concentrated in the most-studied 20% of genes.</li>
+<li><strong>Panel 4c</strong>: Proportion of top-100 ranked genes that originate from the highest publication quintile.</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/leakage_benchmark/fig4_attention.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption>Figure 4: Discrimination after attention matching (a), target distribution across PubMed quintiles (b), and attention bias of top-100 predictions (c).</figcaption>
+</figure>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 4a: AUROC Under Attention Matching</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df_matched <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"Biology (B)"</span>, <span class="st">"Druggability (D)"</span>, <span class="st">"B+D"</span>, <span class="st">"Attention (A)"</span>, <span class="st">"Clinical (C)"</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">levels =</span> <span class="fu">rev</span>(<span class="fu">c</span>(<span class="st">"Biology (B)"</span>, <span class="st">"Druggability (D)"</span>, <span class="st">"B+D"</span>, <span class="st">"Attention (A)"</span>, <span class="st">"Clinical (C)"</span>))),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">unmatched =</span> <span class="fu">c</span>(<span class="fl">0.772</span>, <span class="fl">0.766</span>, <span class="fl">0.860</span>, <span class="fl">0.911</span>, <span class="fl">0.892</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">matched_pubmed =</span> <span class="fu">c</span>(<span class="fl">0.665</span>, <span class="fl">0.612</span>, <span class="fl">0.741</span>, <span class="fl">0.521</span>, <span class="fl">0.785</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">lo_pubmed =</span> <span class="fu">c</span>(<span class="fl">0.551</span>, <span class="fl">0.508</span>, <span class="fl">0.635</span>, <span class="fl">0.412</span>, <span class="fl">0.672</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">hi_pubmed =</span> <span class="fu">c</span>(<span class="fl">0.764</span>, <span class="fl">0.710</span>, <span class="fl">0.835</span>, <span class="fl">0.631</span>, <span class="fl">0.880</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>p_fig4a <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_matched) <span class="sc">+</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">y =</span> model, <span class="at">yend =</span> model, <span class="at">x =</span> matched_pubmed, <span class="at">xend =</span> unmatched), <span class="at">color =</span> <span class="st">"#767676"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> unmatched, <span class="at">y =</span> model), <span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">stroke =</span> <span class="fl">1.0</span>) <span class="sc">+</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">x =</span> matched_pubmed, <span class="at">y =</span> model, <span class="at">xmin =</span> lo_pubmed, <span class="at">xmax =</span> hi_pubmed), </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                  <span class="at">size =</span> <span class="fl">0.6</span>, <span class="at">color =</span> <span class="st">"#0F4D92"</span>, <span class="at">shape =</span> <span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#767676"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"AUROC"</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">title =</span> <span class="st">"Discrimination That Research Attention Cannot Explain"</span>) <span class="sc">+</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_cli_benchmark</span>(<span class="at">base_size =</span> <span class="dv">10</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 4b: Target Concentration in PubMed Publication Quintiles</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>df_strata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">quintile =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"Q1 (0–2)"</span>, <span class="st">"Q2 (3–8)"</span>, <span class="st">"Q3 (9–24)"</span>, <span class="st">"Q4 (25–82)"</span>, <span class="st">"Q5 (&gt;=83)"</span>),</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Q1 (0–2)"</span>, <span class="st">"Q2 (3–8)"</span>, <span class="st">"Q3 (9–24)"</span>, <span class="st">"Q4 (25–82)"</span>, <span class="st">"Q5 (&gt;=83)"</span>)),</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">targets =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">6</span>, <span class="dv">19</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>p_fig4b <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_strata, <span class="fu">aes</span>(<span class="at">x =</span> quintile, <span class="at">y =</span> targets)) <span class="sc">+</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#9A4D8E"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">width =</span> <span class="fl">0.65</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> targets), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">22</span>), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PubMed Volume Quintile (Papers / Gene)"</span>, <span class="at">y =</span> <span class="st">"AD Phase 3+ Targets"</span>, </span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Target Concentration in Heavily Studied Genes"</span>) <span class="sc">+</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_cli_benchmark</span>(<span class="at">base_size =</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="historical-time-splits-pan-disease-generalizability" class="level2" data-number="20.5">
+<h2 data-number="20.5" class="anchored" data-anchor-id="historical-time-splits-pan-disease-generalizability"><span class="header-section-number">20.5</span> 5. Historical Time-Splits &amp; Pan-Disease Generalizability</h2>
+<section id="partially-retrospective-time-split-figure-5" class="level3" data-number="20.5.1">
+<h3 data-number="20.5.1" class="anchored" data-anchor-id="partially-retrospective-time-split-figure-5"><span class="header-section-number">20.5.1</span> Partially Retrospective Time-Split (Figure 5)</h3>
+<p>To emulate prospective target discovery, models were trained on evidence accumulated up to 2014 and tested on drugs advancing to Phase 3 trials between 2015 and 2024:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/leakage_benchmark/fig5_ad_time_split.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption>Figure 5: Retrospective time-split benchmark frozen at 2014 (a) and individual target score trajectories (b).</figcaption>
+</figure>
+</div>
+</section>
+<section id="pan-disease-generalizability-figure-6" class="level3" data-number="20.5.2">
+<h3 data-number="20.5.2" class="anchored" data-anchor-id="pan-disease-generalizability-figure-6"><span class="header-section-number">20.5.2</span> Pan-Disease Generalizability (Figure 6)</h3>
+<p>The multiomics benchmark was extended across 15 distinct human diseases (spanning autoimmune, metabolic, and oncology indications), confirming that the leakage hierarchy is disease-agnostic:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/leakage_benchmark/fig6_pan_disease.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption>Figure 6: Pan-disease cross-validation benchmark across diverse clinical indications.</figcaption>
+</figure>
+</div>
+<hr>
+</section>
+</section>
+<section id="summary-of-figures-and-reproducibility" class="level2" data-number="20.6">
+<h2 data-number="20.6" class="anchored" data-anchor-id="summary-of-figures-and-reproducibility"><span class="header-section-number">20.6</span> 6. Summary of Figures and Reproducibility</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Benchmark Figure</th>
+<th style="text-align: left;">Concept &amp; Clinical Question</th>
+<th style="text-align: left;"><code>cliomicplot</code> Implementation</th>
+<th style="text-align: left;">Key Theme Elements</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Figure 1</strong></td>
+<td style="text-align: left;">5-Tier Data Architecture &amp; Label Audit</td>
+<td style="text-align: left;"><code>cliplot()</code> + <code>type_jitter()</code></td>
+<td style="text-align: left;"><code>theme_cli_benchmark()</code>, Palette <code>"figures4papers"</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Figure 2</strong></td>
+<td style="text-align: left;">Leakage Decomposition &amp; Exact Shapley</td>
+<td style="text-align: left;"><code>type_attribution()</code> (<code>style = "stepwise"</code> / <code>"shapley"</code>)</td>
+<td style="text-align: left;">Baseline reference lines, exact 3-decimal annotations</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Figure 3</strong></td>
+<td style="text-align: left;">Multi-Tier Benchmark with Jackknife CIs</td>
+<td style="text-align: left;"><code>type_benchmark_bars()</code></td>
+<td style="text-align: left;">Permutation null band (<code>c(0.505, 0.549)</code>), log AP lift</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Figure 4</strong></td>
+<td style="text-align: left;">Research Attention &amp; Matched Controls</td>
+<td style="text-align: left;">Custom pointrange + <code>type_benchmark_bars()</code></td>
+<td style="text-align: left;">Quintile strata, matched control offsets</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Figure 5</strong></td>
+<td style="text-align: left;">Partially Retrospective Time-Split</td>
+<td style="text-align: left;"><code>type_benchmark_bars()</code></td>
+<td style="text-align: left;">Historical cutoffs, post-cut drug validation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Figure 6</strong></td>
+<td style="text-align: left;">Pan-Disease Cross-Fitting Benchmark</td>
+<td style="text-align: left;"><code>cliplot()</code> + faceting across diseases</td>
+<td style="text-align: left;">Cross-disease model generalization</td>
+</tr>
+</tbody>
+</table>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/vanhungtran\.github\.io\/cliomicplot_book\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./19-case-study-nature-communications.html" class="pagination-link" aria-label="Replicating Multi-Modal Omics: Nature Communications Case Study">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Replicating Multi-Modal Omics: Nature Communications Case Study</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Leakage-Controlled Machine Learning &amp; Multi-Omics Target Prioritization</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>This case study demonstrates the replication and grammar specification of publication figures from the leakage-controlled multi-omics drug target prioritization benchmark (*Liu et al.*, *multiomics_paper*).</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>Using the 5-tier data governance architecture, 20,097 protein-coding gene universe, and Open Targets clinical precedence labels, we demonstrate how <span class="in">`cliomicplot`</span> implements attribution plots (<span class="in">`type_attribution()`</span>, <span class="in">`type_shapley()`</span>, <span class="in">`type_stepwise()`</span>), multi-tier benchmark bar charts (<span class="in">`type_benchmark_bars()`</span>), permutation null distribution reference bands, and the open L-frame publication theme (<span class="in">`theme_cli_benchmark()`</span>).</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Study Architecture &amp; 5-Tier Data Governance</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>Machine learning models for drug target prioritization frequently suffer from data leakage and literature confounding:</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**5-Tier Governance Architecture**:</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>**Tier B (Biology)**: Genetics, disease transcriptomics, perturbation screens, constraint (<span class="in">`#0F4D92`</span>).</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>**Tier D (Druggability)**: AlphaFold structural metrics, cellular localisation, protein family (<span class="in">`#42949E`</span>).</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>**Tier A (Research Attention)**: PubMed citation volume, curated network degree, text-mining counts (<span class="in">`#9A4D8E`</span>).</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>**Tier C (Clinical Outside Target Disease)**: Approved indications and clinical development outside Atopic Dermatitis (<span class="in">`#E9A6A1`</span>).</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>**Tier L (Label-Containing)**: Direct target disease trial evidence and clinical pipeline databases (<span class="in">`#B64342`</span>).</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Programmatic Truth Labels**: Open Targets clinical precedence for Atopic Dermatitis Phase 3+ targets (28 confirmed targets), recording the first trial reach year.</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Rigorous Validation Designs**: 5-fold grouped cross-validation repeated 20 times (LOGO CV over drug target families), retrospective temporal time-splits, and pan-disease cross-fitting.</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="al">![Figure 1: Design schematic (a), label audit (b), univariate feature leakage beeswarm (c), and target discovery timeline (d).](images/leakage_benchmark/fig1_design_labels_audit.png)</span>{width=100%}</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="fu">### Grammar &amp; Assembly</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 1b**: Horizontal bar audit contrasting curated legacy lists against programmatic clinical precedence.</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 1c**: Univariate AUROC strip/beeswarm with DeLong 95% confidence intervals and horizontal tier median markers.</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 1d**: Timeline scatter plot tracing Phase 3 entry years across target families.</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 1b: Label Audit (Discrepancies Between Hand-Curated and Programmatic Labels)</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>df_audit <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">category =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"Kept in Label"</span>, <span class="st">"Dropped: Phase &lt;= 2 Only"</span>, </span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Dropped: Drugged Elsewhere"</span>, <span class="st">"Dropped: Never Drugged"</span>, </span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Added: AD Phase 3+"</span>),</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">rev</span>(<span class="fu">c</span>(<span class="st">"Kept in Label"</span>, <span class="st">"Dropped: Phase &lt;= 2 Only"</span>, </span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"Dropped: Drugged Elsewhere"</span>, <span class="st">"Dropped: Never Drugged"</span>, </span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">"Added: AD Phase 3+"</span>))),</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">count =</span> <span class="fu">c</span>(<span class="dv">22</span>, <span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">6</span>),</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill_color =</span> <span class="fu">c</span>(<span class="st">"#0F4D92"</span>, <span class="st">"#F6CFCB"</span>, <span class="st">"#E9A6A1"</span>, <span class="st">"#B64342"</span>, <span class="st">"#8BCF8B"</span>)</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>p_fig1b <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_audit, <span class="fu">aes</span>(<span class="at">x =</span> count, <span class="at">y =</span> category, <span class="at">fill =</span> fill_color)) <span class="sc">+</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">width =</span> <span class="fl">0.65</span>) <span class="sc">+</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> count), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.3</span>, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_identity</span>() <span class="sc">+</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">26</span>), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Number of Genes"</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">title =</span> <span class="st">"Original 34-Gene Label vs. Programmatic Precedence"</span>) <span class="sc">+</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_cli_benchmark</span>(<span class="at">base_size =</span> <span class="dv">10</span>)</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 1c: Univariate Feature Leakage Audit by Governance Tier</span></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>df_univariate <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">tier =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"B"</span>, <span class="st">"D"</span>, <span class="st">"A"</span>, <span class="st">"C"</span>, <span class="st">"L"</span>), <span class="at">each =</span> <span class="dv">25</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"B"</span>, <span class="st">"D"</span>, <span class="st">"A"</span>, <span class="st">"C"</span>, <span class="st">"L"</span>)),</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="fl">0.55</span>, <span class="fl">0.04</span>), <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="fl">0.54</span>, <span class="fl">0.03</span>), <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="fl">0.68</span>, <span class="fl">0.06</span>),</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="fl">0.72</span>, <span class="fl">0.05</span>), <span class="fu">rnorm</span>(<span class="dv">25</span>, <span class="fl">0.94</span>, <span class="fl">0.03</span>))</span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>p_fig1c <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>  auroc <span class="sc">~</span> tier,</span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df_univariate,</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"jitter"</span>,</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="st">"figures4papers"</span>,</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="st">"benchmark"</span>,</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Per-Feature Leakage Audit Across Governance Tiers"</span>,</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"Univariate AUROC (Direction-Corrected)"</span>,</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Feature Governance Tier"</span></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#767676"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>)</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Leakage Decomposition &amp; Exact Shapley Attribution</span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>To isolate how much predictive performance arises from true biology versus leakage mechanisms, the benchmark evaluates the full factorial of 7 mechanisms ($2^7 = 128$ distinct model configurations):</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**L**: Label-containing clinical evidence.</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**C**: Drug development outside the target disease.</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**A**: Research attention and publication volume.</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**O**: Hand-typed 34-gene training labels.</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**U**: Positives forced into candidate gene universe.</span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Z**: Zero-filling of missing values.</span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**R**: Ungrouped cross-validation (target family leakage).</span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a><span class="al">![Figure 2: Original pipeline reproduction (a), stepwise removal waterfall (b), dual attribution contrast (c), and exact Shapley values (d).](images/leakage_benchmark/fig2_leakage_decomposition.png)</span>{width=100%}</span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a><span class="fu">### Attribution Mechanics</span></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Stepwise Ablation Curve (`style = "stepwise"`)**: Tracks the progressive deterioration of AUROC from 0.990 down to 0.861 as mechanisms are ablated sequentially.</span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Dual Attribution Contrast (`style = "contrast"`)**: Compares the impact of each mechanism when removed from a fully leaky configuration versus when added to an unaugmented clean configuration.</span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Exact Shapley Values (`style = "shapley"`)**: Calculates the configuration-averaged marginal contribution of each mechanism across all 128 factorial combinations.</span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 2b: Stepwise Leakage Removal Curve</span></span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>df_waterfall <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>  <span class="at">step =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"All Mechanisms On"</span>, <span class="st">"− Label Features"</span>, <span class="st">"− Drug Dev. Elsewhere"</span>, </span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"− Attention Features"</span>, <span class="st">"− 34-Gene Label"</span>, <span class="st">"− Forced Universe"</span>, </span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"− Zero-Fill"</span>, <span class="st">"Clean Biology"</span>),</span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>                <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"All Mechanisms On"</span>, <span class="st">"− Label Features"</span>, <span class="st">"− Drug Dev. Elsewhere"</span>, </span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"− Attention Features"</span>, <span class="st">"− 34-Gene Label"</span>, <span class="st">"− Forced Universe"</span>, </span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"− Zero-Fill"</span>, <span class="st">"Clean Biology"</span>)),</span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc    =</span> <span class="fu">c</span>(<span class="fl">0.990</span>, <span class="fl">0.989</span>, <span class="fl">0.985</span>, <span class="fl">0.951</span>, <span class="fl">0.929</span>, <span class="fl">0.833</span>, <span class="fl">0.842</span>, <span class="fl">0.861</span>),</span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc_lo =</span> <span class="fu">c</span>(<span class="fl">0.982</span>, <span class="fl">0.980</span>, <span class="fl">0.972</span>, <span class="fl">0.910</span>, <span class="fl">0.874</span>, <span class="fl">0.760</span>, <span class="fl">0.782</span>, <span class="fl">0.778</span>),</span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc_hi =</span> <span class="fu">c</span>(<span class="fl">0.997</span>, <span class="fl">0.996</span>, <span class="fl">0.994</span>, <span class="fl">0.981</span>, <span class="fl">0.976</span>, <span class="fl">0.891</span>, <span class="fl">0.897</span>, <span class="fl">0.922</span>)</span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a>p_fig2b <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>  auroc <span class="sc">~</span> step,</span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df_waterfall,</span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_attribution</span>(</span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="st">"stepwise"</span>,</span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference_line =</span> <span class="fl">0.5</span>,</span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>    <span class="at">error_low =</span> <span class="st">"auroc_lo"</span>,</span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">error_high =</span> <span class="st">"auroc_hi"</span>,</span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a>    <span class="at">color_pos =</span> <span class="st">"#0F4D92"</span>,</span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_size =</span> <span class="fl">4.0</span></span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="st">"benchmark"</span>,</span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Sequential Removal of Leakage Mechanisms"</span>,</span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"Cross-Validated AUROC (Gradient Boosting)"</span>,</span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Ablation Step"</span></span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 2d: Exact Shapley Contributions Across Learners</span></span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>df_shapley <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>  <span class="at">mechanism =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Label Features (L)"</span>, <span class="st">"Drug Dev. Elsewhere (C)"</span>, </span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Research Attention (A)"</span>, <span class="st">"34-Gene Label (O)"</span>, </span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Forced Gene List (U)"</span>, <span class="st">"Ungrouped CV (R)"</span>, </span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>                     <span class="st">"Zero-Fill (Z)"</span>), <span class="dv">2</span>),</span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a>  <span class="at">shapley   =</span> <span class="fu">c</span>(<span class="fl">0.0318</span>, <span class="fl">0.0195</span>, <span class="fl">0.0279</span>, <span class="fl">0.0294</span>, <span class="fl">0.0211</span>, <span class="fl">0.0034</span>, <span class="sc">-</span><span class="fl">0.0077</span>,</span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>                <span class="fl">0.0385</span>, <span class="fl">0.0241</span>, <span class="fl">0.0312</span>, <span class="fl">0.0265</span>, <span class="fl">0.0189</span>, <span class="fl">0.0041</span>, <span class="sc">-</span><span class="fl">0.0052</span>),</span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a>  <span class="at">learner   =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"hgb"</span>, <span class="st">"lr"</span>), <span class="at">each =</span> <span class="dv">7</span>)</span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>p_fig2d <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a>  shapley <span class="sc">~</span> mechanism <span class="sc">|</span> learner,</span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df_shapley,</span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_attribution</span>(</span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="st">"shapley"</span>,</span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a>    <span class="at">reference_line =</span> <span class="dv">0</span>,</span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a>    <span class="at">annotate =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a>    <span class="at">learner_colors =</span> <span class="fu">c</span>(<span class="at">hgb =</span> <span class="st">"#0F4D92"</span>, <span class="at">lr =</span> <span class="st">"#B64342"</span>)</span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="st">"benchmark"</span>,</span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Shapley Attribution Averaged Over All 128 Set-Ups"</span>,</span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Leakage Mechanism"</span>,</span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"Marginal Contribution to AUROC"</span></span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Multi-Tier AD Benchmark &amp; Null Bands</span></span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a>Figure 3 presents the primary benchmark of models trained across governance tiers under 5-fold grouped cross-validation:</span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**M-B**: Biology features only.</span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**M-D**: Druggability features only.</span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**M-BD**: Biology + Druggability.</span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**M-BD+N**: Biology + Druggability + in-fold protein-protein interaction network propagation.</span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**M-A**: Research attention features only.</span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**M-BA**: Biology + Attention.</span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**M-BDA**: Biology + Druggability + Attention.</span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**M-C**: Drug development outside Atopic Dermatitis.</span>
+<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**M-BDAC**: Biology + Druggability + Attention + Outside Indications.</span>
+<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**M-L / M-ALL**: Models incorporating label-containing features.</span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a><span class="al">![Figure 3: Tiered model benchmark AUROC with grouped-jackknife CIs and permutation null band (a), log-scale AP lift (b), and cumulative target recovery curves (c).](images/leakage_benchmark/fig3_ad_tier_benchmark.png)</span>{width=100%}</span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a><span class="fu">### Key Visual Features</span></span>
+<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Permutation Null Distribution Band**: Drawn as a neutral shaded horizontal ribbon (<span class="in">`#CFCECE`</span>, alpha = 0.45) spanning $<span class="co">[</span><span class="ot">0.505, 0.549</span><span class="co">]</span>$, denoting empirical chance.</span>
+<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Leave-One-Group-Out Jackknife Whiskers**: Black capped whiskers denoting 95% confidence intervals over grouped drug target families.</span>
+<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Logarithmic Scaling for Average Precision Lift**: Captures performance elevation ranging from near-chance ($1.8\times$) up to $700\times$ prevalence lift.</span>
+<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Target Review Budget Curves**: Compares cumulative targets recovered as review capacity scales from $k = 1$ to $5000$ candidate genes.</span>
+<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 3a: AUROC Across Model Tiers with Permutation Null Band</span></span>
+<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a>df_models <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a>  <span class="at">feature_set =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"M-B"</span>, <span class="st">"M-D"</span>, <span class="st">"M-BD"</span>, <span class="st">"M-BD+N"</span>, <span class="st">"M-A"</span>, <span class="st">"M-BA"</span>, <span class="st">"M-BDA"</span>, <span class="st">"M-C"</span>, <span class="st">"M-BDAC"</span>, <span class="st">"M-L"</span>),</span>
+<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a>                       <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"M-B"</span>, <span class="st">"M-D"</span>, <span class="st">"M-BD"</span>, <span class="st">"M-BD+N"</span>, <span class="st">"M-A"</span>, <span class="st">"M-BA"</span>, <span class="st">"M-BDA"</span>, <span class="st">"M-C"</span>, <span class="st">"M-BDAC"</span>, <span class="st">"M-L"</span>)),</span>
+<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc       =</span> <span class="fu">c</span>(<span class="fl">0.772</span>, <span class="fl">0.766</span>, <span class="fl">0.860</span>, <span class="fl">0.865</span>, <span class="fl">0.911</span>, <span class="fl">0.925</span>, <span class="fl">0.962</span>, <span class="fl">0.892</span>, <span class="fl">0.961</span>, <span class="fl">0.980</span>),</span>
+<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc_lo    =</span> <span class="fu">c</span>(<span class="fl">0.689</span>, <span class="fl">0.683</span>, <span class="fl">0.781</span>, <span class="fl">0.792</span>, <span class="fl">0.838</span>, <span class="fl">0.862</span>, <span class="fl">0.910</span>, <span class="fl">0.816</span>, <span class="fl">0.915</span>, <span class="fl">0.940</span>),</span>
+<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a>  <span class="at">auroc_hi    =</span> <span class="fu">c</span>(<span class="fl">0.847</span>, <span class="fl">0.839</span>, <span class="fl">0.919</span>, <span class="fl">0.928</span>, <span class="fl">0.971</span>, <span class="fl">0.978</span>, <span class="fl">0.991</span>, <span class="fl">0.956</span>, <span class="fl">0.990</span>, <span class="fl">1.000</span>),</span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a>  <span class="at">tier_color  =</span> <span class="fu">c</span>(<span class="st">"#0F4D92"</span>, <span class="st">"#42949E"</span>, <span class="st">"#3775BA"</span>, <span class="st">"#8BCF8B"</span>, <span class="st">"#9A4D8E"</span>, </span>
+<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"#B370AB"</span>, <span class="st">"#C892C2"</span>, <span class="st">"#E9A6A1"</span>, <span class="st">"#F6CFCB"</span>, <span class="st">"#B64342"</span>)</span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a>p_fig3a <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a>  auroc <span class="sc">~</span> feature_set,</span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df_models,</span>
+<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_benchmark_bars</span>(</span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a>    <span class="at">null_band       =</span> <span class="fu">c</span>(<span class="fl">0.505</span>, <span class="fl">0.549</span>),</span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a>    <span class="at">error_low       =</span> <span class="st">"auroc_lo"</span>,</span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a>    <span class="at">error_high      =</span> <span class="st">"auroc_hi"</span>,</span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a>    <span class="at">value_labels    =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_sep_lines =</span> <span class="fu">c</span>(<span class="st">"M-A"</span>, <span class="st">"M-C"</span>, <span class="st">"M-L"</span>),</span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a>    <span class="at">bar_width       =</span> <span class="fl">0.72</span></span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> df_models<span class="sc">$</span>tier_color,</span>
+<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="st">"benchmark"</span>,</span>
+<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Multi-Tier Target Prioritisation Benchmark (Atopic Dermatitis)"</span>,</span>
+<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab =</span> <span class="st">"AUROC (Grouped Jackknife 95% CI)"</span>,</span>
+<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab =</span> <span class="st">"Model Governance Tier"</span></span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 3c: Target Recovery Budget Curves</span></span>
+<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a>df_budget <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>, <span class="dv">2000</span>, <span class="dv">5000</span>), <span class="dv">4</span>),</span>
+<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a>  <span class="at">targets =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">12</span>, <span class="dv">16</span>, <span class="dv">21</span>, <span class="dv">26</span>,       <span class="co"># M-B (Biology)</span></span>
+<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a>              <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">12</span>, <span class="dv">16</span>, <span class="dv">20</span>, <span class="dv">24</span>, <span class="dv">26</span>, <span class="dv">28</span>,      <span class="co"># M-BDA (Biology + Druggability + Attention)</span></span>
+<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a>              <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">12</span>, <span class="dv">19</span>,          <span class="co"># M-0 (Chance)</span></span>
+<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a>              <span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">11</span>, <span class="dv">15</span>, <span class="dv">19</span>, <span class="dv">23</span>, <span class="dv">26</span>, <span class="dv">28</span>, <span class="dv">28</span>),    <span class="co"># M-ALL (Full Model)</span></span>
+<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Biology (B)"</span>, <span class="st">"B+D+A"</span>, <span class="st">"Chance"</span>, <span class="st">"All Features"</span>), <span class="at">each =</span> <span class="dv">9</span>)</span>
+<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a>p_fig3c <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_budget, <span class="fu">aes</span>(<span class="at">x =</span> k, <span class="at">y =</span> targets, <span class="at">color =</span> model)) <span class="sc">+</span></span>
+<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb5-234"><a href="#cb5-234" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">1000</span>, <span class="dv">5000</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"10"</span>, <span class="st">"100"</span>, <span class="st">"1,000"</span>, <span class="st">"5,000"</span>)) <span class="sc">+</span></span>
+<span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">100</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">color =</span> <span class="st">"#767676"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Biology (B)"</span> <span class="ot">=</span> <span class="st">"#0F4D92"</span>, <span class="st">"B+D+A"</span> <span class="ot">=</span> <span class="st">"#9A4D8E"</span>, </span>
+<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"Chance"</span> <span class="ot">=</span> <span class="st">"#767676"</span>, <span class="st">"All Features"</span> <span class="ot">=</span> <span class="st">"#B64342"</span>)) <span class="sc">+</span></span>
+<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Genes Reviewed (Top k)"</span>, <span class="at">y =</span> <span class="st">"Targets Recovered"</span>, <span class="at">title =</span> <span class="st">"Target Recovery by Review Budget"</span>) <span class="sc">+</span></span>
+<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_cli_benchmark</span>(<span class="at">base_size =</span> <span class="dv">10</span>)</span>
+<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Attention Confounding &amp; Matched Controls</span></span>
+<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a>Figure 4 examines how literature attention inflates apparent model performance:</span>
+<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 4a**: Target discrimination evaluated against matched negative controls (unmatched controls vs. controls matched on PubMed paper volume vs. controls matched on attention-model scores).</span>
+<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 4b**: Target frequency distribution across PubMed publication quintiles, showing that approved targets are overwhelmingly concentrated in the most-studied 20% of genes.</span>
+<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 4c**: Proportion of top-100 ranked genes that originate from the highest publication quintile.</span>
+<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a><span class="al">![Figure 4: Discrimination after attention matching (a), target distribution across PubMed quintiles (b), and attention bias of top-100 predictions (c).](images/leakage_benchmark/fig4_attention.png)</span>{width=100%}</span>
+<span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 4a: AUROC Under Attention Matching</span></span>
+<span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a>df_matched <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"Biology (B)"</span>, <span class="st">"Druggability (D)"</span>, <span class="st">"B+D"</span>, <span class="st">"Attention (A)"</span>, <span class="st">"Clinical (C)"</span>),</span>
+<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a>                 <span class="at">levels =</span> <span class="fu">rev</span>(<span class="fu">c</span>(<span class="st">"Biology (B)"</span>, <span class="st">"Druggability (D)"</span>, <span class="st">"B+D"</span>, <span class="st">"Attention (A)"</span>, <span class="st">"Clinical (C)"</span>))),</span>
+<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a>  <span class="at">unmatched =</span> <span class="fu">c</span>(<span class="fl">0.772</span>, <span class="fl">0.766</span>, <span class="fl">0.860</span>, <span class="fl">0.911</span>, <span class="fl">0.892</span>),</span>
+<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a>  <span class="at">matched_pubmed =</span> <span class="fu">c</span>(<span class="fl">0.665</span>, <span class="fl">0.612</span>, <span class="fl">0.741</span>, <span class="fl">0.521</span>, <span class="fl">0.785</span>),</span>
+<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a>  <span class="at">lo_pubmed =</span> <span class="fu">c</span>(<span class="fl">0.551</span>, <span class="fl">0.508</span>, <span class="fl">0.635</span>, <span class="fl">0.412</span>, <span class="fl">0.672</span>),</span>
+<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a>  <span class="at">hi_pubmed =</span> <span class="fu">c</span>(<span class="fl">0.764</span>, <span class="fl">0.710</span>, <span class="fl">0.835</span>, <span class="fl">0.631</span>, <span class="fl">0.880</span>)</span>
+<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a>p_fig4a <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_matched) <span class="sc">+</span></span>
+<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">y =</span> model, <span class="at">yend =</span> model, <span class="at">x =</span> matched_pubmed, <span class="at">xend =</span> unmatched), <span class="at">color =</span> <span class="st">"#767676"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> unmatched, <span class="at">y =</span> model), <span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">stroke =</span> <span class="fl">1.0</span>) <span class="sc">+</span></span>
+<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">x =</span> matched_pubmed, <span class="at">y =</span> model, <span class="at">xmin =</span> lo_pubmed, <span class="at">xmax =</span> hi_pubmed), </span>
+<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a>                  <span class="at">size =</span> <span class="fl">0.6</span>, <span class="at">color =</span> <span class="st">"#0F4D92"</span>, <span class="at">shape =</span> <span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#767676"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"AUROC"</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">title =</span> <span class="st">"Discrimination That Research Attention Cannot Explain"</span>) <span class="sc">+</span></span>
+<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_cli_benchmark</span>(<span class="at">base_size =</span> <span class="dv">10</span>)</span>
+<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 4b: Target Concentration in PubMed Publication Quintiles</span></span>
+<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a>df_strata <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a>  <span class="at">quintile =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"Q1 (0–2)"</span>, <span class="st">"Q2 (3–8)"</span>, <span class="st">"Q3 (9–24)"</span>, <span class="st">"Q4 (25–82)"</span>, <span class="st">"Q5 (&gt;=83)"</span>),</span>
+<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Q1 (0–2)"</span>, <span class="st">"Q2 (3–8)"</span>, <span class="st">"Q3 (9–24)"</span>, <span class="st">"Q4 (25–82)"</span>, <span class="st">"Q5 (&gt;=83)"</span>)),</span>
+<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a>  <span class="at">targets =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">6</span>, <span class="dv">19</span>)</span>
+<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a>p_fig4b <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_strata, <span class="fu">aes</span>(<span class="at">x =</span> quintile, <span class="at">y =</span> targets)) <span class="sc">+</span></span>
+<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#9A4D8E"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">width =</span> <span class="fl">0.65</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> targets), <span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">22</span>), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PubMed Volume Quintile (Papers / Gene)"</span>, <span class="at">y =</span> <span class="st">"AD Phase 3+ Targets"</span>, </span>
+<span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Target Concentration in Heavily Studied Genes"</span>) <span class="sc">+</span></span>
+<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_cli_benchmark</span>(<span class="at">base_size =</span> <span class="dv">10</span>)</span>
+<span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Historical Time-Splits &amp; Pan-Disease Generalizability</span></span>
+<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a><span class="fu">### Partially Retrospective Time-Split (Figure 5)</span></span>
+<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a>To emulate prospective target discovery, models were trained on evidence accumulated up to 2014 and tested on drugs advancing to Phase 3 trials between 2015 and 2024:</span>
+<span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a><span class="al">![Figure 5: Retrospective time-split benchmark frozen at 2014 (a) and individual target score trajectories (b).](images/leakage_benchmark/fig5_ad_time_split.png)</span>{width=100%}</span>
+<span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pan-Disease Generalizability (Figure 6)</span></span>
+<span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a>The multiomics benchmark was extended across 15 distinct human diseases (spanning autoimmune, metabolic, and oncology indications), confirming that the leakage hierarchy is disease-agnostic:</span>
+<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a><span class="al">![Figure 6: Pan-disease cross-validation benchmark across diverse clinical indications.](images/leakage_benchmark/fig6_pan_disease.png)</span>{width=100%}</span>
+<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6. Summary of Figures and Reproducibility</span></span>
+<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Benchmark Figure <span class="pp">|</span> Concept &amp; Clinical Question <span class="pp">|</span> <span class="in">`cliomicplot`</span> Implementation <span class="pp">|</span> Key Theme Elements <span class="pp">|</span></span>
+<span id="cb5-315"><a href="#cb5-315" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|:---|:---|</span></span>
+<span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Figure 1** <span class="pp">|</span> 5-Tier Data Architecture &amp; Label Audit <span class="pp">|</span> <span class="in">`cliplot()`</span> + <span class="in">`type_jitter()`</span> <span class="pp">|</span> <span class="in">`theme_cli_benchmark()`</span>, Palette <span class="in">`"figures4papers"`</span> <span class="pp">|</span></span>
+<span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Figure 2** <span class="pp">|</span> Leakage Decomposition &amp; Exact Shapley <span class="pp">|</span> <span class="in">`type_attribution()`</span> (<span class="in">`style = "stepwise"`</span> / <span class="in">`"shapley"`</span>) <span class="pp">|</span> Baseline reference lines, exact 3-decimal annotations <span class="pp">|</span></span>
+<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Figure 3** <span class="pp">|</span> Multi-Tier Benchmark with Jackknife CIs <span class="pp">|</span> <span class="in">`type_benchmark_bars()`</span> <span class="pp">|</span> Permutation null band (<span class="in">`c(0.505, 0.549)`</span>), log AP lift <span class="pp">|</span></span>
+<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Figure 4** <span class="pp">|</span> Research Attention &amp; Matched Controls <span class="pp">|</span> Custom pointrange + <span class="in">`type_benchmark_bars()`</span> <span class="pp">|</span> Quintile strata, matched control offsets <span class="pp">|</span></span>
+<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Figure 5** <span class="pp">|</span> Partially Retrospective Time-Split <span class="pp">|</span> <span class="in">`type_benchmark_bars()`</span> <span class="pp">|</span> Historical cutoffs, post-cut drug validation <span class="pp">|</span></span>
+<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Figure 6** <span class="pp">|</span> Pan-Disease Cross-Fitting Benchmark <span class="pp">|</span> <span class="in">`cliplot()`</span> + faceting across diseases <span class="pp">|</span> Cross-disease model generalization <span class="pp">|</span></span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/20-case-study-leakage-benchmark.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
