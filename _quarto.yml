@@ -47,6 +47,7 @@ book:
         - 17-case-study-atopic-dermatitis.qmd
         - 18-case-study-cancer-immunotherapy.qmd
         - 19-case-study-nature-communications.qmd
+        - 20-case-study-leakage-benchmark.qmd
 
     - references.qmd
 
