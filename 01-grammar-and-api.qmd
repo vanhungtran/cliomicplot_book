@@ -295,6 +295,55 @@ p_ecology <- cliplot(
 p_ecology
 ```
 
+## Transparent Data Distribution: Scatter-Box-Violin Plots (David Baranger Style)
+
+A recognized issue in biomedical and behavioral data visualization is the over-reliance on bar plots with standard error bars ("dynamite plungers"), which obscure sample sizes, bimodal clusters, skewness, and outliers. In *"Showing your data: Scatter, box, & violin plots"* (2018), David Baranger advocates layering three complementary representations of the data:
+
+1. **Background Kernel Density (`geom_violin`)**: Shows the overall probability density and distribution shape (`alpha = 0.30`, `scale = "width"`, `linewidth = 0.55`).
+2. **Foreground Notched Boxplot (`geom_boxplot`)**: A narrow summary structure (`width = 0.22`, `alpha = 0.75`) with black borders and notches indicating the 95% confidence interval of the median ($1.58 \times \text{IQR} / \sqrt{n}$). Outliers are hidden (`outlier.shape = NA`) to eliminate duplicate points.
+3. **Overlaid Raw Data Points (`geom_jitter` / `geom_point`)**: Individual observations displayed with black borders (`shape = 21`, `stroke = 0.35`, `size = 1.8`, `alpha = 0.65`) and fill colors matching the treatment category, ensuring complete transparency.
+
+`cliomicplot` provides `type_scatter_box_violin()` (aliases: `type_baranger()`, `type_sbv()`, and `type_boxplot(style = "baranger")`), as well as two-component variants `type_scatter_box()` and `type_box_violin()`.
+
+### Single-Factor Demonstration
+
+```{r baranger-single-demo, fig.width=7.2, fig.height=5.0}
+p_sbv_single <- cliplot(
+  Sepal.Length ~ Species,
+  data     = iris,
+  type     = type_scatter_box_violin(notch = TRUE),
+  palette  = "nature",
+  theme    = "nature",
+  title    = "Fisher Iris Sepal Length Distribution",
+  subtitle = "David Baranger scatter-box-violin architecture with 95% median CI notches",
+  ylab     = "Sepal Length (cm)",
+  xlab     = "Iris Species"
+)
+p_sbv_single
+```
+
+### Dodged 2-Way Grouping Demonstration
+
+When conditioning on a secondary treatment or demographic factor (`y ~ x | group`), `type_scatter_box_violin()` automatically coordinates synchronized dodging across all three visual layers using `position_dodge(0.80)` and `position_jitterdodge(0.12, 0.80)`:
+
+```{r baranger-grouped-demo, fig.width=8.0, fig.height=5.2}
+tg <- ToothGrowth
+tg$dose <- factor(tg$dose, levels = c(0.5, 1.0, 2.0), labels = c("0.5 mg/day", "1.0 mg/day", "2.0 mg/day"))
+
+p_sbv_grouped <- cliplot(
+  len ~ dose | supp,
+  data     = tg,
+  type     = type_scatter_box_violin(notch = FALSE, width = 0.20, position_dodge = 0.80),
+  palette  = "jco",
+  theme    = "nature",
+  title    = "Odontoblast Growth by Ascorbic Acid Regimen and Delivery Vehicle",
+  subtitle = "Synchronized 2-way dodging across violin, notched box, and raw observation points",
+  ylab     = "Tooth Length",
+  xlab     = "Dose Level"
+)
+p_sbv_grouped
+```
+
 ## The Parameter Object: `clipar()`
 
 `clipar()` sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:
