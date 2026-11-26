@@ -192,6 +192,58 @@ p_mean_stat <- cliplot(
 p_mean_stat
 ```
 
+## Nature Aging Pathology Boxplots: `type_pathology_boxplot()`
+
+`type_pathology_boxplot()` implements the Nature Aging and SciFig boxplot standard established in Yadav et al. 2026. Designed for large-cohort clinical and multi-tissue omics contrasts (such as GTEx donors stratified by microscopic pathology findings), it incorporates seven publication elements:
+
+1. **Category-matched colored outlines**: Box outlines and whiskers match the group palette (`#0F4D92` vs. `#D55E00`), while box interiors retain low-alpha fill (`alpha = 0.22`).
+2. **Bold black median bar**: An explicit `#111111` horizontal crossbar (`linewidth = 0.85`) highlights the sample median without obscuring point distributions.
+3. **Paired mean connecting lines**: Dotted trajectories connect group means across conditions within each category, showing effect direction.
+4. **Mean diamond glyphs**: A white-filled diamond marker (`shape = 23`) displays the arithmetic mean.
+5. **Dashed zero baseline**: A horizontal reference line (`y = 0`) renders behind all distributions.
+6. **Subsampled jitter**: `jitter_subsample` downsamples massive background groups (e.g. $N \approx 20\text{k}$) to prevent overplotting while keeping box statistics computed on all observations.
+7. **Mathematical significance brackets**: `stat.label = "p.nature"` renders two-line significance annotations with exact Unicode scientific exponents ($***\text{ (P = }1.7 \times 10^{-9}\text{)}$ or $\text{n.s. (P = 0.55)}$).
+
+```{r pathology-boxplot-demo, fig.width=7.5, fig.height=5.2}
+# Simulate multi-tissue pathology data
+set.seed(42)
+pathology_df <- data.frame(
+  feature = factor(rep(c("Calcification\n(n = 225)", "Fibrosis\n(n = 531)", "Atrophy\n(n = 301)"), each = 80)),
+  status  = factor(rep(c("Absent (~20k)", "Present"), each = 40, times = 3), levels = c("Absent (~20k)", "Present")),
+  delta   = c(
+    rnorm(40, mean = 0.10, sd = 0.07), rnorm(40, mean = 0.13, sd = 0.08),
+    rnorm(40, mean = 0.13, sd = 0.08), rnorm(40, mean = 0.16, sd = 0.09),
+    rnorm(40, mean = 0.13, sd = 0.08), rnorm(40, mean = 0.14, sd = 0.14)
+  )
+)
+
+p_pathology <- cliplot(
+  delta ~ feature | status,
+  data       = pathology_df,
+  type       = type_pathology_boxplot(
+    width            = 0.30,
+    position_dodge   = 0.42,
+    alpha            = 0.22,
+    linewidth        = 0.45,
+    jitter_subsample = 40,
+    jitter_size      = 0.85,
+    jitter_alpha     = 0.35,
+    mean_size        = 1.8,
+    bold_median_lwd  = 0.85
+  ),
+  palette    = "pathology",
+  theme      = "pathology",
+  stat.test  = "t.test",
+  stat.label = "p.nature",
+  stat.y     = c(0.38, 0.42, 0.48),
+  title      = "Structural Aging Across Microscopic Pathology Findings",
+  subtitle   = "Nature Aging boxplot architecture with paired mean trajectory lines",
+  xlab       = "Microscopic Pathology Finding",
+  ylab       = "Structural Aging Δ Score"
+)
+p_pathology
+```
+
 ## The Parameter Object: `clipar()`
 
 `clipar()` sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:

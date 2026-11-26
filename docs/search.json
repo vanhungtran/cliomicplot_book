@@ -105,11 +105,22 @@
     ]
   },
   {
+    "objectID": "01-grammar-and-api.html#nature-aging-pathology-boxplots-type_pathology_boxplot",
+    "href": "01-grammar-and-api.html#nature-aging-pathology-boxplots-type_pathology_boxplot",
+    "title": "1  Graphic Grammar and Core API",
+    "section": "1.5 Nature Aging Pathology Boxplots: type_pathology_boxplot()",
+    "text": "1.5 Nature Aging Pathology Boxplots: type_pathology_boxplot()\ntype_pathology_boxplot() implements the Nature Aging and SciFig boxplot standard established in Yadav et al. 2026. Designed for large-cohort clinical and multi-tissue omics contrasts (such as GTEx donors stratified by microscopic pathology findings), it incorporates seven publication elements:\n\nCategory-matched colored outlines: Box outlines and whiskers match the group palette (#0F4D92 vs. #D55E00), while box interiors retain low-alpha fill (alpha = 0.22).\nBold black median bar: An explicit #111111 horizontal crossbar (linewidth = 0.85) highlights the sample median without obscuring point distributions.\nPaired mean connecting lines: Dotted trajectories connect group means across conditions within each category, showing effect direction.\nMean diamond glyphs: A white-filled diamond marker (shape = 23) displays the arithmetic mean.\nDashed zero baseline: A horizontal reference line (y = 0) renders behind all distributions.\nSubsampled jitter: jitter_subsample downsamples massive background groups (e.g. N \\approx 20\\text{k}) to prevent overplotting while keeping box statistics computed on all observations.\nMathematical significance brackets: stat.label = \"p.nature\" renders two-line significance annotations with exact Unicode scientific exponents (***\\text{ (P = }1.7 \\times 10^{-9}\\text{)} or \\text{n.s. (P = 0.55)}).\n\n\n\nCode\n# Simulate multi-tissue pathology data\nset.seed(42)\npathology_df &lt;- data.frame(\n  feature = factor(rep(c(\"Calcification\\n(n = 225)\", \"Fibrosis\\n(n = 531)\", \"Atrophy\\n(n = 301)\"), each = 80)),\n  status  = factor(rep(c(\"Absent (~20k)\", \"Present\"), each = 40, times = 3), levels = c(\"Absent (~20k)\", \"Present\")),\n  delta   = c(\n    rnorm(40, mean = 0.10, sd = 0.07), rnorm(40, mean = 0.13, sd = 0.08),\n    rnorm(40, mean = 0.13, sd = 0.08), rnorm(40, mean = 0.16, sd = 0.09),\n    rnorm(40, mean = 0.13, sd = 0.08), rnorm(40, mean = 0.14, sd = 0.14)\n  )\n)\n\np_pathology &lt;- cliplot(\n  delta ~ feature | status,\n  data       = pathology_df,\n  type       = type_pathology_boxplot(\n    width            = 0.30,\n    position_dodge   = 0.42,\n    alpha            = 0.22,\n    linewidth        = 0.45,\n    jitter_subsample = 40,\n    jitter_size      = 0.85,\n    jitter_alpha     = 0.35,\n    mean_size        = 1.8,\n    bold_median_lwd  = 0.85\n  ),\n  palette    = \"pathology\",\n  theme      = \"pathology\",\n  stat.test  = \"t.test\",\n  stat.label = \"p.nature\",\n  stat.y     = c(0.38, 0.42, 0.48),\n  title      = \"Structural Aging Across Microscopic Pathology Findings\",\n  subtitle   = \"Nature Aging boxplot architecture with paired mean trajectory lines\",\n  xlab       = \"Microscopic Pathology Finding\",\n  ylab       = \"Structural Aging Δ Score\"\n)\np_pathology",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
+    ]
+  },
+  {
     "objectID": "01-grammar-and-api.html#the-parameter-object-clipar",
     "href": "01-grammar-and-api.html#the-parameter-object-clipar",
     "title": "1  Graphic Grammar and Core API",
-    "section": "1.5 The Parameter Object: clipar()",
-    "text": "1.5 The Parameter Object: clipar()\nclipar() sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:\n\n\nCode\npars &lt;- clipar(\n  point_size  = 2.2,\n  line_width  = 0.9,\n  alpha       = 0.75,\n  font_size   = 10\n)\n\np_custom &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data   = df_cohort,\n  type   = \"beeswarm\",\n  params = pars,\n  preset = \"science\"\n)\np_custom",
+    "section": "1.6 The Parameter Object: clipar()",
+    "text": "1.6 The Parameter Object: clipar()\nclipar() sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:\n\n\nCode\npars &lt;- clipar(\n  point_size  = 2.2,\n  line_width  = 0.9,\n  alpha       = 0.75,\n  font_size   = 10\n)\n\np_custom &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data   = df_cohort,\n  type   = \"beeswarm\",\n  params = pars,\n  preset = \"science\"\n)\np_custom",
     "crumbs": [
       "Part I — Graphic Grammar and Design System",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
@@ -119,8 +130,8 @@
     "objectID": "01-grammar-and-api.html#plot-composition-and-layer-addition",
     "href": "01-grammar-and-api.html#plot-composition-and-layer-addition",
     "title": "1  Graphic Grammar and Core API",
-    "section": "1.6 Plot Composition and Layer Addition",
-    "text": "1.6 Plot Composition and Layer Addition\ncliplot() objects are ggplot2 instances. You can extend them using the standard + operator or the cliplot_add() helper:\n\n\nCode\np_final &lt;- p_box +\n  geom_hline(yintercept = 10, linetype = \"dashed\", color = \"#B22222\", linewidth = 0.6) +\n  annotate(\"text\", x = 1.2, y = 10.8, label = \"Diagnostic Threshold (10 pg/mL)\",\n           size = 2.8, color = \"#B22222\", fontface = \"bold\")\np_final",
+    "section": "1.7 Plot Composition and Layer Addition",
+    "text": "1.7 Plot Composition and Layer Addition\ncliplot() objects are ggplot2 instances. You can extend them using the standard + operator or the cliplot_add() helper:\n\n\nCode\np_final &lt;- p_box +\n  geom_hline(yintercept = 10, linetype = \"dashed\", color = \"#B22222\", linewidth = 0.6) +\n  annotate(\"text\", x = 1.2, y = 10.8, label = \"Diagnostic Threshold (10 pg/mL)\",\n           size = 2.8, color = \"#B22222\", fontface = \"bold\")\np_final",
     "crumbs": [
       "Part I — Graphic Grammar and Design System",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
