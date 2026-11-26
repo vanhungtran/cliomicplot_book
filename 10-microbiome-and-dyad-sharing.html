@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -416,8 +416,8 @@ window.Quarto = {
 <h2 data-number="10.1" class="anchored" data-anchor-id="clinical-severity-stratification-by-host-genetics"><span class="header-section-number">10.1</span> Clinical Severity Stratification by Host Genetics</h2>
 <p>In cohort studies of atopic dermatitis, host genetic lesions (such as <em>FLG</em> loss-of-function variants) interact with microbial colonization. Here, clinical eczema severity (SCORAD index) is compared across disease subgroups with overlaid patient jitter and rank-sum tests:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -460,8 +460,8 @@ window.Quarto = {
 <h2 data-number="10.2" class="anchored" data-anchor-id="differential-abundance-bubble-matrices-type-bubble_matrix"><span class="header-section-number">10.2</span> Differential Abundance Bubble Matrices: <code>type = "bubble_matrix"</code></h2>
 <p>Differential abundance tests report both directional effect size (signed <span class="math inline">\log_2\text{FC}</span>) and statistical significance (<span class="math inline">-\log_{10} q</span>). <code>type_bubble_matrix()</code> renders both across anatomical sampling sites and study visits:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. aureus"</span>, <span class="st">"S. epidermidis"</span>, <span class="st">"S. hominis"</span>, <span class="st">"C. acnes"</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"M. restricta"</span>, <span class="st">"P. melaninogenica"</span>, <span class="st">"V. parvula"</span>, <span class="st">"S. mitis"</span>)</span>
@@ -509,8 +509,8 @@ window.Quarto = {
 <h2 data-number="10.3" class="anchored" data-anchor-id="mother-infant-dyad-strain-transmission-heatmap-type-sharing_heatmap"><span class="header-section-number">10.3</span> Mother-Infant Dyad Strain Transmission Heatmap: <code>type = "sharing_heatmap"</code></h2>
 <p>Bacterial vertical transmission and strain persistence across early infancy are evaluated across mother-infant dyads. <code>type_sharing_heatmap()</code> summarizes binary dyad sharing patterns across species:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dyads <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Dyad "</span>, <span class="fu">sprintf</span>(<span class="st">"%02d"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">14</span>))</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>taxa <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. epidermidis ST2"</span>, <span class="st">"S. epidermidis ST5"</span>, <span class="st">"S. hominis ST1"</span>,</span>

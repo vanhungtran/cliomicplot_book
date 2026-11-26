@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -414,7 +414,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./16-assembling-composites.html">Part V — Publication Composites and Applied Case Studies</a></li><li class="breadcrumb-item"><a href="./19-case-study-nature-communications.html"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Replicating Multi-Modal Omics: Nature Communications Case Study</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Replicating Multi-Modal Omics: Nature Communications Case Study</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Replicating Multi-Modal Omics: Nature Communications Case Study</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -431,8 +431,8 @@ window.Quarto = {
 </header>
 
 
-<p>This case study demonstrates the replication of all publication figures from <em>Nature Communications</em> (2024) 15:10413 (<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11607458/">PMC11607458</a>): <em>“Granzyme K⁺CD8⁺ T cells interact with fibroblasts to promote neutrophilic inflammation in nasal polyps”</em>.</p>
-<p>Using real Source Data from <code>41467_2024_54685_MOESM4_ESM.xlsx</code>, we implement the figures across clinical flow cytometry (95 donors), single-cell RNA-seq (208,757 cells), Visium HD spatial transcriptomics, in vitro functional assays, and a cross-tissue inflammatory atlas (159 donors across 10 chronic diseases including Skin Atopic Dermatitis).</p>
+<p>This case study demonstrates the replication of publication figures from <em>Nature Communications</em> (2024) 15:10413 (<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11607458/">PMC11607458</a>): <em>“Granzyme K⁺CD8⁺ T cells interact with fibroblasts to promote neutrophilic inflammation in nasal polyps”</em>.</p>
+<p>Using Source Data from <code>41467_2024_54685_MOESM4_ESM.xlsx</code>, we implement the figures across clinical flow cytometry (95 donors), single-cell RNA-seq (208,757 cells), Visium HD spatial transcriptomics, in vitro functional assays, and a cross-tissue inflammatory atlas (159 donors across 10 chronic diseases including Skin Atopic Dermatitis).</p>
 <hr>
 <section id="study-architecture-and-multi-modal-datasets" class="level2" data-number="19.1">
 <h2 data-number="19.1" class="anchored" data-anchor-id="study-architecture-and-multi-modal-datasets"><span class="header-section-number">19.1</span> 1. Study Architecture and Multi-Modal Datasets</h2>
@@ -464,6 +464,49 @@ window.Quarto = {
 <li><strong>Panel 2h</strong>: Horizontal bar plot ranking the top 10 differentially expressed genes between <code>GZMK⁺</code> and <code>GZMB⁺</code> CD8⁺ T cells, showing elevated <em>GZMK</em>, <em>CD74</em>, <em>DUSP4</em>, <em>RGS1</em>, and <em>JUNB</em>.</li>
 <li><strong>Panel 2g &amp; 2i</strong>: Reactome GSEA normalized enrichment scores and KEGG immunological disease pathway dotplots.</li>
 </ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 2d: 100% Stacked CD8+ Subsets Across Blood and Tissue Compartments</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>p_fig2d <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_2d_long, <span class="fu">aes</span>(<span class="at">x =</span> Sample, <span class="at">y =</span> Share, <span class="at">fill =</span> Subset)) <span class="sc">+</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"stack"</span>, <span class="at">width =</span> <span class="fl">0.82</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span> Compartment, <span class="at">scales =</span> <span class="st">"free_x"</span>, <span class="at">space =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> pal_2d, <span class="at">breaks =</span> cd8_subsets, <span class="at">name =</span> <span class="st">"CD8+ T cell subsets"</span>) <span class="sc">+</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">100.1</span>), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">25</span>)) <span class="sc">+</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"d"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Cell proportion (%)"</span>) <span class="sc">+</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 2f: Differential Expression Scatter Plot (GZMK vs Others)</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>p_fig2f <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_volcano, <span class="fu">aes</span>(<span class="at">x =</span> delta_pct, <span class="at">y =</span> logfc)) <span class="sc">+</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> status), <span class="at">size =</span> <span class="fl">1.3</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Up"</span> <span class="ot">=</span> <span class="st">"#DE3533"</span>, <span class="st">"Down"</span> <span class="ot">=</span> <span class="st">"#3B75AF"</span>, <span class="st">"NS"</span> <span class="ot">=</span> <span class="st">"#D0D0D0"</span>)) <span class="sc">+</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"f"</span>, <span class="at">x =</span> <span class="st">"Δ Percent of cells"</span>, <span class="at">y =</span> <span class="st">"Average log2(Fold Change)"</span>) <span class="sc">+</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 2h: Top 10 Ranked DEGs (Horizontal Bar)</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>p_fig2h <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_top10, <span class="fu">aes</span>(<span class="at">x =</span> logfc, <span class="at">y =</span> gene)) <span class="sc">+</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"#DE3533"</span>, <span class="at">width =</span> <span class="fl">0.72</span>) <span class="sc">+</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"h"</span>, <span class="at">x =</span> <span class="st">"Average log2(Fold Change)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 2g &amp; 2i: Reactome GSEA Enrichment &amp; KEGG Dotplots</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>p_fig2g <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_gsea, <span class="fu">aes</span>(<span class="at">x =</span> NES, <span class="at">y =</span> Pathway, <span class="at">fill =</span> Direction)) <span class="sc">+</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">width =</span> <span class="fl">0.72</span>) <span class="sc">+</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Upregulated"</span> <span class="ot">=</span> <span class="st">"#DE3533"</span>, <span class="st">"Downregulated"</span> <span class="ot">=</span> <span class="st">"#3B75AF"</span>)) <span class="sc">+</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"g"</span>, <span class="at">x =</span> <span class="st">"Normalized Enrichment Score (NES)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>p_fig2i <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_kegg, <span class="fu">aes</span>(<span class="at">x =</span> GeneRatio, <span class="at">y =</span> Description)) <span class="sc">+</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> Count, <span class="at">color =</span> p.adjust)) <span class="sc">+</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_gradient</span>(<span class="at">low =</span> <span class="st">"#DE3533"</span>, <span class="at">high =</span> <span class="st">"#3B75AF"</span>) <span class="sc">+</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"i"</span>, <span class="at">x =</span> <span class="st">"Gene Ratio"</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 <hr>
 </section>
 </section>
@@ -483,6 +526,54 @@ window.Quarto = {
 <li>Paired MFI demonstrates marked upregulation of the homing receptor <em>CXCR4</em> (<span class="math inline">P = 0.0371</span>) and exhaustion marker <em>PD-1</em> (<span class="math inline">P = 0.0031</span>) in <code>GZMK⁺</code> compared to <code>GZMB⁺</code> subsets from the same donors.</li>
 <li>Target cell lysis confirmed that <code>GZMK⁺</code> cells possess reduced cytotoxicity (<span class="math inline">P = 0.0063</span>), functioning primarily as cytokine/chemokine producers.</li>
 </ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggsignif)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 3g: 95-Donor Flow Cytometry with Pairwise Significance Brackets</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>p_fig3g <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  GZMK_Pct <span class="sc">~</span> Group,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">data        =</span> df_3g,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">type        =</span> <span class="fu">type_boxplot</span>(<span class="at">notch =</span> <span class="cn">FALSE</span>, <span class="at">outlier.shape =</span> <span class="dv">16</span>, <span class="at">outlier.size =</span> <span class="fl">1.2</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test   =</span> <span class="st">"wilcox.test"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"CBL"</span>, <span class="st">"NP-BL"</span>), <span class="fu">c</span>(<span class="st">"CIT"</span>, <span class="st">"NP"</span>)),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette     =</span> <span class="fu">c</span>(<span class="st">"CBL"</span> <span class="ot">=</span> <span class="st">"#6BAED6"</span>, <span class="st">"NP-BL"</span> <span class="ot">=</span> <span class="st">"#3182BD"</span>, <span class="st">"CIT"</span> <span class="ot">=</span> <span class="st">"#74C476"</span>, <span class="st">"NP"</span> <span class="ot">=</span> <span class="st">"#E6550D"</span>),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme       =</span> <span class="st">"nature"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"GZMK+ CD8+ T Cell Flow Cytometry"</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab        =</span> <span class="st">"% of CD8+ T cells"</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 3j: Paired Receptor MFI (CXCR4, PD-1) in GZMB+ vs GZMK+</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>p_fig3j <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  MFI <span class="sc">~</span> Subset <span class="sc">|</span> Receptor,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_3j_paired,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_slope</span>(<span class="at">pair =</span> <span class="st">"Donor"</span>, <span class="at">reference_line =</span> <span class="cn">NULL</span>),</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="fu">c</span>(<span class="st">"GZMB+CD8"</span> <span class="ot">=</span> <span class="st">"#DE3533"</span>, <span class="st">"GZMK+CD8"</span> <span class="ot">=</span> <span class="st">"#F58518"</span>),</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"nature"</span>,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Normalized Mean Fluorescence Intensity (MFI)"</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 3l &amp; 3n: Functional Cytotoxicity and Target Cell Lysis</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>p_fig3n <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  Lysis_Pct <span class="sc">~</span> Effector_Target_Ratio <span class="sc">|</span> Subset,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_cytotoxicity,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_trajectory</span>(</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_errorbar =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">errorbar      =</span> <span class="st">"se"</span>,</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_fill    =</span> <span class="st">"white"</span>,</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">dodge         =</span> <span class="fl">0.16</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="fu">c</span>(<span class="st">"GZMB+CD8"</span> <span class="ot">=</span> <span class="st">"#DE3533"</span>, <span class="st">"GZMK+CD8"</span> <span class="ot">=</span> <span class="st">"#F58518"</span>),</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"nature"</span>,</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Target Cell Lysis Curve (Reduced Cytotoxicity in GZMK+, P = 0.0063)"</span>,</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"% Specific Lysis"</span>,</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab      =</span> <span class="st">"Effector : Target Ratio"</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 <hr>
 </section>
 </section>
@@ -503,6 +594,35 @@ window.Quarto = {
 <li><strong>Panel 5h</strong>: Direct frequency comparison of <code>CD8T_GZMK</code> (<span class="math inline">P = 0.0667</span>) versus <code>CD8T_GZMB</code> (<span class="math inline">\text{ns}</span>) in total CD8⁺ T cells.</li>
 <li><strong>Panel 5i &amp; 5j</strong>: Proportions of infiltrating B cells (<span class="math inline">P = 0.0381</span>), CD4⁺ T cells (<span class="math inline">P = 0.0190</span>), and smooth muscle cells (SMCs, <span class="math inline">P = 0.0095</span>).</li>
 </ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 5f: 100% Stacked Bar Chart of 19 Cell Lineages Across Visium HD Sections</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>p_fig5f <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_5f_long, <span class="fu">aes</span>(<span class="at">x =</span> Sample, <span class="at">y =</span> Share, <span class="at">fill =</span> CellType)) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"stack"</span>, <span class="at">width =</span> <span class="fl">0.82</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span> Group, <span class="at">scales =</span> <span class="st">"free_x"</span>, <span class="at">space =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> pal_19, <span class="at">name =</span> <span class="st">"19 Visium HD Lineages"</span>) <span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">100.1</span>), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">25</span>)) <span class="sc">+</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"f"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Lineage proportion (%)"</span>) <span class="sc">+</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 5h: CD8T_GZMK Frequency in Total CD8+ T Cells Across CIT vs NP</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>p_fig5h <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  Frequency <span class="sc">~</span> Group,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">data        =</span> df_5h_gzmk,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">type        =</span> <span class="fu">type_boxplot</span>(<span class="at">outlier.shape =</span> <span class="dv">16</span>),</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test   =</span> <span class="st">"wilcox.test"</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"CIT"</span>, <span class="st">"NP"</span>)),</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette     =</span> <span class="fu">c</span>(<span class="st">"CIT"</span> <span class="ot">=</span> <span class="st">"#74C476"</span>, <span class="st">"NP"</span> <span class="ot">=</span> <span class="st">"#E6550D"</span>),</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme       =</span> <span class="st">"nature"</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"CD8T_GZMK Frequency (P = 0.0667)"</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab        =</span> <span class="st">"% of CD8+ T cells"</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 <hr>
 </section>
 </section>
@@ -523,6 +643,44 @@ window.Quarto = {
 <li><strong>Chemotaxis (j)</strong>: Transwell migration of <code>GZMK⁺CD8⁺</code> T cells towards fibroblasts is abrogated by the CXCR4 neutraligand <code>LIT-927</code> (<span class="math inline">P = 0.0001</span>).</li>
 <li><strong>Neutrophil Infiltration (m, n, o)</strong>: MPO⁺ neutrophils are elevated in NP tissue (<span class="math inline">P &lt; 0.0001</span>) and correlate positively with <code>GZMK⁺CD8⁺</code> T cell density (<span class="math inline">R = 0.456, P = 0.007</span>), whereas eosinophil infiltration does not correlate (<span class="math inline">R = 0.151, P = 0.262</span>).</li>
 </ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 6c: HALO Spatial Cell Neighborhood (&lt; 25 µm from COL1A1+ Fibroblasts)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>p_fig6c <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  Fibroblast_Count <span class="sc">~</span> CellType,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">data        =</span> df_6c,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">type        =</span> <span class="fu">type_boxplot</span>(<span class="at">notch =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test   =</span> <span class="st">"t.test"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"GZMK+CD8"</span>, <span class="st">"CD4+T"</span>), <span class="fu">c</span>(<span class="st">"GZMK+CD8"</span>, <span class="st">"B cells"</span>)),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette     =</span> <span class="fu">c</span>(<span class="st">"GZMK+CD8"</span> <span class="ot">=</span> <span class="st">"#F58518"</span>, <span class="st">"CD4+T"</span> <span class="ot">=</span> <span class="st">"#3B75AF"</span>, <span class="st">"B cells"</span> <span class="ot">=</span> <span class="st">"#2CA02C"</span>),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme       =</span> <span class="st">"nature"</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab        =</span> <span class="st">"Fibroblast counts within 25 μm"</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 6h: Secretome Quantification After GZMK Stimulation (CXCL1, CXCL2, CXCL6, CXCL8)</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>p_fig6h <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_6h, <span class="fu">aes</span>(<span class="at">x =</span> Chemokine, <span class="at">y =</span> Concentration_pg_ml, <span class="at">fill =</span> Treatment)) <span class="sc">+</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.78</span>), <span class="at">width =</span> <span class="fl">0.72</span>) <span class="sc">+</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"PBS"</span> <span class="ot">=</span> <span class="st">"#B0C4DE"</span>, <span class="st">"GZMK"</span> <span class="ot">=</span> <span class="st">"#E6550D"</span>)) <span class="sc">+</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"h"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Concentration (pg/mL)"</span>) <span class="sc">+</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 6n &amp; 6o: Spearman Correlation with Tissue Infiltrating Neutrophils</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>p_fig6n <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  MPO_Neutrophils <span class="sc">~</span> GZMK_Density,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_correlations,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="st">"scatter"</span>,</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"nature"</span>,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"cor.test"</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Tissue Neutrophil Infiltration (R = 0.456, P = 0.007)"</span>,</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"MPO+ Neutrophils / mm²"</span>,</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab      =</span> <span class="st">"GZMK+ CD8+ T cells / mm²"</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 <hr>
 </section>
 </section>
@@ -539,6 +697,38 @@ window.Quarto = {
 <li><strong>Panel 7b</strong>: Boxplots of Shannon diversity across <code>CBL</code>, <code>NP-BL</code>, <code>CIT</code>, and <code>NP</code> with Dunn’s multiple comparison brackets (<span class="math inline">P = 0.0381, P = 0.0356</span>).</li>
 <li><strong>Panel 7c</strong>: Clonal expansion hierarchy from singletons (clone size = 1, light grey <code>#D9D9D9</code>) to hyper-expanded clones (&gt; 50, dark navy <code>#084594</code>).</li>
 </ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 7b: TCR Shannon Diversity Index Across Cohort Compartments</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>p_fig7b <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  Shannon_Index <span class="sc">~</span> Group,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">data        =</span> df_7b,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">type        =</span> <span class="fu">type_boxplot</span>(<span class="at">outlier.shape =</span> <span class="dv">16</span>),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"CBL"</span>, <span class="st">"CIT"</span>), <span class="fu">c</span>(<span class="st">"CIT"</span>, <span class="st">"NP"</span>)),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette     =</span> <span class="fu">c</span>(<span class="st">"CBL"</span> <span class="ot">=</span> <span class="st">"#6BAED6"</span>, <span class="st">"NP-BL"</span> <span class="ot">=</span> <span class="st">"#3182BD"</span>, <span class="st">"CIT"</span> <span class="ot">=</span> <span class="st">"#74C476"</span>, <span class="st">"NP"</span> <span class="ot">=</span> <span class="st">"#E6550D"</span>),</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme       =</span> <span class="st">"nature"</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"TCR Shannon Diversity Index"</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab        =</span> <span class="st">"Shannon entropy"</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 7c: Clonal Expansion Dynamics from Singletons to Hyper-Expanded Clones</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>p_fig7c <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_7c, <span class="fu">aes</span>(<span class="at">x =</span> Sample, <span class="at">y =</span> Share, <span class="at">fill =</span> Clone_Tier)) <span class="sc">+</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"stack"</span>, <span class="at">width =</span> <span class="fl">0.82</span>) <span class="sc">+</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Single (1)"</span>    <span class="ot">=</span> <span class="st">"#D9D9D9"</span>,</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Small (2-5)"</span>   <span class="ot">=</span> <span class="st">"#9ECAE1"</span>,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Medium (6-20)"</span> <span class="ot">=</span> <span class="st">"#4292C6"</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Large (21-50)"</span> <span class="ot">=</span> <span class="st">"#08519C"</span>,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Hyper (&gt;50)"</span>   <span class="ot">=</span> <span class="st">"#08306B"</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"c"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Clonal proportion (%)"</span>) <span class="sc">+</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 <hr>
 </section>
 <section id="figure-8-pan-tissue-cross-condition-atlas-10-diseases-159-donors" class="level2" data-number="19.7">
@@ -564,6 +754,36 @@ window.Quarto = {
 <li>Skin PN: Elevated <code>GZMK⁺CD8⁺</code> proportion (<span class="math inline">P = 0.0022</span>).</li>
 <li>Spatial transcriptomics in AD lesional sections confirmed positive neighborhood enrichment between <code>GZMK⁺CD8⁺</code> T cells and fibroblasts, driven by the <em>CXCL12</em>–<em>CXCR4</em> signaling axis.</li>
 </ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 8e: Skin Atopic Dermatitis (GSE197023) - GZMK+ vs GZMB+ CD8+ T Cells</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>p_fig8e_ad <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  Cell_Proportion <span class="sc">~</span> Subset,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_ad_skin,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_boxplot</span>(<span class="at">outlier.shape =</span> <span class="dv">16</span>),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"t.test"</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="fu">c</span>(<span class="st">"GZMB+CD8"</span> <span class="ot">=</span> <span class="st">"#DE3533"</span>, <span class="st">"GZMK+CD8"</span> <span class="ot">=</span> <span class="st">"#F58518"</span>),</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"nature"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Atopic Dermatitis Lesional Skin (P = 0.012)"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"% of CD8+ T cells"</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 8e: Cross-Tissue Inflammation Boxplots Across 10 Chronic Diseases</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>p_fig8e_atlas <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  Proportion <span class="sc">~</span> Disease <span class="sc">|</span> Subset,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_atlas_10d,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_boxplot</span>(<span class="at">outlier.shape =</span> <span class="dv">16</span>),</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="st">"jco"</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"nature"</span>,</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Pan-Tissue Chronic Inflammation Atlas (159 Donors)"</span>,</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"% of CD8+ T cells"</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
 <hr>
 </section>
 </section>
@@ -1056,121 +1276,342 @@ window.Quarto = {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Replicating Multi-Modal Omics: Nature Communications Case Study</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>This case study demonstrates the replication of all publication figures from *Nature Communications* (2024) 15:10413 ([PMC11607458](https://pmc.ncbi.nlm.nih.gov/articles/PMC11607458/)): *"Granzyme K⁺CD8⁺ T cells interact with fibroblasts to promote neutrophilic inflammation in nasal polyps"*.</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Using real Source Data from <span class="in">`41467_2024_54685_MOESM4_ESM.xlsx`</span>, we implement the figures across clinical flow cytometry (95 donors), single-cell RNA-seq (208,757 cells), Visium HD spatial transcriptomics, in vitro functional assays, and a cross-tissue inflammatory atlas (159 donors across 10 chronic diseases including Skin Atopic Dermatitis).</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Study Architecture and Multi-Modal Datasets</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>The study investigates how non-cytotoxic Granzyme K⁺ (<span class="in">`GZMK⁺`</span>) CD8⁺ T cells drive neutrophilic pathology rather than classic Type 2 eosinophilic inflammation in chronic rhinosinusitis with nasal polyps (CRSwNP):</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Clinical Discovery Cohort (scRNA-seq)**: 25 samples recovered from 5 control blood (<span class="in">`CBL`</span>), 8 patient blood (<span class="in">`NP-BL`</span>), 4 control inferior turbinate (<span class="in">`CIT`</span>), and 8 nasal polyp (<span class="in">`NP`</span>) tissues.</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Clinical Validation Cohort (Flow Cytometry)**: 95 independent donors (<span class="in">`CBL`</span> $n=22$, <span class="in">`NP-BL`</span> $n=27$, <span class="in">`CIT`</span> $n=14$, <span class="in">`NP`</span> $n=30$).</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**High-Definition Spatial Transcriptomics (Visium HD)**: 10 clinical specimens (<span class="in">`CIT`</span> $n=4$, <span class="in">`NP`</span> $n=6$) profiling 19 cell lineages at 2 μm resolution.</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Spatial Cell-Cell Distance Analysis**: HALO spatial neighborhood counts (&lt; 25 μm) and physical Euclidean distances between T/B cells and <span class="in">`COL1A1⁺`</span> fibroblasts.</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Functional In Vitro Assays**: Nasal polyp-derived primary fibroblasts (<span class="in">`NPDF`</span>) stimulated with recombinant <span class="in">`GZMK`</span>, <span class="in">`GZMA`</span>, <span class="in">`GZMB`</span>, and <span class="in">`LIT-927`</span> CXCR4/CXCL12 neutraligand.</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Cross-Disease Pan-Tissue Validation**: Integration of 108,969 CD8⁺ T cells across 9 public datasets (159 donors) spanning Atopic Dermatitis (<span class="in">`AD`</span>), Prurigo Nodularis (<span class="in">`PN`</span>), Eosinophilic Esophagitis (<span class="in">`EoE`</span>), Asthma, COPD, Lupus Erythematosus (<span class="in">`DLE`</span>/<span class="in">`SLE`</span>), Thyroiditis, Sepsis, and Hepatitis B (<span class="in">`HBV`</span>).</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Figure 2: Single-Cell Phenotype and Transcriptional Signature</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>Figure 2 resolves 81,202 CD8⁺ T cells into 9 subclusters, identifying a preferential expansion of <span class="in">`GZMK⁺CD8⁺`</span> T cells in nasal polyp tissue with a non-cytotoxic inflammatory signature.</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="al">![Nature Communications Figure 2 Composite: Subsets (d), Volcano (f), Top DEGs (h), GSEA NES (g), and KEGG Dotplot (i)](images/nature_communications/NatCommun_Figure2_Composite.png)</span>{width=100%}</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">### Grammar &amp; Assembly Highlights</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 2d**: 100% stacked bar chart displaying the 9 canonical CD8⁺ subsets across compartments (Blood vs Nasal tissue).</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 2f**: Single-cell differential expression scatter plot ($\Delta\text{ Percent of cells}$ vs $\text{Average }\log_2(\text{Fold Change})$), with upregulated genes in red (<span class="in">`#DE3533`</span>), downregulated in blue (<span class="in">`#3B75AF`</span>), and non-significant in grey (<span class="in">`#D0D0D0`</span>).</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 2h**: Horizontal bar plot ranking the top 10 differentially expressed genes between <span class="in">`GZMK⁺`</span> and <span class="in">`GZMB⁺`</span> CD8⁺ T cells, showing elevated *GZMK*, *CD74*, *DUSP4*, *RGS1*, and *JUNB*.</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 2g &amp; 2i**: Reactome GSEA normalized enrichment scores and KEGG immunological disease pathway dotplots.</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Figure 3: Clinical Flow Cytometry Validation (95 Donors)</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>To validate single-cell transcriptomic predictions, 95 clinical donors were analyzed by multi-parameter flow cytometry and functional cytotoxicity assays.</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="al">![Nature Communications Figure 3 Composite: 95-Donor Flow Cytometry (g), Receptor MFI (j), Dual Cytokines (l), and Target Lysis (n)](images/nature_communications/NatCommun_Figure3_Composite.png)</span>{width=100%}</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">### Statistical Observations</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`GZMK⁺GZMB⁻`</span> CD8⁺ T cells are selectively enriched in nasal polyps (<span class="in">`NP`</span>, median 22.4%) compared to control tissue (<span class="in">`CIT`</span>, median 4.5%, $P &lt; 0.0001$).</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Paired MFI demonstrates marked upregulation of the homing receptor *CXCR4* ($P = 0.0371$) and exhaustion marker *PD-1* ($P = 0.0031$) in <span class="in">`GZMK⁺`</span> compared to <span class="in">`GZMB⁺`</span> subsets from the same donors.</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Target cell lysis confirmed that <span class="in">`GZMK⁺`</span> cells possess reduced cytotoxicity ($P = 0.0063$), functioning primarily as cytokine/chemokine producers.</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Figure 4 &amp; 5: Visium HD Spatial Deconvolution</span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>Visium HD resolves single-cell neighborhoods across 10 intact clinical tissue sections.</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="al">![Nature Communications Figure 5 Composite: Visium HD 19-Cell Lineage Stack (f), Total Counts (g), Frequency in CD8 (h), and Immune/Structural Cell Proportions (i, j)](images/nature_communications/NatCommun_Figure5_Complete_Composite.png)</span>{width=100%}</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="fu">### Key Visual Elements</span></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 5f**: 100% stacked bar chart of all 19 cell lineages across 4 control inferior turbinates (<span class="in">`HD_CIT1`</span>–<span class="in">`4`</span>) and 6 polyps (<span class="in">`HD_NP1`</span>–<span class="in">`6`</span>).</span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 5g**: Ranked cell abundance across all spatial spots.</span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 5h**: Direct frequency comparison of <span class="in">`CD8T_GZMK`</span> ($P = 0.0667$) versus <span class="in">`CD8T_GZMB`</span> ($\text{ns}$) in total CD8⁺ T cells.</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 5i &amp; 5j**: Proportions of infiltrating B cells ($P = 0.0381$), CD4⁺ T cells ($P = 0.0190$), and smooth muscle cells (SMCs, $P = 0.0095$).</span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Figure 6: Spatial Neighborhood and Fibroblast Activation Assays</span></span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>Figure 6 demonstrates the central biological discovery: <span class="in">`GZMK⁺CD8⁺`</span> T cells physically co-localize with fibroblasts (&lt; 25 μm) and trigger high-level secretion of neutrophil-recruiting chemokines (*CXCL1*, *CXCL2*, *CXCL6*, *CXCL8*).</span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="al">![Nature Communications Figure 6 Composite: Fibroblast Density (c), Distance (d), Chemotaxis (j), qPCR (g), Secretome (h), MPO Counts (m), and Neutrophil/Eosinophil Correlations (n, o)](images/nature_communications/NatCommun_Figure6_Complete_Composite.png)</span>{width=100%}</span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="fu">### Highlights &amp; Quantitative Endpoints</span></span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Spatial Proximity (c &amp; d)**: Average number of <span class="in">`COL1A1⁺`</span> fibroblasts within 25 μm is highest around <span class="in">`GZMK⁺CD8⁺`</span> T cells in NP tissue ($P = 0.0004$ vs CD4⁺ T, $P = 0.0030$ vs CD19⁺ B).</span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**qPCR (g) &amp; Secretome (h)**: Stimulation of primary fibroblasts (<span class="in">`NPDF`</span>, $n=10$) with <span class="in">`GZMK`</span> drives a 10- to 25-fold induction of neutrophil chemokines (*CXCL1*, *CXCL2*, *CXCL6*, *CXCL8*) exceeding <span class="in">`GZMA`</span> and <span class="in">`GZMB`</span> controls ($P &lt; 0.001$).</span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chemotaxis (j)**: Transwell migration of <span class="in">`GZMK⁺CD8⁺`</span> T cells towards fibroblasts is abrogated by the CXCR4 neutraligand <span class="in">`LIT-927`</span> ($P = 0.0001$).</span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Neutrophil Infiltration (m, n, o)**: MPO⁺ neutrophils are elevated in NP tissue ($P &lt; 0.0001$) and correlate positively with <span class="in">`GZMK⁺CD8⁺`</span> T cell density ($R = 0.456, P = 0.007$), whereas eosinophil infiltration does not correlate ($R = 0.151, P = 0.262$).</span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6. Figure 7: Single-Cell TCR Repertoire Diversity and Clonal Expansion</span></span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>T cell receptor (TCR) sequencing of 25 donors tracks clonal development and transition states.</span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a><span class="al">![Nature Communications Figure 7 Composite: Alpha Diversity Indices (b) and Clonal Expansion Hierarchy (c)](images/nature_communications/NatCommun_Figure7_TCR_Composite.png)</span>{width=95%}</span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 7b**: Boxplots of Shannon diversity across <span class="in">`CBL`</span>, <span class="in">`NP-BL`</span>, <span class="in">`CIT`</span>, and <span class="in">`NP`</span> with Dunn's multiple comparison brackets ($P = 0.0381, P = 0.0356$).</span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 7c**: Clonal expansion hierarchy from singletons (clone size = 1, light grey <span class="in">`#D9D9D9`</span>) to hyper-expanded clones (&gt; 50, dark navy <span class="in">`#084594`</span>).</span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7. Figure 8: Pan-Tissue Cross-Condition Atlas (10 Diseases, 159 Donors)</span></span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>To test whether the <span class="in">`GZMK⁺CD8⁺`</span> T cell-fibroblast interaction represents a general mechanism of chronic tissue inflammation, the authors integrated 108,969 CD8⁺ T cells from 9 public scRNA-seq datasets across 10 disease conditions.</span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="al">![Nature Communications Figure 8e: Cross-Tissue Expansion Across 10 Chronic Inflammatory Diseases (Skin AD, EoE, Asthma, COPD, Bladder, Lupus, Sepsis, HBV)](images/nature_communications/NatCommun_Figure8e_Cross_Tissue_Inflammation.png)</span>{width=100%}</span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a><span class="fu">### Skin Atopic Dermatitis Focus</span></span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>In lesional skin from patients with Atopic Dermatitis (<span class="in">`AD`</span>, GSE197023) and Prurigo Nodularis (<span class="in">`PN`</span>), <span class="in">`GZMK⁺CD8⁺`</span> T cells outnumber <span class="in">`GZMB⁺CD8⁺`</span> T cells:</span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="al">![Skin Atopic Dermatitis &amp; Prurigo Nodularis: GZMB⁺ vs GZMK⁺ CD8⁺ T Cells](images/nature_communications/NatCommun_Figure8e_Skin_AD.png)</span>{width=55%}</span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Skin AD: <span class="in">`GZMK⁺CD8⁺`</span> percentage is elevated compared to <span class="in">`GZMB⁺CD8⁺`</span> cells ($P = 0.012$).</span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Skin PN: Elevated <span class="in">`GZMK⁺CD8⁺`</span> proportion ($P = 0.0022$).</span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Spatial transcriptomics in AD lesional sections confirmed positive neighborhood enrichment between <span class="in">`GZMK⁺CD8⁺`</span> T cells and fibroblasts, driven by the *CXCL12*–*CXCR4* signaling axis.</span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8. Summary of Replicated Assets</span></span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>All 37 figure files and underlying R scripts are available in the <span class="in">`cliomicplot`</span> package under <span class="co">[</span><span class="ot">`inst/examples/nature_communications/`</span><span class="co">](https://github.com/vanhungtran/cliomicplot/tree/master/inst/examples/nature_communications)</span>:</span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`generate_nature_commun_figures.R`</span>: Figures 1e, 2d, 2f, 2g, 2i, 5h, 7b, 7c.</span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`assemble_composites.R`</span>: Figure 2 Composite (d, f, h, g, i) and Figure 7 Composite (b, c).</span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`generate_figure3_figures.R`</span>: Figures 3g, 3j, 3l, 3n, and Figure 3 Composite.</span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`generate_figure4_5_figures.R`</span>: Figures 4b, 5f, 5g, 5h, 5i, 5j, and Figure 5 Complete Composite.</span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`generate_figure6_figures.R`</span>: Figures 6c, 6d, 6g, 6h, 6i, 6j, 6m, 6n, 6o, and Figure 6 Complete Composite.</span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`generate_figure8_figures.R`</span>: Figure 8e (Skin AD &amp; 10-tissue chronic disease atlas).</span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`generate_supp_figures.R`</span>: Supplementary Figures S2c, S3c, S12c.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Replicating Multi-Modal Omics: Nature Communications Case Study</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>This case study demonstrates the replication of publication figures from *Nature Communications* (2024) 15:10413 ([PMC11607458](https://pmc.ncbi.nlm.nih.gov/articles/PMC11607458/)): *"Granzyme K⁺CD8⁺ T cells interact with fibroblasts to promote neutrophilic inflammation in nasal polyps"*.</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>Using Source Data from <span class="in">`41467_2024_54685_MOESM4_ESM.xlsx`</span>, we implement the figures across clinical flow cytometry (95 donors), single-cell RNA-seq (208,757 cells), Visium HD spatial transcriptomics, in vitro functional assays, and a cross-tissue inflammatory atlas (159 donors across 10 chronic diseases including Skin Atopic Dermatitis).</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Study Architecture and Multi-Modal Datasets</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>The study investigates how non-cytotoxic Granzyme K⁺ (<span class="in">`GZMK⁺`</span>) CD8⁺ T cells drive neutrophilic pathology rather than classic Type 2 eosinophilic inflammation in chronic rhinosinusitis with nasal polyps (CRSwNP):</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Clinical Discovery Cohort (scRNA-seq)**: 25 samples recovered from 5 control blood (<span class="in">`CBL`</span>), 8 patient blood (<span class="in">`NP-BL`</span>), 4 control inferior turbinate (<span class="in">`CIT`</span>), and 8 nasal polyp (<span class="in">`NP`</span>) tissues.</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Clinical Validation Cohort (Flow Cytometry)**: 95 independent donors (<span class="in">`CBL`</span> $n=22$, <span class="in">`NP-BL`</span> $n=27$, <span class="in">`CIT`</span> $n=14$, <span class="in">`NP`</span> $n=30$).</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**High-Definition Spatial Transcriptomics (Visium HD)**: 10 clinical specimens (<span class="in">`CIT`</span> $n=4$, <span class="in">`NP`</span> $n=6$) profiling 19 cell lineages at 2 μm resolution.</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Spatial Cell-Cell Distance Analysis**: HALO spatial neighborhood counts (&lt; 25 μm) and physical Euclidean distances between T/B cells and <span class="in">`COL1A1⁺`</span> fibroblasts.</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Functional In Vitro Assays**: Nasal polyp-derived primary fibroblasts (<span class="in">`NPDF`</span>) stimulated with recombinant <span class="in">`GZMK`</span>, <span class="in">`GZMA`</span>, <span class="in">`GZMB`</span>, and <span class="in">`LIT-927`</span> CXCR4/CXCL12 neutraligand.</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Cross-Disease Pan-Tissue Validation**: Integration of 108,969 CD8⁺ T cells across 9 public datasets (159 donors) spanning Atopic Dermatitis (<span class="in">`AD`</span>), Prurigo Nodularis (<span class="in">`PN`</span>), Eosinophilic Esophagitis (<span class="in">`EoE`</span>), Asthma, COPD, Lupus Erythematosus (<span class="in">`DLE`</span>/<span class="in">`SLE`</span>), Thyroiditis, Sepsis, and Hepatitis B (<span class="in">`HBV`</span>).</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. Figure 2: Single-Cell Phenotype and Transcriptional Signature</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>Figure 2 resolves 81,202 CD8⁺ T cells into 9 subclusters, identifying a preferential expansion of <span class="in">`GZMK⁺CD8⁺`</span> T cells in nasal polyp tissue with a non-cytotoxic inflammatory signature.</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="al">![Nature Communications Figure 2 Composite: Subsets (d), Volcano (f), Top DEGs (h), GSEA NES (g), and KEGG Dotplot (i)](images/nature_communications/NatCommun_Figure2_Composite.png)</span>{width=100%}</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="fu">### Grammar &amp; Assembly Highlights</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 2d**: 100% stacked bar chart displaying the 9 canonical CD8⁺ subsets across compartments (Blood vs Nasal tissue).</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 2f**: Single-cell differential expression scatter plot ($\Delta\text{ Percent of cells}$ vs $\text{Average }\log_2(\text{Fold Change})$), with upregulated genes in red (<span class="in">`#DE3533`</span>), downregulated in blue (<span class="in">`#3B75AF`</span>), and non-significant in grey (<span class="in">`#D0D0D0`</span>).</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 2h**: Horizontal bar plot ranking the top 10 differentially expressed genes between <span class="in">`GZMK⁺`</span> and <span class="in">`GZMB⁺`</span> CD8⁺ T cells, showing elevated *GZMK*, *CD74*, *DUSP4*, *RGS1*, and *JUNB*.</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 2g &amp; 2i**: Reactome GSEA normalized enrichment scores and KEGG immunological disease pathway dotplots.</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 2d: 100% Stacked CD8+ Subsets Across Blood and Tissue Compartments</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>p_fig2d <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_2d_long, <span class="fu">aes</span>(<span class="at">x =</span> Sample, <span class="at">y =</span> Share, <span class="at">fill =</span> Subset)) <span class="sc">+</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"stack"</span>, <span class="at">width =</span> <span class="fl">0.82</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span> Compartment, <span class="at">scales =</span> <span class="st">"free_x"</span>, <span class="at">space =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> pal_2d, <span class="at">breaks =</span> cd8_subsets, <span class="at">name =</span> <span class="st">"CD8+ T cell subsets"</span>) <span class="sc">+</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">100.1</span>), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">25</span>)) <span class="sc">+</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"d"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Cell proportion (%)"</span>) <span class="sc">+</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 2f: Differential Expression Scatter Plot (GZMK vs Others)</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>p_fig2f <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_volcano, <span class="fu">aes</span>(<span class="at">x =</span> delta_pct, <span class="at">y =</span> logfc)) <span class="sc">+</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> status), <span class="at">size =</span> <span class="fl">1.3</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Up"</span> <span class="ot">=</span> <span class="st">"#DE3533"</span>, <span class="st">"Down"</span> <span class="ot">=</span> <span class="st">"#3B75AF"</span>, <span class="st">"NS"</span> <span class="ot">=</span> <span class="st">"#D0D0D0"</span>)) <span class="sc">+</span></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"f"</span>, <span class="at">x =</span> <span class="st">"Δ Percent of cells"</span>, <span class="at">y =</span> <span class="st">"Average log2(Fold Change)"</span>) <span class="sc">+</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 2h: Top 10 Ranked DEGs (Horizontal Bar)</span></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>p_fig2h <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_top10, <span class="fu">aes</span>(<span class="at">x =</span> logfc, <span class="at">y =</span> gene)) <span class="sc">+</span></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"#DE3533"</span>, <span class="at">width =</span> <span class="fl">0.72</span>) <span class="sc">+</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"h"</span>, <span class="at">x =</span> <span class="st">"Average log2(Fold Change)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 2g &amp; 2i: Reactome GSEA Enrichment &amp; KEGG Dotplots</span></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>p_fig2g <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_gsea, <span class="fu">aes</span>(<span class="at">x =</span> NES, <span class="at">y =</span> Pathway, <span class="at">fill =</span> Direction)) <span class="sc">+</span></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">width =</span> <span class="fl">0.72</span>) <span class="sc">+</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Upregulated"</span> <span class="ot">=</span> <span class="st">"#DE3533"</span>, <span class="st">"Downregulated"</span> <span class="ot">=</span> <span class="st">"#3B75AF"</span>)) <span class="sc">+</span></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"g"</span>, <span class="at">x =</span> <span class="st">"Normalized Enrichment Score (NES)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>p_fig2i <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_kegg, <span class="fu">aes</span>(<span class="at">x =</span> GeneRatio, <span class="at">y =</span> Description)) <span class="sc">+</span></span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> Count, <span class="at">color =</span> p.adjust)) <span class="sc">+</span></span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_gradient</span>(<span class="at">low =</span> <span class="st">"#DE3533"</span>, <span class="at">high =</span> <span class="st">"#3B75AF"</span>) <span class="sc">+</span></span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"i"</span>, <span class="at">x =</span> <span class="st">"Gene Ratio"</span>, <span class="at">y =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Figure 3: Clinical Flow Cytometry Validation (95 Donors)</span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>To validate single-cell transcriptomic predictions, 95 clinical donors were analyzed by multi-parameter flow cytometry and functional cytotoxicity assays.</span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a><span class="al">![Nature Communications Figure 3 Composite: 95-Donor Flow Cytometry (g), Receptor MFI (j), Dual Cytokines (l), and Target Lysis (n)](images/nature_communications/NatCommun_Figure3_Composite.png)</span>{width=100%}</span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a><span class="fu">### Statistical Observations</span></span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`GZMK⁺GZMB⁻`</span> CD8⁺ T cells are selectively enriched in nasal polyps (<span class="in">`NP`</span>, median 22.4%) compared to control tissue (<span class="in">`CIT`</span>, median 4.5%, $P &lt; 0.0001$).</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Paired MFI demonstrates marked upregulation of the homing receptor *CXCR4* ($P = 0.0371$) and exhaustion marker *PD-1* ($P = 0.0031$) in <span class="in">`GZMK⁺`</span> compared to <span class="in">`GZMB⁺`</span> subsets from the same donors.</span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Target cell lysis confirmed that <span class="in">`GZMK⁺`</span> cells possess reduced cytotoxicity ($P = 0.0063$), functioning primarily as cytokine/chemokine producers.</span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggsignif)</span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 3g: 95-Donor Flow Cytometry with Pairwise Significance Brackets</span></span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>p_fig3g <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>  GZMK_Pct <span class="sc">~</span> Group,</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>  <span class="at">data        =</span> df_3g,</span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">type        =</span> <span class="fu">type_boxplot</span>(<span class="at">notch =</span> <span class="cn">FALSE</span>, <span class="at">outlier.shape =</span> <span class="dv">16</span>, <span class="at">outlier.size =</span> <span class="fl">1.2</span>),</span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test   =</span> <span class="st">"wilcox.test"</span>,</span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>  <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"CBL"</span>, <span class="st">"NP-BL"</span>), <span class="fu">c</span>(<span class="st">"CIT"</span>, <span class="st">"NP"</span>)),</span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette     =</span> <span class="fu">c</span>(<span class="st">"CBL"</span> <span class="ot">=</span> <span class="st">"#6BAED6"</span>, <span class="st">"NP-BL"</span> <span class="ot">=</span> <span class="st">"#3182BD"</span>, <span class="st">"CIT"</span> <span class="ot">=</span> <span class="st">"#74C476"</span>, <span class="st">"NP"</span> <span class="ot">=</span> <span class="st">"#E6550D"</span>),</span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme       =</span> <span class="st">"nature"</span>,</span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"GZMK+ CD8+ T Cell Flow Cytometry"</span>,</span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab        =</span> <span class="st">"% of CD8+ T cells"</span></span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 3j: Paired Receptor MFI (CXCR4, PD-1) in GZMB+ vs GZMK+</span></span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a>p_fig3j <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>  MFI <span class="sc">~</span> Subset <span class="sc">|</span> Receptor,</span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_3j_paired,</span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_slope</span>(<span class="at">pair =</span> <span class="st">"Donor"</span>, <span class="at">reference_line =</span> <span class="cn">NULL</span>),</span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="fu">c</span>(<span class="st">"GZMB+CD8"</span> <span class="ot">=</span> <span class="st">"#DE3533"</span>, <span class="st">"GZMK+CD8"</span> <span class="ot">=</span> <span class="st">"#F58518"</span>),</span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"nature"</span>,</span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Normalized Mean Fluorescence Intensity (MFI)"</span></span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 3l &amp; 3n: Functional Cytotoxicity and Target Cell Lysis</span></span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>p_fig3n <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>  Lysis_Pct <span class="sc">~</span> Effector_Target_Ratio <span class="sc">|</span> Subset,</span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_cytotoxicity,</span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_trajectory</span>(</span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a>    <span class="at">show_errorbar =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a>    <span class="at">errorbar      =</span> <span class="st">"se"</span>,</span>
+<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_fill    =</span> <span class="st">"white"</span>,</span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a>    <span class="at">dodge         =</span> <span class="fl">0.16</span></span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="fu">c</span>(<span class="st">"GZMB+CD8"</span> <span class="ot">=</span> <span class="st">"#DE3533"</span>, <span class="st">"GZMK+CD8"</span> <span class="ot">=</span> <span class="st">"#F58518"</span>),</span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"nature"</span>,</span>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Target Cell Lysis Curve (Reduced Cytotoxicity in GZMK+, P = 0.0063)"</span>,</span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"% Specific Lysis"</span>,</span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab      =</span> <span class="st">"Effector : Target Ratio"</span></span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Figure 4 &amp; 5: Visium HD Spatial Deconvolution</span></span>
+<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>Visium HD resolves single-cell neighborhoods across 10 intact clinical tissue sections.</span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a><span class="al">![Nature Communications Figure 5 Composite: Visium HD 19-Cell Lineage Stack (f), Total Counts (g), Frequency in CD8 (h), and Immune/Structural Cell Proportions (i, j)](images/nature_communications/NatCommun_Figure5_Complete_Composite.png)</span>{width=100%}</span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a><span class="fu">### Key Visual Elements</span></span>
+<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 5f**: 100% stacked bar chart of all 19 cell lineages across 4 control inferior turbinates (<span class="in">`HD_CIT1`</span>–<span class="in">`4`</span>) and 6 polyps (<span class="in">`HD_NP1`</span>–<span class="in">`6`</span>).</span>
+<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 5g**: Ranked cell abundance across all spatial spots.</span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 5h**: Direct frequency comparison of <span class="in">`CD8T_GZMK`</span> ($P = 0.0667$) versus <span class="in">`CD8T_GZMB`</span> ($\text{ns}$) in total CD8⁺ T cells.</span>
+<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 5i &amp; 5j**: Proportions of infiltrating B cells ($P = 0.0381$), CD4⁺ T cells ($P = 0.0190$), and smooth muscle cells (SMCs, $P = 0.0095$).</span>
+<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb7-163"><a href="#cb7-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 5f: 100% Stacked Bar Chart of 19 Cell Lineages Across Visium HD Sections</span></span>
+<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a>p_fig5f <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_5f_long, <span class="fu">aes</span>(<span class="at">x =</span> Sample, <span class="at">y =</span> Share, <span class="at">fill =</span> CellType)) <span class="sc">+</span></span>
+<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"stack"</span>, <span class="at">width =</span> <span class="fl">0.82</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="sc">~</span> Group, <span class="at">scales =</span> <span class="st">"free_x"</span>, <span class="at">space =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
+<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> pal_19, <span class="at">name =</span> <span class="st">"19 Visium HD Lineages"</span>) <span class="sc">+</span></span>
+<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">100.1</span>), <span class="at">expand =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">25</span>)) <span class="sc">+</span></span>
+<span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"f"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Lineage proportion (%)"</span>) <span class="sc">+</span></span>
+<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 5h: CD8T_GZMK Frequency in Total CD8+ T Cells Across CIT vs NP</span></span>
+<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a>p_fig5h <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a>  Frequency <span class="sc">~</span> Group,</span>
+<span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a>  <span class="at">data        =</span> df_5h_gzmk,</span>
+<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>  <span class="at">type        =</span> <span class="fu">type_boxplot</span>(<span class="at">outlier.shape =</span> <span class="dv">16</span>),</span>
+<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test   =</span> <span class="st">"wilcox.test"</span>,</span>
+<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a>  <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"CIT"</span>, <span class="st">"NP"</span>)),</span>
+<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette     =</span> <span class="fu">c</span>(<span class="st">"CIT"</span> <span class="ot">=</span> <span class="st">"#74C476"</span>, <span class="st">"NP"</span> <span class="ot">=</span> <span class="st">"#E6550D"</span>),</span>
+<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme       =</span> <span class="st">"nature"</span>,</span>
+<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"CD8T_GZMK Frequency (P = 0.0667)"</span>,</span>
+<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab        =</span> <span class="st">"% of CD8+ T cells"</span></span>
+<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Figure 6: Spatial Neighborhood and Fibroblast Activation Assays</span></span>
+<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a>Figure 6 demonstrates the central biological discovery: <span class="in">`GZMK⁺CD8⁺`</span> T cells physically co-localize with fibroblasts (&lt; 25 μm) and trigger high-level secretion of neutrophil-recruiting chemokines (*CXCL1*, *CXCL2*, *CXCL6*, *CXCL8*).</span>
+<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a><span class="al">![Nature Communications Figure 6 Composite: Fibroblast Density (c), Distance (d), Chemotaxis (j), qPCR (g), Secretome (h), MPO Counts (m), and Neutrophil/Eosinophil Correlations (n, o)](images/nature_communications/NatCommun_Figure6_Complete_Composite.png)</span>{width=100%}</span>
+<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a><span class="fu">### Highlights &amp; Quantitative Endpoints</span></span>
+<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Spatial Proximity (c &amp; d)**: Average number of <span class="in">`COL1A1⁺`</span> fibroblasts within 25 μm is highest around <span class="in">`GZMK⁺CD8⁺`</span> T cells in NP tissue ($P = 0.0004$ vs CD4⁺ T, $P = 0.0030$ vs CD19⁺ B).</span>
+<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**qPCR (g) &amp; Secretome (h)**: Stimulation of primary fibroblasts (<span class="in">`NPDF`</span>, $n=10$) with <span class="in">`GZMK`</span> drives a 10- to 25-fold induction of neutrophil chemokines (*CXCL1*, *CXCL2*, *CXCL6*, *CXCL8*) exceeding <span class="in">`GZMA`</span> and <span class="in">`GZMB`</span> controls ($P &lt; 0.001$).</span>
+<span id="cb7-198"><a href="#cb7-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chemotaxis (j)**: Transwell migration of <span class="in">`GZMK⁺CD8⁺`</span> T cells towards fibroblasts is abrogated by the CXCR4 neutraligand <span class="in">`LIT-927`</span> ($P = 0.0001$).</span>
+<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Neutrophil Infiltration (m, n, o)**: MPO⁺ neutrophils are elevated in NP tissue ($P &lt; 0.0001$) and correlate positively with <span class="in">`GZMK⁺CD8⁺`</span> T cell density ($R = 0.456, P = 0.007$), whereas eosinophil infiltration does not correlate ($R = 0.151, P = 0.262$).</span>
+<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-203"><a href="#cb7-203" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-204"><a href="#cb7-204" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-205"><a href="#cb7-205" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb7-206"><a href="#cb7-206" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb7-207"><a href="#cb7-207" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb7-208"><a href="#cb7-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-209"><a href="#cb7-209" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 6c: HALO Spatial Cell Neighborhood (&lt; 25 µm from COL1A1+ Fibroblasts)</span></span>
+<span id="cb7-210"><a href="#cb7-210" aria-hidden="true" tabindex="-1"></a>p_fig6c <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-211"><a href="#cb7-211" aria-hidden="true" tabindex="-1"></a>  Fibroblast_Count <span class="sc">~</span> CellType,</span>
+<span id="cb7-212"><a href="#cb7-212" aria-hidden="true" tabindex="-1"></a>  <span class="at">data        =</span> df_6c,</span>
+<span id="cb7-213"><a href="#cb7-213" aria-hidden="true" tabindex="-1"></a>  <span class="at">type        =</span> <span class="fu">type_boxplot</span>(<span class="at">notch =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb7-214"><a href="#cb7-214" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test   =</span> <span class="st">"t.test"</span>,</span>
+<span id="cb7-215"><a href="#cb7-215" aria-hidden="true" tabindex="-1"></a>  <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"GZMK+CD8"</span>, <span class="st">"CD4+T"</span>), <span class="fu">c</span>(<span class="st">"GZMK+CD8"</span>, <span class="st">"B cells"</span>)),</span>
+<span id="cb7-216"><a href="#cb7-216" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette     =</span> <span class="fu">c</span>(<span class="st">"GZMK+CD8"</span> <span class="ot">=</span> <span class="st">"#F58518"</span>, <span class="st">"CD4+T"</span> <span class="ot">=</span> <span class="st">"#3B75AF"</span>, <span class="st">"B cells"</span> <span class="ot">=</span> <span class="st">"#2CA02C"</span>),</span>
+<span id="cb7-217"><a href="#cb7-217" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme       =</span> <span class="st">"nature"</span>,</span>
+<span id="cb7-218"><a href="#cb7-218" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab        =</span> <span class="st">"Fibroblast counts within 25 μm"</span></span>
+<span id="cb7-219"><a href="#cb7-219" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-220"><a href="#cb7-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-221"><a href="#cb7-221" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 6h: Secretome Quantification After GZMK Stimulation (CXCL1, CXCL2, CXCL6, CXCL8)</span></span>
+<span id="cb7-222"><a href="#cb7-222" aria-hidden="true" tabindex="-1"></a>p_fig6h <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_6h, <span class="fu">aes</span>(<span class="at">x =</span> Chemokine, <span class="at">y =</span> Concentration_pg_ml, <span class="at">fill =</span> Treatment)) <span class="sc">+</span></span>
+<span id="cb7-223"><a href="#cb7-223" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="fl">0.78</span>), <span class="at">width =</span> <span class="fl">0.72</span>) <span class="sc">+</span></span>
+<span id="cb7-224"><a href="#cb7-224" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"PBS"</span> <span class="ot">=</span> <span class="st">"#B0C4DE"</span>, <span class="st">"GZMK"</span> <span class="ot">=</span> <span class="st">"#E6550D"</span>)) <span class="sc">+</span></span>
+<span id="cb7-225"><a href="#cb7-225" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"h"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Concentration (pg/mL)"</span>) <span class="sc">+</span></span>
+<span id="cb7-226"><a href="#cb7-226" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb7-227"><a href="#cb7-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-228"><a href="#cb7-228" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 6n &amp; 6o: Spearman Correlation with Tissue Infiltrating Neutrophils</span></span>
+<span id="cb7-229"><a href="#cb7-229" aria-hidden="true" tabindex="-1"></a>p_fig6n <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-230"><a href="#cb7-230" aria-hidden="true" tabindex="-1"></a>  MPO_Neutrophils <span class="sc">~</span> GZMK_Density,</span>
+<span id="cb7-231"><a href="#cb7-231" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_correlations,</span>
+<span id="cb7-232"><a href="#cb7-232" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="st">"scatter"</span>,</span>
+<span id="cb7-233"><a href="#cb7-233" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"nature"</span>,</span>
+<span id="cb7-234"><a href="#cb7-234" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"cor.test"</span>,</span>
+<span id="cb7-235"><a href="#cb7-235" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Tissue Neutrophil Infiltration (R = 0.456, P = 0.007)"</span>,</span>
+<span id="cb7-236"><a href="#cb7-236" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"MPO+ Neutrophils / mm²"</span>,</span>
+<span id="cb7-237"><a href="#cb7-237" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab      =</span> <span class="st">"GZMK+ CD8+ T cells / mm²"</span></span>
+<span id="cb7-238"><a href="#cb7-238" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-239"><a href="#cb7-239" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-240"><a href="#cb7-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-241"><a href="#cb7-241" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb7-242"><a href="#cb7-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-243"><a href="#cb7-243" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6. Figure 7: Single-Cell TCR Repertoire Diversity and Clonal Expansion</span></span>
+<span id="cb7-244"><a href="#cb7-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-245"><a href="#cb7-245" aria-hidden="true" tabindex="-1"></a>T cell receptor (TCR) sequencing of 25 donors tracks clonal development and transition states.</span>
+<span id="cb7-246"><a href="#cb7-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-247"><a href="#cb7-247" aria-hidden="true" tabindex="-1"></a><span class="al">![Nature Communications Figure 7 Composite: Alpha Diversity Indices (b) and Clonal Expansion Hierarchy (c)](images/nature_communications/NatCommun_Figure7_TCR_Composite.png)</span>{width=95%}</span>
+<span id="cb7-248"><a href="#cb7-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-249"><a href="#cb7-249" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 7b**: Boxplots of Shannon diversity across <span class="in">`CBL`</span>, <span class="in">`NP-BL`</span>, <span class="in">`CIT`</span>, and <span class="in">`NP`</span> with Dunn's multiple comparison brackets ($P = 0.0381, P = 0.0356$).</span>
+<span id="cb7-250"><a href="#cb7-250" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Panel 7c**: Clonal expansion hierarchy from singletons (clone size = 1, light grey <span class="in">`#D9D9D9`</span>) to hyper-expanded clones (&gt; 50, dark navy <span class="in">`#084594`</span>).</span>
+<span id="cb7-251"><a href="#cb7-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-254"><a href="#cb7-254" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-255"><a href="#cb7-255" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-256"><a href="#cb7-256" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb7-257"><a href="#cb7-257" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb7-258"><a href="#cb7-258" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb7-259"><a href="#cb7-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-260"><a href="#cb7-260" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 7b: TCR Shannon Diversity Index Across Cohort Compartments</span></span>
+<span id="cb7-261"><a href="#cb7-261" aria-hidden="true" tabindex="-1"></a>p_fig7b <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-262"><a href="#cb7-262" aria-hidden="true" tabindex="-1"></a>  Shannon_Index <span class="sc">~</span> Group,</span>
+<span id="cb7-263"><a href="#cb7-263" aria-hidden="true" tabindex="-1"></a>  <span class="at">data        =</span> df_7b,</span>
+<span id="cb7-264"><a href="#cb7-264" aria-hidden="true" tabindex="-1"></a>  <span class="at">type        =</span> <span class="fu">type_boxplot</span>(<span class="at">outlier.shape =</span> <span class="dv">16</span>),</span>
+<span id="cb7-265"><a href="#cb7-265" aria-hidden="true" tabindex="-1"></a>  <span class="at">comparisons =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"CBL"</span>, <span class="st">"CIT"</span>), <span class="fu">c</span>(<span class="st">"CIT"</span>, <span class="st">"NP"</span>)),</span>
+<span id="cb7-266"><a href="#cb7-266" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette     =</span> <span class="fu">c</span>(<span class="st">"CBL"</span> <span class="ot">=</span> <span class="st">"#6BAED6"</span>, <span class="st">"NP-BL"</span> <span class="ot">=</span> <span class="st">"#3182BD"</span>, <span class="st">"CIT"</span> <span class="ot">=</span> <span class="st">"#74C476"</span>, <span class="st">"NP"</span> <span class="ot">=</span> <span class="st">"#E6550D"</span>),</span>
+<span id="cb7-267"><a href="#cb7-267" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme       =</span> <span class="st">"nature"</span>,</span>
+<span id="cb7-268"><a href="#cb7-268" aria-hidden="true" tabindex="-1"></a>  <span class="at">title       =</span> <span class="st">"TCR Shannon Diversity Index"</span>,</span>
+<span id="cb7-269"><a href="#cb7-269" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab        =</span> <span class="st">"Shannon entropy"</span></span>
+<span id="cb7-270"><a href="#cb7-270" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-271"><a href="#cb7-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-272"><a href="#cb7-272" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 7c: Clonal Expansion Dynamics from Singletons to Hyper-Expanded Clones</span></span>
+<span id="cb7-273"><a href="#cb7-273" aria-hidden="true" tabindex="-1"></a>p_fig7c <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_7c, <span class="fu">aes</span>(<span class="at">x =</span> Sample, <span class="at">y =</span> Share, <span class="at">fill =</span> Clone_Tier)) <span class="sc">+</span></span>
+<span id="cb7-274"><a href="#cb7-274" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"stack"</span>, <span class="at">width =</span> <span class="fl">0.82</span>) <span class="sc">+</span></span>
+<span id="cb7-275"><a href="#cb7-275" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(</span>
+<span id="cb7-276"><a href="#cb7-276" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Single (1)"</span>    <span class="ot">=</span> <span class="st">"#D9D9D9"</span>,</span>
+<span id="cb7-277"><a href="#cb7-277" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Small (2-5)"</span>   <span class="ot">=</span> <span class="st">"#9ECAE1"</span>,</span>
+<span id="cb7-278"><a href="#cb7-278" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Medium (6-20)"</span> <span class="ot">=</span> <span class="st">"#4292C6"</span>,</span>
+<span id="cb7-279"><a href="#cb7-279" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Large (21-50)"</span> <span class="ot">=</span> <span class="st">"#08519C"</span>,</span>
+<span id="cb7-280"><a href="#cb7-280" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Hyper (&gt;50)"</span>   <span class="ot">=</span> <span class="st">"#08306B"</span></span>
+<span id="cb7-281"><a href="#cb7-281" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">+</span></span>
+<span id="cb7-282"><a href="#cb7-282" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">tag =</span> <span class="st">"c"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Clonal proportion (%)"</span>) <span class="sc">+</span></span>
+<span id="cb7-283"><a href="#cb7-283" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clitheme</span>(<span class="at">preset =</span> <span class="st">"nature"</span>, <span class="at">base_size =</span> <span class="dv">9</span>)</span>
+<span id="cb7-284"><a href="#cb7-284" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-285"><a href="#cb7-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-286"><a href="#cb7-286" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb7-287"><a href="#cb7-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-288"><a href="#cb7-288" aria-hidden="true" tabindex="-1"></a><span class="fu">## 7. Figure 8: Pan-Tissue Cross-Condition Atlas (10 Diseases, 159 Donors)</span></span>
+<span id="cb7-289"><a href="#cb7-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-290"><a href="#cb7-290" aria-hidden="true" tabindex="-1"></a>To test whether the <span class="in">`GZMK⁺CD8⁺`</span> T cell-fibroblast interaction represents a general mechanism of chronic tissue inflammation, the authors integrated 108,969 CD8⁺ T cells from 9 public scRNA-seq datasets across 10 disease conditions.</span>
+<span id="cb7-291"><a href="#cb7-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-292"><a href="#cb7-292" aria-hidden="true" tabindex="-1"></a><span class="al">![Nature Communications Figure 8e: Cross-Tissue Expansion Across 10 Chronic Inflammatory Diseases (Skin AD, EoE, Asthma, COPD, Bladder, Lupus, Sepsis, HBV)](images/nature_communications/NatCommun_Figure8e_Cross_Tissue_Inflammation.png)</span>{width=100%}</span>
+<span id="cb7-293"><a href="#cb7-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-294"><a href="#cb7-294" aria-hidden="true" tabindex="-1"></a><span class="fu">### Skin Atopic Dermatitis Focus</span></span>
+<span id="cb7-295"><a href="#cb7-295" aria-hidden="true" tabindex="-1"></a>In lesional skin from patients with Atopic Dermatitis (<span class="in">`AD`</span>, GSE197023) and Prurigo Nodularis (<span class="in">`PN`</span>), <span class="in">`GZMK⁺CD8⁺`</span> T cells outnumber <span class="in">`GZMB⁺CD8⁺`</span> T cells:</span>
+<span id="cb7-296"><a href="#cb7-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-297"><a href="#cb7-297" aria-hidden="true" tabindex="-1"></a><span class="al">![Skin Atopic Dermatitis &amp; Prurigo Nodularis: GZMB⁺ vs GZMK⁺ CD8⁺ T Cells](images/nature_communications/NatCommun_Figure8e_Skin_AD.png)</span>{width=55%}</span>
+<span id="cb7-298"><a href="#cb7-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-299"><a href="#cb7-299" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Skin AD: <span class="in">`GZMK⁺CD8⁺`</span> percentage is elevated compared to <span class="in">`GZMB⁺CD8⁺`</span> cells ($P = 0.012$).</span>
+<span id="cb7-300"><a href="#cb7-300" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Skin PN: Elevated <span class="in">`GZMK⁺CD8⁺`</span> proportion ($P = 0.0022$).</span>
+<span id="cb7-301"><a href="#cb7-301" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Spatial transcriptomics in AD lesional sections confirmed positive neighborhood enrichment between <span class="in">`GZMK⁺CD8⁺`</span> T cells and fibroblasts, driven by the *CXCL12*–*CXCR4* signaling axis.</span>
+<span id="cb7-302"><a href="#cb7-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-305"><a href="#cb7-305" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-306"><a href="#cb7-306" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-307"><a href="#cb7-307" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb7-308"><a href="#cb7-308" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb7-309"><a href="#cb7-309" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb7-310"><a href="#cb7-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-311"><a href="#cb7-311" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 8e: Skin Atopic Dermatitis (GSE197023) - GZMK+ vs GZMB+ CD8+ T Cells</span></span>
+<span id="cb7-312"><a href="#cb7-312" aria-hidden="true" tabindex="-1"></a>p_fig8e_ad <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-313"><a href="#cb7-313" aria-hidden="true" tabindex="-1"></a>  Cell_Proportion <span class="sc">~</span> Subset,</span>
+<span id="cb7-314"><a href="#cb7-314" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_ad_skin,</span>
+<span id="cb7-315"><a href="#cb7-315" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_boxplot</span>(<span class="at">outlier.shape =</span> <span class="dv">16</span>),</span>
+<span id="cb7-316"><a href="#cb7-316" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"t.test"</span>,</span>
+<span id="cb7-317"><a href="#cb7-317" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="fu">c</span>(<span class="st">"GZMB+CD8"</span> <span class="ot">=</span> <span class="st">"#DE3533"</span>, <span class="st">"GZMK+CD8"</span> <span class="ot">=</span> <span class="st">"#F58518"</span>),</span>
+<span id="cb7-318"><a href="#cb7-318" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"nature"</span>,</span>
+<span id="cb7-319"><a href="#cb7-319" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Atopic Dermatitis Lesional Skin (P = 0.012)"</span>,</span>
+<span id="cb7-320"><a href="#cb7-320" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"% of CD8+ T cells"</span></span>
+<span id="cb7-321"><a href="#cb7-321" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-322"><a href="#cb7-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-323"><a href="#cb7-323" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel 8e: Cross-Tissue Inflammation Boxplots Across 10 Chronic Diseases</span></span>
+<span id="cb7-324"><a href="#cb7-324" aria-hidden="true" tabindex="-1"></a>p_fig8e_atlas <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-325"><a href="#cb7-325" aria-hidden="true" tabindex="-1"></a>  Proportion <span class="sc">~</span> Disease <span class="sc">|</span> Subset,</span>
+<span id="cb7-326"><a href="#cb7-326" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_atlas_10d,</span>
+<span id="cb7-327"><a href="#cb7-327" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_boxplot</span>(<span class="at">outlier.shape =</span> <span class="dv">16</span>),</span>
+<span id="cb7-328"><a href="#cb7-328" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="st">"jco"</span>,</span>
+<span id="cb7-329"><a href="#cb7-329" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"nature"</span>,</span>
+<span id="cb7-330"><a href="#cb7-330" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Pan-Tissue Chronic Inflammation Atlas (159 Donors)"</span>,</span>
+<span id="cb7-331"><a href="#cb7-331" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"% of CD8+ T cells"</span></span>
+<span id="cb7-332"><a href="#cb7-332" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-333"><a href="#cb7-333" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-334"><a href="#cb7-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-335"><a href="#cb7-335" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb7-336"><a href="#cb7-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-337"><a href="#cb7-337" aria-hidden="true" tabindex="-1"></a><span class="fu">## 8. Summary of Replicated Assets</span></span>
+<span id="cb7-338"><a href="#cb7-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-339"><a href="#cb7-339" aria-hidden="true" tabindex="-1"></a>All 37 figure files and underlying R scripts are available in the <span class="in">`cliomicplot`</span> package under <span class="co">[</span><span class="ot">`inst/examples/nature_communications/`</span><span class="co">](https://github.com/vanhungtran/cliomicplot/tree/master/inst/examples/nature_communications)</span>:</span>
+<span id="cb7-340"><a href="#cb7-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-341"><a href="#cb7-341" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`generate_nature_commun_figures.R`</span>: Figures 1e, 2d, 2f, 2g, 2i, 5h, 7b, 7c.</span>
+<span id="cb7-342"><a href="#cb7-342" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`assemble_composites.R`</span>: Figure 2 Composite (d, f, h, g, i) and Figure 7 Composite (b, c).</span>
+<span id="cb7-343"><a href="#cb7-343" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`generate_figure3_figures.R`</span>: Figures 3g, 3j, 3l, 3n, and Figure 3 Composite.</span>
+<span id="cb7-344"><a href="#cb7-344" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`generate_figure4_5_figures.R`</span>: Figures 4b, 5f, 5g, 5h, 5i, 5j, and Figure 5 Complete Composite.</span>
+<span id="cb7-345"><a href="#cb7-345" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`generate_figure6_figures.R`</span>: Figures 6c, 6d, 6g, 6h, 6i, 6j, 6m, 6n, 6o, and Figure 6 Complete Composite.</span>
+<span id="cb7-346"><a href="#cb7-346" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`generate_figure8_figures.R`</span>: Figure 8e (Skin AD &amp; 10-tissue chronic disease atlas).</span>
+<span id="cb7-347"><a href="#cb7-347" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`generate_supp_figures.R`</span>: Supplementary Figures S2c, S3c, S12c.</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

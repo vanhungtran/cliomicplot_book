@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -418,8 +418,8 @@ window.Quarto = {
 <p><span class="math display">\text{Responder} = \mathbb{I}(\Delta \text{Score}_i \ge \text{MCID})</span></p>
 <p>The MCID Dumbbell Plot connects observed clinical effect estimates to validated instrument thresholds (e.g.&nbsp;FACT-G, QLQ-C30, Pain NRS), scaling point glyphs by sample size (<span class="math inline">N_{\text{treated}}</span>) and sorting endpoints by their effect-to-MCID ratio:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -465,8 +465,8 @@ window.Quarto = {
 <h2 data-number="6.2" class="anchored" data-anchor-id="longitudinal-trajectories-with-severity-bands-type-trajectory"><span class="header-section-number">6.2</span> Longitudinal Trajectories with Severity Bands: <code>type = "trajectory"</code></h2>
 <p>Patient biomarkers exhibit substantial between-subject variability. <code>type_trajectory()</code> overlays semi-transparent individual patient profiles onto shaded reference severity bands (e.g., Normal, Elevated, Critical), anchored by a bold group mean ribbon:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n_patients <span class="ot">&lt;-</span> <span class="dv">20</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>visits <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Baseline"</span>, <span class="st">"Cycle 2"</span>, <span class="st">"Cycle 4"</span>, <span class="st">"Cycle 6"</span>, <span class="st">"Follow-up"</span>)</span>
@@ -511,8 +511,8 @@ window.Quarto = {
 <h2 data-number="6.3" class="anchored" data-anchor-id="time-course-translational-proteomics-xomicsshiny-dataset"><span class="header-section-number">6.3</span> Time-Course Translational Proteomics (xOmicsShiny Dataset)</h2>
 <p>Using the bundled <code>StrokeBrain_TimeCourse.RData</code> dataset, we track the temporal kinetics of the macrophage/microglia activation marker <em>Mpeg1</em> across recovery time points in ischemic stroke (StrkIp), sham surgery (ShamIp), and naive control (StrkC):</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>stroke_path <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">"extdata"</span>, <span class="st">"StrokeBrain_TimeCourse.RData"</span>, <span class="at">package =</span> <span class="st">"cliomicplot"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>stroke_env <span class="ot">&lt;-</span> <span class="fu">new.env</span>()</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(stroke_path, <span class="at">envir =</span> stroke_env)</span>
@@ -558,8 +558,8 @@ window.Quarto = {
 </div>
 <p>When evaluating treatment-level pharmacokinetics without individual profile tracking, <code>type_lines()</code> automatically calculates the group mean trajectory, offsets overlapping error bars horizontally with <code>dodge</code>, highlights mean markers with white borders, and maps individual replicate observations into the background:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Mean trajectory with horizontal dodge and standard error bars</span></span>
@@ -616,8 +616,8 @@ window.Quarto = {
 </div>
 <p>Alternatively, <code>show_ribbon = TRUE</code> provides continuous semi-transparent confidence envelopes around each treatment path:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Smooth shaded mean ± SEM ribbon trajectories</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>p_tc_ribbon <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  expr <span class="sc">~</span> Day <span class="sc">|</span> Treatment,</span>

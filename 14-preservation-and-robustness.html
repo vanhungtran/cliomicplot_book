@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -439,8 +439,8 @@ window.Quarto = {
 </ul></li>
 </ul>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>demo_omics <span class="ot">&lt;-</span> <span class="fu">cli_demo_vitality_multiomics</span>(<span class="at">n_samples =</span> <span class="dv">35</span>, <span class="at">n_features =</span> <span class="dv">60</span>, <span class="at">seed =</span> <span class="dv">42</span>)</span>
@@ -479,8 +479,8 @@ window.Quarto = {
 <p>The competitive-to-cooperative edge balance is evaluated as:</p>
 <p><span class="math display">R_{\pm} = \frac{E_{-}}{E_{+}}</span></p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>rob_stats <span class="ot">&lt;-</span> <span class="fu">cli_network_robustness</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">networks     =</span> demo_omics<span class="sc">$</span>networks,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">attack       =</span> <span class="fu">c</span>(<span class="st">"random"</span>, <span class="st">"degree"</span>),</span>
@@ -515,8 +515,8 @@ window.Quarto = {
 <p>Standard cutoffs (<span class="math inline">Z = 2.5, P = 0.62</span>) partition the plane into four topological roles: 1. <strong>Peripherals</strong> (<span class="math inline">Z_i \le 2.5, P_i \le 0.62</span>): Module specialists with few inter-module links. 2. <strong>Connectors</strong> (<span class="math inline">Z_i \le 2.5, P_i &gt; 0.62</span>): Generalists linking distinct modules. 3. <strong>Module hubs</strong> (<span class="math inline">Z_i &gt; 2.5, P_i \le 0.62</span>): Highly connected specialists inside their module. 4. <strong>Network hubs</strong> (<span class="math inline">Z_i &gt; 2.5, P_i &gt; 0.62</span>): Super-generalists critical to global network integrity.</p>
 <p><code>type_zipi()</code> automates role classification, renders soft shaded background quadrants, adds marginal density rugs, and labels keystone taxa with collision-free text:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>n_taxa <span class="ot">&lt;-</span> <span class="dv">45</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>zipi_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
@@ -548,8 +548,8 @@ window.Quarto = {
 <h2 data-number="14.4" class="anchored" data-anchor-id="ecological-network-edge-sign-dynamics-type-edge_dynamics"><span class="header-section-number">14.4</span> Ecological Network Edge-Sign Dynamics: <code>type = "edge_dynamics"</code></h2>
 <p>The balance of positive co-occurrences (mutualism, cross-feeding, or shared environmental preference) versus negative correlations (competitive exclusion, predation, or niche differentiation) quantifies ecological community stability across clinical phenotypes or treatment arms (Faust &amp; Raes 2012; Wen et al.&nbsp;<em>iMeta</em> 2025):</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p_edge <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(<span class="at">type =</span> <span class="fu">type_edge_dynamics</span>(<span class="at">mode =</span> <span class="st">"stack"</span>))</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>p_edge</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>

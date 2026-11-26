@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -490,8 +490,8 @@ window.Quarto = {
 <section id="node-level-cross-network-graph" class="level2" data-number="12.2">
 <h2 data-number="12.2" class="anchored" data-anchor-id="node-level-cross-network-graph"><span class="header-section-number">12.2</span> Node-Level Cross-Network Graph</h2>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate reproducible cross-network graph data</span></span>
@@ -520,8 +520,8 @@ window.Quarto = {
 <section id="style-6-concentric-orbital-ring-architecture" class="level3" data-number="12.2.1">
 <h3 data-number="12.2.1" class="anchored" data-anchor-id="style-6-concentric-orbital-ring-architecture"><span class="header-section-number">12.2.1</span> Style 6: Concentric Orbital Ring Architecture</h3>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>p_conc <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
@@ -545,8 +545,8 @@ window.Quarto = {
 <section id="style-7-bipolar-magnetic-dipole-layout" class="level3" data-number="12.2.2">
 <h3 data-number="12.2.2" class="anchored" data-anchor-id="style-7-bipolar-magnetic-dipole-layout"><span class="header-section-number">12.2.2</span> Style 7: Bipolar Magnetic Dipole Layout</h3>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>p_bip <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
@@ -570,8 +570,8 @@ window.Quarto = {
 <section id="style-8-science-jewel-toned-palette" class="level3" data-number="12.2.3">
 <h3 data-number="12.2.3" class="anchored" data-anchor-id="style-8-science-jewel-toned-palette"><span class="header-section-number">12.2.3</span> Style 8: Science Jewel-Toned Palette</h3>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p_sci <span class="ot">&lt;-</span> <span class="fu">cliplot_cross_network_graph</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">nodes       =</span> demo_net<span class="sc">$</span>nodes,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">edges       =</span> demo_net<span class="sc">$</span>edges,</span>
@@ -597,8 +597,8 @@ window.Quarto = {
 <p>Community co-occurrence networks frequently partition into distinct functional modules. Placing module members along circular rings positioned at the vertices of a macro-polygon (<code>PolygonClusterG</code> and <code>PolygonRrClusterG</code> in <code>ggClusterNet 2</code>, Wen et al.&nbsp;<em>iMeta</em> 2025) cleanly separates dense intra-module edges from inter-cluster links.</p>
 <p>In <code>type_polygon_network(adaptive_radius = TRUE)</code>, module ring radii scale with <span class="math inline">\sqrt{N_k / \bar{N}}</span>, allocating area proportional to module richness:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p_poly <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">type  =</span> <span class="fu">type_polygon_network</span>(<span class="at">adaptive_radius =</span> <span class="cn">TRUE</span>, <span class="at">label_size =</span> <span class="fl">2.4</span>),</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Modular Polygon Ring Co-Occurrence Topology (PolygonRrClusterG)"</span></span>
@@ -618,8 +618,8 @@ window.Quarto = {
 <h3 data-number="12.2.5" class="anchored" data-anchor-id="style-10-transkingdom-multi-omics-bipartite-networks-type_bipartite"><span class="header-section-number">12.2.5</span> Style 10: Transkingdom &amp; Multi-Omics Bipartite Networks (<code>type_bipartite()</code>)</h3>
 <p>Cross-domain associations—such as interactions between bacterial and fungal communities, or gut microbiota coupled with serum metabolomics—require bipartite layouts with signed correlation edges:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>p_bip_net <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">type  =</span> <span class="fu">type_bipartite</span>(<span class="at">domain_a =</span> <span class="st">"Gut Microbiota"</span>, <span class="at">domain_b =</span> <span class="st">"Serum Metabolites"</span>, <span class="at">layout =</span> <span class="st">"bipolar"</span>),</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Transkingdom Cross-Domain Network (Microbiota vs Metabolites)"</span></span>

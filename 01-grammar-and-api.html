@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -451,8 +451,8 @@ window.Quarto = {
 <h2 data-number="1.2" class="anchored" data-anchor-id="function-dispatch-and-plot-types"><span class="header-section-number">1.2</span> Function Dispatch and Plot Types</h2>
 <p>The <code>type</code> argument selects the geometry and statistical layer. It accepts either character aliases or typed constructor functions:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -493,8 +493,8 @@ window.Quarto = {
 <h3 data-number="1.2.1" class="anchored" data-anchor-id="typed-constructor-functions"><span class="header-section-number">1.2.1</span> Typed Constructor Functions</h3>
 <p>Constructor functions configure geometry-specific options with autocomplete support:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>p_viol <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data  =</span> df_cohort,</span>
@@ -520,8 +520,8 @@ window.Quarto = {
 <h3 data-number="1.3.1" class="anchored" data-anchor-id="step-1-the-basic-geometry"><span class="header-section-number">1.3.1</span> Step 1: The Basic Geometry</h3>
 <p>A single formula call renders the unadorned baseline geometry using default styling:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p_step1 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df_cohort,</span>
@@ -542,8 +542,8 @@ window.Quarto = {
 <h3 data-number="1.3.2" class="anchored" data-anchor-id="step-2-add-curated-scientific-color"><span class="header-section-number">1.3.2</span> Step 2: Add Curated Scientific Color</h3>
 <p>Applying a publication palette (<code>palette = "nature"</code>) assigns coordinated categorical hues across experimental cohorts:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p_step2 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> df_cohort,</span>
@@ -565,8 +565,8 @@ window.Quarto = {
 <h3 data-number="1.3.3" class="anchored" data-anchor-id="step-3-add-journal-template-and-typography"><span class="header-section-number">1.3.3</span> Step 3: Add Journal Template and Typography</h3>
 <p>Applying a journal template (<code>theme = "nature"</code>) configures open axes, tick direction, typography, panel titles, and axis labels:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>p_step3 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data     =</span> df_cohort,</span>
@@ -593,8 +593,8 @@ window.Quarto = {
 <h3 data-number="1.3.4" class="anchored" data-anchor-id="step-4-add-statistical-hypothesis-testing-with-comparison-bars"><span class="header-section-number">1.3.4</span> Step 4: Add Statistical Hypothesis Testing with Comparison Bars</h3>
 <p>Setting <code>stat.test = "wilcox.test"</code> calculates non-parametric rank-sum statistics and draws comparison bracket bars across cohorts:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>p_step4 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_cohort,</span>
@@ -626,8 +626,8 @@ window.Quarto = {
 <h3 data-number="1.4.1" class="anchored" data-anchor-id="dual-condition-contrast-type_split_violin"><span class="header-section-number">1.4.1</span> Dual-Condition Contrast: <code>type_split_violin()</code></h3>
 <p>When comparing two treatment arms (Placebo vs.&nbsp;Biologic) across multiple severity tiers, <code>type_split_violin()</code> renders both distributions back-to-back along a shared category spine. Each condition is highlighted by group color, with inner boxplots dodged inside each split half. Adding <code>stat.test = "t.test"</code> performs within-tier comparisons with horizontal bracket bars:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>p_split <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker <span class="sc">|</span> Treatment,</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_cohort,</span>
@@ -658,8 +658,8 @@ window.Quarto = {
 <h3 data-number="1.4.2" class="anchored" data-anchor-id="mean-diamond-glyphs-with-standard-error-inner-mean_se"><span class="header-section-number">1.4.2</span> Mean Diamond Glyphs with Standard Error: <code>inner = "mean_se"</code></h3>
 <p>Setting <code>inner = "mean_se"</code> replaces median boxplots with an arithmetic mean diamond and standard error errorbars:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>p_mean_stat <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Treatment,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_cohort,</span>
@@ -703,8 +703,8 @@ window.Quarto = {
 <li><strong>Mathematical significance brackets</strong>: <code>stat.label = "p.nature"</code> renders two-line significance annotations with exact Unicode scientific exponents (<span class="math inline">***\text{ (P = }1.7 \times 10^{-9}\text{)}</span> or <span class="math inline">\text{n.s. (P = 0.55)}</span>).</li>
 </ol>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate multi-tissue pathology data</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>pathology_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
@@ -764,8 +764,8 @@ window.Quarto = {
 <li><strong>Ecology theme</strong>: <code>theme = "ecology"</code> establishes a 4-sided rectangular border, clean white interior, outward ticks, and bold axis typography.</li>
 </ol>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate reseeding viability data (population growth rate lambda across years)</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>n_reps <span class="ot">&lt;-</span> <span class="dv">250</span></span>
@@ -816,8 +816,8 @@ window.Quarto = {
 <h2 data-number="1.7" class="anchored" data-anchor-id="the-parameter-object-clipar"><span class="header-section-number">1.7</span> The Parameter Object: <code>clipar()</code></h2>
 <p><code>clipar()</code> sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>pars <span class="ot">&lt;-</span> <span class="fu">clipar</span>(</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">point_size  =</span> <span class="fl">2.2</span>,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">line_width  =</span> <span class="fl">0.9</span>,</span>
@@ -847,8 +847,8 @@ window.Quarto = {
 <h2 data-number="1.8" class="anchored" data-anchor-id="plot-composition-and-layer-addition"><span class="header-section-number">1.8</span> Plot Composition and Layer Addition</h2>
 <p><code>cliplot()</code> objects are <code>ggplot2</code> instances. You can extend them using the standard <code>+</code> operator or the <code>cliplot_add()</code> helper:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>p_final <span class="ot">&lt;-</span> p_box <span class="sc">+</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">10</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#B22222"</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">1.2</span>, <span class="at">y =</span> <span class="fl">10.8</span>, <span class="at">label =</span> <span class="st">"Diagnostic Threshold (10 pg/mL)"</span>,</span>
