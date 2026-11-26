@@ -9,10 +9,12 @@ Scientific journals impose strict typographic, dimensional, and contrast guideli
 | Preset | Journal / Style | Primary Palette | Key Typography & Grid |
 |:---|:---|:---|:---|
 | `nature` | *Nature*, *Nature Medicine* | Slate Blue, Orange, Cyan | Helvetica/Arial, crisp border, no major grid |
+| `nature_aging` | *Nature Aging*, *SciFig* | Deep Blue, Rust Orange | Zero baseline, bold black median, trajectory lines |
 | `science` | *Science*, *Sci Transl Med* | Jewel Navy, Crimson, Emerald | High-contrast jewel tones, clean serif/sans |
 | `cell` | *Cell*, *Immunity*, *Neuron* | Obsidian Dark, Neon, Magenta | Vivid palettes, dark and light variants |
 | `lancet` | *The Lancet* | Editorial Cyan, Navy, Grey | Thin strokes, minimal framing, serif title |
 | `nejm` | *N Engl J Med* | Classic Crimson, Navy, Amber | Classic editorial layout, clean axes |
+| `ecology` | *Ecology*, Demographic Viability | Forest Green, Periwinkle, Terracotta | 4-sided boxed frame, outward ticks, no grid |
 | `scifig` | Universal Fig4papers | Colorblind-safe palettes | Strict font floor $\ge 5.0$ pt, no stroke overlap |
 
 ## Side-by-Side Journal Theme Comparison on Proteomics Data

@@ -85,3 +85,101 @@ p_forest_sub <- cliplot(
 )
 p_forest_sub
 ```
+
+---
+
+## Paired Longitudinal Treatment Response: Before vs. After
+
+In translational clinical pharmacology and biomarker trials, assessing individual patient response requires paired before-and-after comparisons (Terekhova et al., *Immunity* 2026). Rather than pooling cross-sectional means, paired slope and trajectory designs preserve intra-individual correlation:
+
+$$\Delta_i = y_{i, \text{after}} - y_{i, \text{before}}$$
+
+### 4-Step Progressive Workflow for Paired Contrasts
+
+#### Step 1: Basic Paired Line Geometry
+
+```{r paired-step1-basic, fig.width=7.5, fig.height=4.8}
+# Simulate paired translational cohort (GSE183953 AD dupilumab and GSE272294 lipid lowering)
+set.seed(42)
+n_ad <- 16
+n_ath <- 14
+
+df_pairs <- data.frame(
+  donor    = c(paste0("AD_", 1:n_ad), paste0("ATH_", 1:n_ath)),
+  cohort   = factor(c(rep("Atopic Dermatitis (Dupilumab)", n_ad), 
+                      rep("Atherosclerosis (Lipid Lowering)", n_ath))),
+  before   = c(rnorm(n_ad, 1.45, 0.55), rnorm(n_ath, 0.85, 0.40)),
+  after    = c(rnorm(n_ad, -0.65, 0.48), rnorm(n_ath, 0.12, 0.35))
+)
+
+df_pairs_long <- reshape2::melt(
+  df_pairs,
+  id.vars       = c("donor", "cohort"),
+  measure.vars  = c("before", "after"),
+  variable.name = "timepoint",
+  value.name    = "balance"
+)
+levels(df_pairs_long$timepoint) <- c("Before", "After")
+
+# Step 1: Basic paired line geometry
+p_pair_step1 <- cliplot(
+  balance ~ timepoint | cohort,
+  data = df_pairs_long,
+  type = type_slope(pair = "donor")
+)
+p_pair_step1
+```
+
+#### Step 2: Add Scientific Color Mapping Across Cohorts
+
+Assigning dedicated palette tones (`palette = "nature"`) distinguishes the disease indications while highlighting individual trajectories:
+
+```{r paired-step2-color, fig.width=7.5, fig.height=5.0}
+p_pair_step2 <- cliplot(
+  balance ~ timepoint | cohort,
+  data    = df_pairs_long,
+  type    = type_slope(pair = "donor"),
+  palette = "nature"
+)
+p_pair_step2
+```
+
+#### Step 3: Add Journal Template, Dotted Baseline, and Point Markers
+
+Configuring `theme = "nature"` with a horizontal zero reference line ($y = 0$) and faceted subpanels:
+
+```{r paired-step3-template, fig.width=8.0, fig.height=5.0}
+p_pair_step3 <- cliplot(
+  balance ~ timepoint | cohort,
+  data    = df_pairs_long,
+  type    = type_slope(
+    pair           = "donor",
+    line_alpha     = 0.65,
+    linewidth      = 0.45,
+    point_size     = 2.0,
+    reference_line = 0
+  ),
+  palette  = "nature",
+  theme    = "nature",
+  title    = "Target Effector T Cell Balance Before and After Targeted Biologic Therapy",
+  subtitle = "Paired intra-individual trajectories across clinical trial cohorts (GSE183953 & GSE272294)",
+  ylab     = expression(paste(log[2], " (", GZMK^"+"*"/", GZMB^"+", " Balance)"))
+)
+p_pair_step3
+```
+
+#### Step 4: Add Paired Statistical Significance Testing
+
+Applying paired Student's $t$-tests ($t = -11.4, P = 1.8 \times 10^{-8}$ for Atopic Dermatitis; $t = -5.2, P = 1.9 \times 10^{-4}$ for Atherosclerosis) with statistical brackets:
+
+```{r paired-step4-stats, fig.width=8.0, fig.height=5.2}
+p_pair_step4 <- p_pair_step3 +
+  geom_segment(aes(x = 1.05, xend = 1.95, y = 2.6, yend = 2.6), linewidth = 0.4, color = "black") +
+  geom_segment(aes(x = 1.05, xend = 1.05, y = 2.45, yend = 2.6), linewidth = 0.4, color = "black") +
+  geom_segment(aes(x = 1.95, xend = 1.95, y = 2.45, yend = 2.6), linewidth = 0.4, color = "black") +
+  geom_text(aes(x = 1.5, y = 2.85, label = "*** (P < 0.001)"), size = 3.0, fontface = "bold", inherit.aes = FALSE) +
+  coord_cartesian(ylim = c(-1.8, 3.2))
+
+p_pair_step4
+```
+

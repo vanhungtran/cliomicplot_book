@@ -90,4 +90,110 @@ p_swim <- cliplot(
   theme(axis.text.y = element_text(size = 7))
 
 p_swim
+
 ```
+
+---
+
+## Longitudinal Recovery Trajectories with Standard Error Bars: `type_trajectory()`
+
+In longitudinal trials and cohort recovery tracking, patient-level heterogeneity is evaluated across repeated clinic visits and follow-up milestones (Clinical Archetype 4). `type_trajectory()` overlays semi-transparent individual patient spaghetti paths with bold group mean trajectories and vertical standard error bars with horizontal crossbar caps (`errorbar = "se"`).
+
+We follow the 4-step progressive pipeline:
+
+### Step 1: Basic Mean Trajectory Geometry
+
+A single formula call renders the baseline trajectory with raw patient spaghetti paths and overall mean line:
+
+```{r traj-step1-basic, fig.width=7.5, fig.height=4.8}
+# Generate reproducible 2-arm longitudinal trial cohort with recovery milestone
+set.seed(42)
+n_per_arm <- 20
+visits <- c("Baseline", "Week 2", "Week 4", "Week 8", "Recovery")
+arms <- c("Placebo", "Biologic (300mg)")
+
+df_trial <- expand.grid(
+  Subject = paste0("S_", sprintf("%03d", 1:(n_per_arm * 2))),
+  Visit   = visits
+)
+df_trial$Treatment <- factor(
+  ifelse(as.numeric(gsub("S_", "", df_trial$Subject)) <= n_per_arm, "Placebo", "Biologic (300mg)"),
+  levels = arms
+)
+df_trial$Visit <- factor(df_trial$Visit, levels = visits)
+
+eff_map <- c("Baseline" = 0, "Week 2" = -8, "Week 4" = -18, "Week 8" = -28, "Recovery" = -32)
+df_trial$Score <- 55 + rnorm(nrow(df_trial), 0, 5.5)
+is_bio <- df_trial$Treatment == "Biologic (300mg)"
+for (v in visits) {
+  mask <- is_bio & (df_trial$Visit == v)
+  df_trial$Score[mask] <- df_trial$Score[mask] + eff_map[v] + rnorm(sum(mask), 0, 3.5)
+}
+
+# Step 1: Basic unstratified trajectory
+p_traj_step1 <- cliplot(
+  Score ~ Visit | Subject,
+  data = df_trial[df_trial$Treatment == "Biologic (300mg)", ],
+  type = "trajectory"
+)
+p_traj_step1
+```
+
+### Step 2: Add Scientific Color Mapping Across Treatment Arms
+
+Mapping the formula to `Score ~ Visit | Treatment` stratifies both patient spaghetti paths and bold mean trajectories by treatment arm using a publication palette (`palette = "nature"`):
+
+```{r traj-step2-color, fig.width=7.5, fig.height=5.0}
+p_traj_step2 <- cliplot(
+  Score ~ Visit | Treatment,
+  data    = df_trial,
+  type    = "trajectory",
+  palette = "nature"
+)
+p_traj_step2
+```
+
+### Step 3: Add Journal Template and Standard Error Crossbars
+
+Configuring `type_trajectory()` with standard error bars (`show_errorbar = TRUE`, `errorbar = "se"`), white-filled circular markers (`point_fill = "white"`), horizontal dodging (`dodge = 0.16`), and `theme = "nature"` produces a clean publication figure:
+
+```{r traj-step3-template, fig.width=8.0, fig.height=5.2}
+p_traj_step3 <- cliplot(
+  Score ~ Visit | Treatment,
+  data    = df_trial,
+  type    = type_trajectory(
+    show_errorbar  = TRUE,
+    errorbar       = "se",
+    errorbar_width = 0.15,
+    errorbar_lwd   = 0.85,
+    point_shape    = 21,
+    point_size     = 3.4,
+    point_fill     = "white",
+    dodge          = 0.16,
+    severity_bands = NULL
+  ),
+  palette = "nature",
+  theme   = "nature",
+  title   = "Mean Trajectory with Standard Error Bars Across Recovery Time Points",
+  subtitle = "Biologic vs Placebo with SE crossbars and recovery follow-up milestone",
+  xlab    = "Study Visit / Timeline",
+  ylab    = "Clinical Severity Score (Points)"
+)
+p_traj_step3
+```
+
+### Step 4: Add Statistical Significance Comparison at Recovery Milestone
+
+At the primary endpoint (Week 8) and post-treatment recovery milestone, between-arm differences can be tested and annotated with comparison bracket bars:
+
+```{r traj-step4-stats, fig.width=8.0, fig.height=5.4}
+p_traj_step4 <- p_traj_step3 +
+  annotate("segment", x = 4.92, xend = 5.08, y = 60, yend = 60, linewidth = 0.5, color = "#222222") +
+  annotate("segment", x = 4.92, xend = 4.92, y = 58.5, yend = 60, linewidth = 0.5, color = "#222222") +
+  annotate("segment", x = 5.08, xend = 5.08, y = 58.5, yend = 60, linewidth = 0.5, color = "#222222") +
+  annotate("text", x = 5.0, y = 62.2, label = "*** (P < 0.001)", size = 3.2, fontface = "bold", color = "#222222") +
+  coord_cartesian(ylim = c(15, 68))
+
+p_traj_step4
+```
+
