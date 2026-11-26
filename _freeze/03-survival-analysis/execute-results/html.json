@@ -1,0 +1,17 @@
+{
+  "hash": "ac0cd50e8b4314cb067f82dc2c00c3ee",
+  "result": {
+    "engine": "knitr",
+    "markdown": "# Survival Analysis and Time-to-Event Graphics\n\nTime-to-event outcomes require specialized visual conventions. `cliplot()` implements Kaplan-Meier survival curves with aligned risk tables and Fine-Gray cumulative incidence curves for competing risks.\n\n## Kaplan-Meier Curves: `type = \"km\"`\n\n`cliplot(Surv(time, event) ~ arm, data, type = \"km\")` estimates the step survival function $\\hat{S}(t)$:\n\n$$\\hat{S}(t) = \\prod_{t_i \\le t} \\left(1 - \\frac{d_i}{n_i}\\right)$$\n\nwhere $d_i$ is the number of events and $n_i$ is the number of individuals at risk at time $t_i$.\n\n### Overall Survival with Landmark Milestones (NEJM Style)\n\nReporting overall survival (OS) requires both the step survival function and explicit landmark milestone rates (e.g., 6-month, 1-year, and 2-year survival) with confidence intervals.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(cliomicplot)\nlibrary(survival)\nlibrary(ggplot2)\n\nclitheme(\"nejm\")\n\np_km <- cliplot(\n  Surv(time, status) ~ sex,\n  data = lung,\n  type = type_km(\n    risk_table  = TRUE,\n    pval        = TRUE,\n    conf_int    = TRUE,\n    median_line = TRUE,\n    milestones  = c(180, 365, 730)\n  ),\n  palette  = \"nejm\",\n  title    = \"Overall Survival Stratified by Sex\",\n  subtitle = \"NCCTG Lung Cancer Trial (n = 228) with 6-mo, 1-yr, 2-yr Milestones\",\n  xlab     = \"Time on Study (days)\",\n  ylab     = \"Survival Probability\",\n  legend   = \"top\"\n)\np_km\n```\n\n::: {.cell-output-display}\n![](03-survival-analysis_files/figure-html/km-demo-1.png){width=2400}\n:::\n:::\n\n\nKey features of `type_km()`:\n- Landmark milestones annotated directly on curves with percentage estimates and error bars.\n- Aligned numbers-at-risk table matching x-axis tick positions.\n- Dashed drop lines indicating median survival time for each cohort.\n\n## Competing Risks Cumulative Incidence: `type = \"ci\"`\n\nWhen evaluating disease progression, toxicities, or adverse event rates, clinical journals prefer cumulative incidence curves starting at 0% and climbing toward 100%:\n\n$$F_k(t) = P(T \\le t, C = k) = \\int_0^t S(u-) d\\Lambda_k(u)$$\n\n\n::: {.cell}\n\n```{.r .cell-code}\nclitheme(\"lancet\")\n\np_ci <- cliplot(\n  Surv(time, status) ~ sex,\n  data = lung,\n  type = type_km(\n    cumulative_incidence = TRUE,\n    risk_table           = TRUE,\n    pval                 = TRUE,\n    conf_int             = TRUE,\n    milestones           = c(180, 365)\n  ),\n  palette  = \"lancet\",\n  title    = \"Cumulative Incidence of Mortality\",\n  subtitle = \"NCCTG Lung Cohort — Landmark Milestones at 180 and 365 Days\",\n  xlab     = \"Days Since Enrollment\",\n  ylab     = \"Cumulative Incidence (%)\",\n  legend   = \"top\"\n)\np_ci\n```\n\n::: {.cell-output-display}\n![](03-survival-analysis_files/figure-html/ci-demo-1.png){width=2400}\n:::\n:::\n\n",
+    "supporting": [
+      "03-survival-analysis_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

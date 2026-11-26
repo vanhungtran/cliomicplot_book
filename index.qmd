@@ -1,38 +1,72 @@
-# Welcome {.unnumbered}
+# Preface {.unnumbered}
 
-`cliomicplot` produces publication-ready clinical and multi-omics figures in R with a formula grammar and pre-configured journal styles. This handbook explains how to use the package for clinical trial reporting, high-dimensional omics profiling, systems biology network coupling, and multi-panel journal composite assembly.
+`cliomicplot` produces publication-ready clinical and multi-omics figures in R with a formula grammar and pre-configured journal styles. This handbook explains how to use the package for clinical trial reporting, high-dimensional omics profiling, systems biology network coupling, and multi-panel journal composite assembly conforming to international publication specifications.
 
-## Package Scope
+## About This Handbook
 
-The package addresses three visual bottlenecks in biomedical data science:
+Biomedical data science routinely requires visualizing disparate data modalities—ranging from patient survival times and longitudinal biomarker trajectories to transcriptomic differential expression profiles and complex coupled molecular networks. Standard visualization libraries frequently require dozens of boilerplate lines for basic journal conventions: risk tables aligned below Kaplan-Meier survival curves, statistical significance callouts, outward tick marks, uppercase panel labels, and color-blind safe palettes.
 
-1. **Clinical Trial Visualizations**: Kaplan-Meier curves with aligned risk tables, competing risks cumulative incidence, hazard ratio forest plots, and oncology patient response trajectories (RECIST waterfall and swimmer plots).
-2. **High-Throughput Omics**: Volcano plots with biomarker callout boxes, differential expression contrast matrices, gene set enrichment running scores, microbiome GWAS Manhattan plots, and taxonomic abundance bubble matrices.
-3. **Systems Biology & Multi-Network Coupling**: Cross-condition module comparison, comparative multi-group network graphs, modular circular networks coupled with peripheral environmental heatmaps, module preservation testing ($Z_{\text{summary}}$), and topological attack simulations.
+`cliomicplot` unifies these workflows under an expressive formula interface:
+
+$$\text{response} \sim \text{predictor} \mid \text{grouping}$$
+
+By pairing this formula syntax with pre-built journal themes (`theme_cli_nature()`, `theme_cli_lancet()`, `theme_cli_nejm()`, `theme_cli_cell()`), researchers can move from raw data to peer-review ready figures in a single function call.
+
+::: {.key-box}
+**Core Design Philosophy**: Every plot type in `cliomicplot` adheres to rigorous graphic standards—open L-frame axes, outward tick marks, CIEDE2000-separated palettes, and automated layout alignment.
+:::
+
+## Visual Grammar & Mental Models
+
+Throughout this handbook, visualizations are structured around five core patterns:
+
+1. **The Formula Interface**: A single consistent calling convention `cliplot(y ~ x, data = df, type = type_*)` across univariate, bivariate, survival, network, and meta-analytic figures.
+2. **Journal Style Presets**: Automated formatting rules conforming to publication guidelines for *Nature*, *The Lancet*, *NEJM*, *Cell*, *JAMA*, and *Science*.
+3. **Multi-Layer Alignment**: Seamless integration of risk tables, difference bars, forest subgroup annotations, and benchmark bars without manual coordinate math.
+4. **Coupled Network Topology**: Spatial positioning of molecular and microbial networks coupled with peripheral environmental heatmaps and triangular Mantel links.
+5. **Reproducible Case Studies**: Full-scale reproductions of figures from high-impact literature (*Nature Communications*, *Nature Metabolism*, *Lancet Oncology*, *JACI*).
+
+## Handbook Box Conventions
+
+To assist practical learning and quick reference, chapters employ structured tutorial callouts:
+
+::: {.theory-box}
+**Theoretical Foundations**: Explains the underlying statistical models, dimensional reductions, distance metrics, and visual perception rules behind each figure architecture.
+:::
+
+::: {.example-box}
+**Applied Case Study**: Step-by-step code demonstrations using real-world deposited datasets from NCBI GEO, Metabolomics Workbench, PRIDE, and clinical trial registries.
+:::
+
+::: {.mistakes-box}
+**Common Pitfalls & SciFig Violations**: Highlights formatting mistakes that trigger peer-review rejection—such as inward ticks, rainbow palettes, unaligned risk tables, or hidden data points.
+:::
+
+## Handbook Structure
+
+The handbook is organized into five thematic parts:
+
+- **Part I — Graphic Grammar and Design System (Chapters 1–2):** The unified `cliplot()` formula syntax, theme resolvers, and journal styling presets conforming to AI4SciFig publication gates.
+- **Part II — Clinical Trials and Survival Analysis (Chapters 3–6):** Time-to-event curves with risk tables, subgroup treatment effects, oncology response tracking (RECIST waterfall and swimmer plots), and minimally clinically important difference (MCID) modeling.
+- **Part III — High-Dimensional Omics Visualizations (Chapters 7–10):** Volcano plots with biomarker callout boxes, pathway enrichment running scores, microbiome GWAS Manhattan architectures, and taxonomic dyad sharing.
+- **Part IV — Systems Biology and Coupled Multi-Network Architectures (Chapters 11–15):** Cross-network module overlap ($RF$, Jaccard), multi-group network layouts across 10 journal styles, modular polygon rings (`PolygonRrClusterG`), transkingdom bipartite networks, triangular environmental Mantel links, Zi-Pi keystone hub classification, ecological edge-sign dynamics, module preservation, and permutation testing.
+- **Part V — Publication Composites and Applied Case Studies (Chapters 16–24):** Figure assembly with `patchwork` and full-scale reproducible workflows for atopic dermatitis, immuno-oncology, nasal polyps (*Nature Communications*), deconvolution identifiability, network meta-analysis, and nanoplastics multi-omics audit (*Nature Metabolism*).
 
 ## Installation
 
-Install `cliomicplot` from GitHub:
+Install `cliomicplot` directly from GitHub:
 
 ```r
 # install.packages("remotes")
 remotes::install_github("vanhungtran/cliomicplot")
 ```
 
-Verify the installation:
+Verify the installation and loaded version:
 
 ```{r check-install}
 library(cliomicplot)
 packageVersion("cliomicplot")
 ```
-
-## Structure of This Handbook
-
-- **Part I — Graphic Grammar and Design System**: The unified `cliplot()` formula syntax, theme resolvers, and journal styling presets conforming to AI4SciFig publication gates.
-- **Part II — Clinical Trials and Survival Analysis**: Time-to-event curves, subgroup treatment effects, oncology response tracking, and minimally clinically important difference (MCID) modeling.
-- **Part III — High-Dimensional Omics Visualizations**: Volcano plots, pathway enrichment running scores, microbiome GWAS Manhattan architectures, and taxonomic dyad sharing.
-- **Part IV — Systems Biology and Coupled Multi-Network Architectures**: Cross-network module overlap ($RF$, Jaccard), multi-group network layouts across 10 journal styles, modular polygon rings (`PolygonRrClusterG`), transkingdom bipartite networks, triangular environmental Mantel links, Zi-Pi keystone hub classification, ecological edge-sign dynamics, module preservation, and permutation testing.
-- **Part V — Publication Composites and Applied Case Studies**: Figure assembly with `patchwork` and reproducible workflows for atopic dermatitis and immuno-oncology.
 
 ## Reproducibility Setup
 

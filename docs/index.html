@@ -80,13 +80,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-eb4b6c537902febffbf40bee783dc245.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-578431499295ea3befd07f5af3ac06eb.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -156,47 +156,56 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar floating quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Clinical and Omics Data Visualization in R</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/vanhungtran/cliomicplot_book"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/vanhungtran/cliomicplot_book" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Welcome</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Preface</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="./">Clinical and Omics Data Visualization in R</a> 
-        <div class="sidebar-tools-main">
-    <a href="https://github.com/vanhungtran/cliomicplot_book" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-</div>
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Welcome</span></a>
+ <span class="menu-text">Preface</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -414,11 +423,13 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#welcome" id="toc-welcome" class="nav-link active" data-scroll-target="#welcome">Welcome</a>
+  <li><a href="#preface" id="toc-preface" class="nav-link active" data-scroll-target="#preface">Preface</a>
   <ul class="collapse">
-  <li><a href="#package-scope" id="toc-package-scope" class="nav-link" data-scroll-target="#package-scope">Package Scope</a></li>
+  <li><a href="#about-this-handbook" id="toc-about-this-handbook" class="nav-link" data-scroll-target="#about-this-handbook">About This Handbook</a></li>
+  <li><a href="#visual-grammar-mental-models" id="toc-visual-grammar-mental-models" class="nav-link" data-scroll-target="#visual-grammar-mental-models">Visual Grammar &amp; Mental Models</a></li>
+  <li><a href="#handbook-box-conventions" id="toc-handbook-box-conventions" class="nav-link" data-scroll-target="#handbook-box-conventions">Handbook Box Conventions</a></li>
+  <li><a href="#handbook-structure" id="toc-handbook-structure" class="nav-link" data-scroll-target="#handbook-structure">Handbook Structure</a></li>
   <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
-  <li><a href="#structure-of-this-handbook" id="toc-structure-of-this-handbook" class="nav-link" data-scroll-target="#structure-of-this-handbook">Structure of This Handbook</a></li>
   <li><a href="#reproducibility-setup" id="toc-reproducibility-setup" class="nav-link" data-scroll-target="#reproducibility-setup">Reproducibility Setup</a></li>
   </ul></li>
   </ul>
@@ -459,24 +470,60 @@ window.Quarto = {
 </header>
 
 
-<section id="welcome" class="level1 unnumbered">
-<h1 class="unnumbered">Welcome</h1>
-<p><code>cliomicplot</code> produces publication-ready clinical and multi-omics figures in R with a formula grammar and pre-configured journal styles. This handbook explains how to use the package for clinical trial reporting, high-dimensional omics profiling, systems biology network coupling, and multi-panel journal composite assembly.</p>
-<section id="package-scope" class="level2">
-<h2 class="anchored" data-anchor-id="package-scope">Package Scope</h2>
-<p>The package addresses three visual bottlenecks in biomedical data science:</p>
+<section id="preface" class="level1 unnumbered">
+<h1 class="unnumbered">Preface</h1>
+<p><code>cliomicplot</code> produces publication-ready clinical and multi-omics figures in R with a formula grammar and pre-configured journal styles. This handbook explains how to use the package for clinical trial reporting, high-dimensional omics profiling, systems biology network coupling, and multi-panel journal composite assembly conforming to international publication specifications.</p>
+<section id="about-this-handbook" class="level2">
+<h2 class="anchored" data-anchor-id="about-this-handbook">About This Handbook</h2>
+<p>Biomedical data science routinely requires visualizing disparate data modalities—ranging from patient survival times and longitudinal biomarker trajectories to transcriptomic differential expression profiles and complex coupled molecular networks. Standard visualization libraries frequently require dozens of boilerplate lines for basic journal conventions: risk tables aligned below Kaplan-Meier survival curves, statistical significance callouts, outward tick marks, uppercase panel labels, and color-blind safe palettes.</p>
+<p><code>cliomicplot</code> unifies these workflows under an expressive formula interface:</p>
+<p><span class="math display">\text{response} \sim \text{predictor} \mid \text{grouping}</span></p>
+<p>By pairing this formula syntax with pre-built journal themes (<code>theme_cli_nature()</code>, <code>theme_cli_lancet()</code>, <code>theme_cli_nejm()</code>, <code>theme_cli_cell()</code>), researchers can move from raw data to peer-review ready figures in a single function call.</p>
+<div class="key-box">
+<p><strong>Core Design Philosophy</strong>: Every plot type in <code>cliomicplot</code> adheres to rigorous graphic standards—open L-frame axes, outward tick marks, CIEDE2000-separated palettes, and automated layout alignment.</p>
+</div>
+</section>
+<section id="visual-grammar-mental-models" class="level2">
+<h2 class="anchored" data-anchor-id="visual-grammar-mental-models">Visual Grammar &amp; Mental Models</h2>
+<p>Throughout this handbook, visualizations are structured around five core patterns:</p>
 <ol type="1">
-<li><strong>Clinical Trial Visualizations</strong>: Kaplan-Meier curves with aligned risk tables, competing risks cumulative incidence, hazard ratio forest plots, and oncology patient response trajectories (RECIST waterfall and swimmer plots).</li>
-<li><strong>High-Throughput Omics</strong>: Volcano plots with biomarker callout boxes, differential expression contrast matrices, gene set enrichment running scores, microbiome GWAS Manhattan plots, and taxonomic abundance bubble matrices.</li>
-<li><strong>Systems Biology &amp; Multi-Network Coupling</strong>: Cross-condition module comparison, comparative multi-group network graphs, modular circular networks coupled with peripheral environmental heatmaps, module preservation testing (<span class="math inline">Z_{\text{summary}}</span>), and topological attack simulations.</li>
+<li><strong>The Formula Interface</strong>: A single consistent calling convention <code>cliplot(y ~ x, data = df, type = type_*)</code> across univariate, bivariate, survival, network, and meta-analytic figures.</li>
+<li><strong>Journal Style Presets</strong>: Automated formatting rules conforming to publication guidelines for <em>Nature</em>, <em>The Lancet</em>, <em>NEJM</em>, <em>Cell</em>, <em>JAMA</em>, and <em>Science</em>.</li>
+<li><strong>Multi-Layer Alignment</strong>: Seamless integration of risk tables, difference bars, forest subgroup annotations, and benchmark bars without manual coordinate math.</li>
+<li><strong>Coupled Network Topology</strong>: Spatial positioning of molecular and microbial networks coupled with peripheral environmental heatmaps and triangular Mantel links.</li>
+<li><strong>Reproducible Case Studies</strong>: Full-scale reproductions of figures from high-impact literature (<em>Nature Communications</em>, <em>Nature Metabolism</em>, <em>Lancet Oncology</em>, <em>JACI</em>).</li>
 </ol>
+</section>
+<section id="handbook-box-conventions" class="level2">
+<h2 class="anchored" data-anchor-id="handbook-box-conventions">Handbook Box Conventions</h2>
+<p>To assist practical learning and quick reference, chapters employ structured tutorial callouts:</p>
+<div class="theory-box">
+<p><strong>Theoretical Foundations</strong>: Explains the underlying statistical models, dimensional reductions, distance metrics, and visual perception rules behind each figure architecture.</p>
+</div>
+<div class="example-box">
+<p><strong>Applied Case Study</strong>: Step-by-step code demonstrations using real-world deposited datasets from NCBI GEO, Metabolomics Workbench, PRIDE, and clinical trial registries.</p>
+</div>
+<div class="mistakes-box">
+<p><strong>Common Pitfalls &amp; SciFig Violations</strong>: Highlights formatting mistakes that trigger peer-review rejection—such as inward ticks, rainbow palettes, unaligned risk tables, or hidden data points.</p>
+</div>
+</section>
+<section id="handbook-structure" class="level2">
+<h2 class="anchored" data-anchor-id="handbook-structure">Handbook Structure</h2>
+<p>The handbook is organized into five thematic parts:</p>
+<ul>
+<li><strong>Part I — Graphic Grammar and Design System (Chapters 1–2):</strong> The unified <code>cliplot()</code> formula syntax, theme resolvers, and journal styling presets conforming to AI4SciFig publication gates.</li>
+<li><strong>Part II — Clinical Trials and Survival Analysis (Chapters 3–6):</strong> Time-to-event curves with risk tables, subgroup treatment effects, oncology response tracking (RECIST waterfall and swimmer plots), and minimally clinically important difference (MCID) modeling.</li>
+<li><strong>Part III — High-Dimensional Omics Visualizations (Chapters 7–10):</strong> Volcano plots with biomarker callout boxes, pathway enrichment running scores, microbiome GWAS Manhattan architectures, and taxonomic dyad sharing.</li>
+<li><strong>Part IV — Systems Biology and Coupled Multi-Network Architectures (Chapters 11–15):</strong> Cross-network module overlap (<span class="math inline">RF</span>, Jaccard), multi-group network layouts across 10 journal styles, modular polygon rings (<code>PolygonRrClusterG</code>), transkingdom bipartite networks, triangular environmental Mantel links, Zi-Pi keystone hub classification, ecological edge-sign dynamics, module preservation, and permutation testing.</li>
+<li><strong>Part V — Publication Composites and Applied Case Studies (Chapters 16–24):</strong> Figure assembly with <code>patchwork</code> and full-scale reproducible workflows for atopic dermatitis, immuno-oncology, nasal polyps (<em>Nature Communications</em>), deconvolution identifiability, network meta-analysis, and nanoplastics multi-omics audit (<em>Nature Metabolism</em>).</li>
+</ul>
 </section>
 <section id="installation" class="level2">
 <h2 class="anchored" data-anchor-id="installation">Installation</h2>
-<p>Install <code>cliomicplot</code> from GitHub:</p>
+<p>Install <code>cliomicplot</code> directly from GitHub:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("remotes")</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"vanhungtran/cliomicplot"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Verify the installation:</p>
+<p>Verify the installation and loaded version:</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show R code</summary>
@@ -487,16 +534,6 @@ window.Quarto = {
 <pre><code>[1] '0.1.7'</code></pre>
 </div>
 </div>
-</section>
-<section id="structure-of-this-handbook" class="level2">
-<h2 class="anchored" data-anchor-id="structure-of-this-handbook">Structure of This Handbook</h2>
-<ul>
-<li><strong>Part I — Graphic Grammar and Design System</strong>: The unified <code>cliplot()</code> formula syntax, theme resolvers, and journal styling presets conforming to AI4SciFig publication gates.</li>
-<li><strong>Part II — Clinical Trials and Survival Analysis</strong>: Time-to-event curves, subgroup treatment effects, oncology response tracking, and minimally clinically important difference (MCID) modeling.</li>
-<li><strong>Part III — High-Dimensional Omics Visualizations</strong>: Volcano plots, pathway enrichment running scores, microbiome GWAS Manhattan architectures, and taxonomic dyad sharing.</li>
-<li><strong>Part IV — Systems Biology and Coupled Multi-Network Architectures</strong>: Cross-network module overlap (<span class="math inline">RF</span>, Jaccard), multi-group network layouts across 10 journal styles, modular polygon rings (<code>PolygonRrClusterG</code>), transkingdom bipartite networks, triangular environmental Mantel links, Zi-Pi keystone hub classification, ecological edge-sign dynamics, module preservation, and permutation testing.</li>
-<li><strong>Part V — Publication Composites and Applied Case Studies</strong>: Figure assembly with <code>patchwork</code> and reproducible workflows for atopic dermatitis and immuno-oncology.</li>
-</ul>
 </section>
 <section id="reproducibility-setup" class="level2">
 <h2 class="anchored" data-anchor-id="reproducibility-setup">Reproducibility Setup</h2>
@@ -1020,51 +1057,85 @@ document.addEventListener('DOMContentLoaded', function () {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Welcome {.unnumbered}</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Preface {.unnumbered}</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="in">`cliomicplot`</span> produces publication-ready clinical and multi-omics figures in R with a formula grammar and pre-configured journal styles. This handbook explains how to use the package for clinical trial reporting, high-dimensional omics profiling, systems biology network coupling, and multi-panel journal composite assembly.</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="in">`cliomicplot`</span> produces publication-ready clinical and multi-omics figures in R with a formula grammar and pre-configured journal styles. This handbook explains how to use the package for clinical trial reporting, high-dimensional omics profiling, systems biology network coupling, and multi-panel journal composite assembly conforming to international publication specifications.</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Package Scope</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## About This Handbook</span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>The package addresses three visual bottlenecks in biomedical data science:</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>Biomedical data science routinely requires visualizing disparate data modalities—ranging from patient survival times and longitudinal biomarker trajectories to transcriptomic differential expression profiles and complex coupled molecular networks. Standard visualization libraries frequently require dozens of boilerplate lines for basic journal conventions: risk tables aligned below Kaplan-Meier survival curves, statistical significance callouts, outward tick marks, uppercase panel labels, and color-blind safe palettes.</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Clinical Trial Visualizations**: Kaplan-Meier curves with aligned risk tables, competing risks cumulative incidence, hazard ratio forest plots, and oncology patient response trajectories (RECIST waterfall and swimmer plots).</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**High-Throughput Omics**: Volcano plots with biomarker callout boxes, differential expression contrast matrices, gene set enrichment running scores, microbiome GWAS Manhattan plots, and taxonomic abundance bubble matrices.</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Systems Biology &amp; Multi-Network Coupling**: Cross-condition module comparison, comparative multi-group network graphs, modular circular networks coupled with peripheral environmental heatmaps, module preservation testing ($Z_{\text{summary}}$), and topological attack simulations.</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="in">`cliomicplot`</span> unifies these workflows under an expressive formula interface:</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>$$\text{response} \sim \text{predictor} \mid \text{grouping}$$</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Installation</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>By pairing this formula syntax with pre-built journal themes (<span class="in">`theme_cli_nature()`</span>, <span class="in">`theme_cli_lancet()`</span>, <span class="in">`theme_cli_nejm()`</span>, <span class="in">`theme_cli_cell()`</span>), researchers can move from raw data to peer-review ready figures in a single function call.</span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>Install <span class="in">`cliomicplot`</span> from GitHub:</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("remotes")</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"vanhungtran/cliomicplot"</span>)</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>Verify the installation:</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="in">```{r check-install}</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">"cliomicplot"</span>)</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>::: {.key-box}</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>**Core Design Philosophy**: Every plot type in <span class="in">`cliomicplot`</span> adheres to rigorous graphic standards—open L-frame axes, outward tick marks, CIEDE2000-separated palettes, and automated layout alignment.</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## Visual Grammar &amp; Mental Models</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>Throughout this handbook, visualizations are structured around five core patterns:</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**The Formula Interface**: A single consistent calling convention <span class="in">`cliplot(y ~ x, data = df, type = type_*)`</span> across univariate, bivariate, survival, network, and meta-analytic figures.</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Journal Style Presets**: Automated formatting rules conforming to publication guidelines for *Nature*, *The Lancet*, *NEJM*, *Cell*, *JAMA*, and *Science*.</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Multi-Layer Alignment**: Seamless integration of risk tables, difference bars, forest subgroup annotations, and benchmark bars without manual coordinate math.</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Coupled Network Topology**: Spatial positioning of molecular and microbial networks coupled with peripheral environmental heatmaps and triangular Mantel links.</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Reproducible Case Studies**: Full-scale reproductions of figures from high-impact literature (*Nature Communications*, *Nature Metabolism*, *Lancet Oncology*, *JACI*).</span>
 <span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## Structure of This Handbook</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## Handbook Box Conventions</span></span>
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Part I — Graphic Grammar and Design System**: The unified <span class="in">`cliplot()`</span> formula syntax, theme resolvers, and journal styling presets conforming to AI4SciFig publication gates.</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Part II — Clinical Trials and Survival Analysis**: Time-to-event curves, subgroup treatment effects, oncology response tracking, and minimally clinically important difference (MCID) modeling.</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Part III — High-Dimensional Omics Visualizations**: Volcano plots, pathway enrichment running scores, microbiome GWAS Manhattan architectures, and taxonomic dyad sharing.</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Part IV — Systems Biology and Coupled Multi-Network Architectures**: Cross-network module overlap ($RF$, Jaccard), multi-group network layouts across 10 journal styles, modular polygon rings (<span class="in">`PolygonRrClusterG`</span>), transkingdom bipartite networks, triangular environmental Mantel links, Zi-Pi keystone hub classification, ecological edge-sign dynamics, module preservation, and permutation testing.</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Part V — Publication Composites and Applied Case Studies**: Figure assembly with <span class="in">`patchwork`</span> and reproducible workflows for atopic dermatitis and immuno-oncology.</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>To assist practical learning and quick reference, chapters employ structured tutorial callouts:</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>::: {.theory-box}</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>**Theoretical Foundations**: Explains the underlying statistical models, dimensional reductions, distance metrics, and visual perception rules behind each figure architecture.</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproducibility Setup</span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>All code chunks in this book execute in a standard R environment with fixed random seeds.</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>::: {.example-box}</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>**Applied Case Study**: Step-by-step code demonstrations using real-world deposited datasets from NCBI GEO, Metabolomics Workbench, PRIDE, and clinical trial registries.</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup-chunk}</span></span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>::: {.mistakes-box}</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>**Common Pitfalls &amp; SciFig Violations**: Highlights formatting mistakes that trigger peer-review rejection—such as inward ticks, rainbow palettes, unaligned risk tables, or hidden data points.</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## Handbook Structure</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>The handbook is organized into five thematic parts:</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Part I — Graphic Grammar and Design System (Chapters 1–2):** The unified <span class="in">`cliplot()`</span> formula syntax, theme resolvers, and journal styling presets conforming to AI4SciFig publication gates.</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Part II — Clinical Trials and Survival Analysis (Chapters 3–6):** Time-to-event curves with risk tables, subgroup treatment effects, oncology response tracking (RECIST waterfall and swimmer plots), and minimally clinically important difference (MCID) modeling.</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Part III — High-Dimensional Omics Visualizations (Chapters 7–10):** Volcano plots with biomarker callout boxes, pathway enrichment running scores, microbiome GWAS Manhattan architectures, and taxonomic dyad sharing.</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Part IV — Systems Biology and Coupled Multi-Network Architectures (Chapters 11–15):** Cross-network module overlap ($RF$, Jaccard), multi-group network layouts across 10 journal styles, modular polygon rings (<span class="in">`PolygonRrClusterG`</span>), transkingdom bipartite networks, triangular environmental Mantel links, Zi-Pi keystone hub classification, ecological edge-sign dynamics, module preservation, and permutation testing.</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Part V — Publication Composites and Applied Case Studies (Chapters 16–24):** Figure assembly with <span class="in">`patchwork`</span> and full-scale reproducible workflows for atopic dermatitis, immuno-oncology, nasal polyps (*Nature Communications*), deconvolution identifiability, network meta-analysis, and nanoplastics multi-omics audit (*Nature Metabolism*).</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="fu">## Installation</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>Install <span class="in">`cliomicplot`</span> directly from GitHub:</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("remotes")</span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"vanhungtran/cliomicplot"</span>)</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>Verify the installation and loaded version:</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="in">```{r check-install}</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">"cliomicplot"</span>)</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reproducibility Setup</span></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>All code chunks in this book execute in a standard R environment with fixed random seeds.</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup-chunk}</span></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

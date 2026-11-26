@@ -10,6 +10,10 @@ book:
   site-url: https://vanhungtran.github.io/cliomicplot_book/
   repo-url: https://github.com/vanhungtran/cliomicplot_book
   repo-actions: [edit, issue]
+  navbar:
+    right:
+      - icon: github
+        href: https://github.com/vanhungtran/cliomicplot_book
 
   chapters:
     - index.qmd
@@ -58,6 +62,7 @@ book:
 bibliography: references.bib
 
 execute:
+  freeze: auto
   warning: false
   message: false
   echo: true
@@ -85,6 +90,8 @@ format:
     code-summary: "Show R code"
     code-tools: true
     code-copy: true
+    code-link: false
+    code-block-bg: true
     highlight-style: arrow
     anchor-sections: true
     link-external-newwindow: true
@@ -92,11 +99,16 @@ format:
     smooth-scroll: true
     citations-hover: true
     footnotes-hover: true
-    fig-width: 7.5
-    fig-height: 5.0
+    fig-width: 8
+    fig-height: 5.5
     fig-dpi: 300
+    fig-cap-location: bottom
     prefer-html: true
     html-math-method: katex
+    fontsize: 1rem
+    linestretch: 1.65
+    mainfont: "Inter"
+    monofont: "Fira Code"
     grid:
       sidebar-width: 300px
       body-width: 850px

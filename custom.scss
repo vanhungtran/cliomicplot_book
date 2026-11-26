@@ -1,19 +1,24 @@
 /*-- scss:defaults --*/
 
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Fira+Code:wght@400;500;600&display=swap');
+/* ==========================================================================
+   FONTS & TYPOGRAPHY SETTINGS
+   Learned from PKPDwithR design system
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;0,8..60,800;1,8..60,400;1,8..60,600&family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap');
 
-/* Color Palette */
-$theme-navy: #002060;
-$theme-navy-light: #1e3a8a;
-$theme-crimson: #b22222;
-$theme-emerald: #008b45;
-$theme-slate: #1e293b;
-$theme-muted: #64748b;
-$theme-border: #e2e8f0;
-$theme-bg: #f8fafc;
+/* Color Palette — Deep Clinical Navy & Omics Teal/Cyan, with Nature Accents */
+$cli-ink:         #071527;
+$cli-navy:        #0A1E38;
+$cli-primary:     #0F4D92;
+$cli-teal:        #00A8B0;
+$cli-teal-light:  #20D0C8;
+$cli-gold:        #D97706;
+$cli-crimson:     #B22222;
+$cli-sage:        #2D6A4F;
+$cli-slate:       #5C6B7A;
+$cli-cream:       #F0F4F8;
+$cli-paper:       #FFFFFF;
 
-/* Typography */
 $font-family-sans-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 $font-family-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
 $font-family-monospace: "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace;
@@ -21,126 +26,457 @@ $font-family-monospace: "Fira Code", "SFMono-Regular", Menlo, Consolas, monospac
 $body-font-family: $font-family-sans-serif;
 $headings-font-family: $font-family-serif;
 $headings-font-weight: 700;
-$headings-color: $theme-navy;
-$link-color: $theme-navy-light;
-$link-hover-color: $theme-crimson;
-$body-color: $theme-slate;
+$headings-color: $cli-ink;
 
-/* Code styling */
-$code-block-bg: #f8fafc;
-$code-block-border-color: #e2e8f0;
-$code-color: #991b1b;
-$code-font-family: $font-family-monospace;
+$link-color: $cli-primary;
+$link-hover-color: $cli-teal;
+$body-color: $cli-ink;
+
+$presentation-heading-color: $cli-ink;
+
+$toc-color: $cli-teal;
+$toc-active-border: $cli-teal;
+
+$code-block-bg: #f4f7f8;
+$code-block-border-color: #dde6ea;
+$code-color: $cli-crimson;
 
 /*-- scss:rules --*/
 
+/* ==========================================================================
+   GLOBAL TYPOGRAPHY & BODY
+   ========================================================================== */
+
 body {
+  font-feature-settings: "kern" 1, "liga" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.72;
-  font-size: 1.02rem;
+  text-rendering: optimizeLegibility;
+  line-height: 1.75;
+  font-size: 1.05rem;
+}
+
+.content p,
+main p {
+  line-height: 1.75;
+  font-size: 1.05rem;
+  margin-bottom: 1.25rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
+  font-family: $headings-font-family;
+  letter-spacing: -0.015em;
   font-feature-settings: "kern" 1, "liga" 1;
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
 }
 
-h1.title {
-  color: $theme-navy;
+.content h1 {
+  border-bottom: 3px solid $cli-teal;
+  padding-bottom: 0.5rem;
+  margin-top: 2.8rem;
   font-weight: 800;
+  color: $cli-ink;
+}
+
+.content h2 {
+  margin-top: 2.5rem;
+  color: $cli-ink;
+  font-weight: 700;
+  border-bottom: 1px solid #dde6ea;
+  padding-bottom: 0.35rem;
+}
+
+.content h3 {
+  color: $cli-primary;
+  font-weight: 600;
+  margin-top: 1.8rem;
+}
+
+.content h2 .header-section-number,
+.content h1 .header-section-number {
+  color: $cli-teal;
+  margin-right: 0.4rem;
+}
+
+/* Drop cap for the first paragraph after a chapter title */
+.content > section > p:first-of-type::first-letter,
+main.content > p:first-of-type::first-letter {
+  float: left;
+  font-family: $headings-font-family;
+  font-weight: 800;
+  font-size: 3.5rem;
+  line-height: 0.85;
+  padding: 0.15rem 0.45rem 0 0;
+  color: $cli-primary;
+}
+
+/* ==========================================================================
+   HERO CHAPTER TITLE BLOCK HEADER
+   Learned from PKPDwithR
+   ========================================================================== */
+
+#title-block-header.quarto-title-block {
+  background: linear-gradient(135deg, #071527 0%, #0A1E38 55%, #0F4D92 100%);
+  color: #fff;
+  padding: 3.8rem 2.8rem;
+  margin: -2rem -2rem 3rem -2rem;
+  border-radius: 0 0 1.25rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(7, 21, 39, 0.28);
+}
+
+#title-block-header.quarto-title-block::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(0, 168, 176, 0.24) 0%, transparent 45%),
+    radial-gradient(circle at 10% 90%, rgba(32, 208, 200, 0.18) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+#title-block-header h1.title {
+  color: #ffffff;
+  font-family: $headings-font-family;
+  font-size: 3.2rem;
+  font-weight: 900;
+  margin-bottom: 0.8rem;
+  position: relative;
   letter-spacing: -0.02em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
 }
 
-p.subtitle {
-  color: $theme-muted;
-  font-size: 1.25rem;
+#title-block-header h1.title .chapter-number {
+  color: $cli-teal-light;
+  margin-right: 0.5rem;
+}
+
+#title-block-header h1.title .chapter-title {
+  color: #ffffff;
+}
+
+#title-block-header .quarto-title-banner .description,
+#title-block-header p.subtitle {
+  color: #7dd3fc;
+  font-size: 1.35rem;
+  font-weight: 500;
+  position: relative;
+  font-family: $font-family-serif;
   font-style: italic;
+  margin-bottom: 1rem;
 }
 
-/* Callout cards */
-.callout {
-  border-radius: 6px;
-  border-left-width: 4px !important;
-  margin: 1.5rem 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+#title-block-header .author,
+#title-block-header .quarto-title-meta-contents {
+  color: rgba(255, 255, 255, 0.90);
+  font-size: 1.05rem;
+  font-weight: 400;
+  position: relative;
+}
+
+#title-block-header .quarto-title-meta-heading {
+  color: $cli-teal-light;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+#title-block-header a,
+#title-block-header .breadcrumb-item a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+}
+
+#title-block-header .breadcrumb-item + .breadcrumb-item::before {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ==========================================================================
+   NAVBAR & SIDEBAR
+   ========================================================================== */
+
+.navbar {
+  background: linear-gradient(135deg, #071527 0%, #050E1A 100%) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.navbar .nav-link,
+.navbar .navbar-brand {
+  color: rgba(255, 255, 255, 0.92) !important;
+  font-family: $font-family-sans-serif;
+}
+
+.navbar .nav-link:hover {
+  color: $cli-teal-light !important;
+}
+
+.navbar .active {
+  color: $cli-teal-light !important;
+}
+
+.sidebar nav[role="doc-toc"] {
+  border-left: 3px solid $cli-teal;
+}
+
+.sidebar-title {
+  font-family: $font-family-serif;
+  font-weight: 700;
+  color: $cli-ink;
+}
+
+.sidebar-item .sidebar-item-text {
+  transition: color 0.15s ease-in-out;
+}
+
+.sidebar-item.active > .sidebar-item-container .sidebar-item-text,
+.sidebar-item-container:hover .sidebar-item-text {
+  color: $cli-primary;
+  font-weight: 600;
+}
+
+.sidebar-item .chapter-number {
+  color: $cli-teal;
+  font-weight: 700;
+  margin-right: 0.35rem;
+}
+
+/* Right-side TOC */
+#TOC,
+nav#TOC {
+  border-left: 3px solid $cli-teal;
+  padding-left: 1rem;
+}
+
+#TOC h2, nav#TOC h2 {
+  font-family: $font-family-sans-serif;
+  color: $cli-ink;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+#TOC .active,
+nav#TOC .active {
+  font-weight: 600;
+  color: $cli-primary !important;
+}
+
+#TOC ul > li > a:hover,
+nav#TOC ul > li > a:hover {
+  color: $cli-primary;
+}
+
+/* ==========================================================================
+   CALLOUT BOXES — Tutorial & Case Study Style
+   Learned from PKPDwithR
+   ========================================================================== */
+
+.theory-box,
+.example-box,
+.exercise-box,
+.mistakes-box,
+.key-box {
+  padding: 1.25rem 1.5rem;
+  margin: 1.75rem 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(7, 21, 39, 0.06);
+  position: relative;
+}
+
+.theory-box p:last-child,
+.example-box p:last-child,
+.exercise-box p:last-child,
+.mistakes-box p:last-child,
+.key-box p:last-child {
+  margin-bottom: 0;
+}
+
+/* Theory box */
+.theory-box {
+  background: linear-gradient(135deg, #eef4f8 0%, #e2edf3 100%);
+  border-left: 5px solid $cli-slate;
+}
+
+.theory-box::before {
+  content: "📘 Theory & Visual Grammar";
+  font-weight: 700;
+  color: $cli-slate;
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  font-family: $font-family-sans-serif;
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Worked example box */
+.example-box {
+  background: linear-gradient(135deg, #e8fcff 0%, #d4f5fb 100%);
+  border-left: 5px solid $cli-teal;
+}
+
+.example-box::before {
+  content: "🔬 Applied Case Study";
+  font-weight: 700;
+  color: #0086a3;
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  font-family: $font-family-sans-serif;
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Exercise box */
+.exercise-box {
+  background: linear-gradient(135deg, #f0effa 0%, #e3e1f5 100%);
+  border-left: 5px solid #6366f1;
+}
+
+.exercise-box::before {
+  content: "✏️ Hands-On Figure Exercise";
+  font-weight: 700;
+  color: #6366f1;
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  font-family: $font-family-sans-serif;
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Common mistakes box */
+.mistakes-box {
+  background: linear-gradient(135deg, #faf1ee 0%, #f5e2dc 100%);
+  border-left: 5px solid $cli-crimson;
+}
+
+.mistakes-box::before {
+  content: "⚠️ Common Pitfalls & SciFig Violations";
+  font-weight: 700;
+  color: $cli-crimson;
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  font-family: $font-family-sans-serif;
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Key takeaway box */
+.key-box {
+  background: linear-gradient(135deg, #f4fbfc 0%, #e6f6f9 100%);
+  border: 2px solid $cli-teal;
+}
+
+.key-box::before {
+  content: "🔑 Publication Takeaway";
+  font-weight: 700;
+  color: $cli-ink;
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  font-family: $font-family-sans-serif;
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Native Quarto callouts aligned with custom boxes */
+div.callout {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(7, 21, 39, 0.06);
+  border-left-width: 5px !important;
+}
+
+div.callout.callout-style-default > .callout-header {
+  font-family: $font-family-sans-serif;
+  font-weight: 700;
 }
 
 .callout-note {
-  border-left-color: $theme-navy !important;
+  border-left-color: $cli-primary !important;
   background-color: #f0f4f8;
 }
 
 .callout-tip {
-  border-left-color: $theme-emerald !important;
+  border-left-color: $cli-sage !important;
   background-color: #f0fdf4;
 }
 
 .callout-important {
-  border-left-color: $theme-crimson !important;
+  border-left-color: $cli-crimson !important;
   background-color: #fef2f2;
 }
 
-/* Table styling */
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 1.5rem 0;
-  font-size: 0.95rem;
-}
+/* ==========================================================================
+   CODE BLOCKS & R RESULTS
+   Learned from PKPDwithR
+   ========================================================================== */
 
-th {
-  background-color: #f1f5f9;
-  color: $theme-navy;
-  font-weight: 600;
-  border-bottom: 2px solid #cbd5e1;
-  padding: 0.65rem 0.85rem;
-  text-align: left;
-}
-
-td {
-  padding: 0.55rem 0.85rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-tr:hover td {
-  background-color: #f8fafc;
-}
-
-/* Code blocks */
+pre.sourceCode,
 div.sourceCode {
+  border-radius: 8px;
+  border: 1px solid $code-block-border-color;
+  box-shadow: 0 1px 4px rgba(7, 21, 39, 0.05);
+}
+
+pre.sourceCode {
+  border-left: 4px solid $cli-primary;
+  font-size: 0.88rem;
+  background-color: #f4f7f8;
+}
+
+code {
+  font-family: $font-family-monospace;
+  font-size: 0.88em;
+}
+
+/* Output / results blocks */
+pre.cell-output,
+div.cell-output {
+  background: #fcfbf9;
+  border: 1px solid #efe9e0;
+  border-left: 4px solid $cli-teal;
   border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  margin: 1.25rem 0;
+  padding: 0.65rem 0.95rem;
+  font-size: 0.85rem;
+  margin: 0.85rem 0;
+}
+
+div.cell-output-display img,
+div.cell-output-display svg {
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(7, 21, 39, 0.08);
 }
 
 /* Quarto code folding button styling */
 details.code-fold {
   margin-bottom: 1.25rem;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  border: 1px solid #dde6ea;
   background: #f8fafc;
   overflow: hidden;
+  box-shadow: 0 1px 3px rgba(7, 21, 39, 0.04);
 
   summary {
     cursor: pointer;
-    padding: 0.5rem 0.85rem;
+    padding: 0.55rem 0.95rem;
     font-size: 0.88rem;
     font-weight: 600;
-    color: #1e3a8a;
+    color: $cli-primary;
     user-select: none;
     transition: background-color 0.15s ease, color 0.15s ease;
 
     &:hover {
-      background-color: #f1f5f9;
-      color: #002060;
+      background-color: #eef4f8;
+      color: $cli-ink;
     }
   }
 
   &[open] summary {
-    border-bottom: 1px solid #e2e8f0;
-    background-color: #f1f5f9;
+    border-bottom: 1px solid #dde6ea;
+    background-color: #eef4f8;
   }
 
   div.sourceCode {
@@ -150,25 +486,81 @@ details.code-fold {
   }
 }
 
-pre {
-  padding: 0.85rem 1rem;
-  font-size: 0.90rem;
+/* ==========================================================================
+   TABLES
+   Learned from PKPDwithR
+   ========================================================================== */
+
+.table,
+table.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(7, 21, 39, 0.06);
+  font-size: 0.95rem;
+  width: 100%;
+  margin: 1.75rem 0;
 }
 
-code {
-  font-size: 0.88em;
-  padding: 0.15em 0.35em;
-  border-radius: 4px;
+.table thead th,
+table.table thead th {
+  background: $cli-ink;
+  color: #fff;
+  font-family: $font-family-sans-serif;
+  font-weight: 600;
+  border: none;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
 }
 
-/* Figure & Image Lightbox Zoom Styling */
+.table tbody tr:nth-child(even),
+table.table tbody tr:nth-child(even) {
+  background-color: #f1f5f7;
+}
+
+.table tbody tr:hover,
+table.table tbody tr:hover {
+  background-color: #e3eef2;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.table td,
+table.table td {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid #dde6ea;
+}
+
+caption, .table-caption {
+  font-style: italic;
+  color: $cli-slate;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* ==========================================================================
+   FIGURES & LIGHTBOX ZOOM
+   ========================================================================== */
+
+figure figcaption,
+.figure-caption {
+  font-style: italic;
+  color: $cli-slate;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
 .lightbox, .figure-img, figure img, p > img {
   cursor: zoom-in;
+  border-radius: 6px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .lightbox:hover img, p > a.lightbox:hover img {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 20px rgba(7, 21, 39, 0.14);
   transform: scale(1.006);
 }
 
@@ -176,3 +568,79 @@ code {
   cursor: zoom-out;
 }
 
+/* ==========================================================================
+   BLOCKQUOTES & LINKS
+   ========================================================================== */
+
+blockquote {
+  border-left: 4px solid $cli-teal;
+  background: #f0f4f8;
+  padding: 0.85rem 1.35rem;
+  border-radius: 0 8px 8px 0;
+  font-family: $font-family-serif;
+  font-style: italic;
+  color: #334155;
+  margin: 1.5rem 0;
+}
+
+main a:not(.nav-link):not(.dropdown-item):not(.btn) {
+  text-decoration: underline;
+  text-decoration-color: rgba(15, 77, 146, 0.35);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+main a:not(.nav-link):not(.dropdown-item):not(.btn):hover {
+  text-decoration-color: $cli-teal;
+  color: $cli-teal;
+}
+
+.math.display {
+  overflow-x: auto;
+  padding: 0.6rem 0;
+}
+
+/* ==========================================================================
+   PAGE FOOTER & NAVIGATION
+   ========================================================================== */
+
+.page-navigation .nav-page-text,
+.page-navigation .nav-page .nav-page-text {
+  font-family: $font-family-sans-serif;
+  font-weight: 500;
+}
+
+.page-navigation .nav-page a:hover {
+  color: $cli-teal;
+}
+
+.page-footer {
+  border-top: 1px solid #dde6ea;
+  color: $cli-slate;
+  font-size: 0.85rem;
+  padding: 1.5rem 0;
+}
+
+::selection {
+  background: rgba(0, 168, 176, 0.28);
+}
+
+hr {
+  border: none;
+  border-top: 2px dotted #cdd9de;
+  margin: 2.5rem 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #title-block-header.quarto-title-block {
+    padding: 2.5rem 1.5rem;
+  }
+  #title-block-header h1.title {
+    font-size: 2.2rem;
+  }
+  .content > section > p:first-of-type::first-letter,
+  main.content > p:first-of-type::first-letter {
+    font-size: 2.6rem;
+  }
+}
