@@ -64,7 +64,43 @@ p_box <- cliplot(
 p_box
 ```
 
-## Step 3: Cutaneous Dysbiosis Across Anatomical Sites
+## Step 3: Cytokine Activation Across Cutaneous Lineages: Split Violins
+
+Single-cell *IL4R* expression across cutaneous immune lineages in paired non-lesional versus lesional skin:
+
+```{r ad-split-violin, fig.width=8.5, fig.height=5.0}
+set.seed(42)
+cell_types <- c("Th2 Cells", "ILC2", "Eosinophils", "Mast Cells", "DC2")
+n_per_group <- 60
+sc_ad <- do.call(rbind, lapply(cell_types, function(ct) {
+  base_expr <- switch(ct, "Th2 Cells" = 3.8, "ILC2" = 4.5, "Eosinophils" = 2.4, "Mast Cells" = 3.1, "DC2" = 1.6)
+  nl <- pmax(0, rnorm(n_per_group, mean = base_expr, sd = 0.75))
+  ls <- pmax(0, rnorm(n_per_group, mean = base_expr + switch(ct, "Th2 Cells" = 1.8, "ILC2" = 2.1, "Eosinophils" = 1.2, "Mast Cells" = 0.9, "DC2" = 0.4), sd = 0.85))
+  data.frame(
+    Lineage = factor(rep(ct, n_per_group * 2), levels = cell_types),
+    Skin = factor(rep(c("Non-Lesional", "Lesional"), each = n_per_group), levels = c("Non-Lesional", "Lesional")),
+    Expression = c(nl, ls)
+  )
+}))
+
+p_vln <- cliplot(
+  Expression ~ Lineage | Skin,
+  data    = sc_ad,
+  type    = type_split_violin(
+    inner     = "quartiles",
+    quantiles = c(0.25, 0.5, 0.75),
+    scale     = "width"
+  ),
+  palette = "jco",
+  title   = "Single-Cell IL4R Expression in Non-Lesional vs. Lesional Skin",
+  subtitle = "Split-half density distributions with interior quartiles across immune lineages",
+  xlab    = "Immune Cell Lineage",
+  ylab    = "Normalized IL4R Expression (log2 CPM)"
+)
+p_vln
+```
+
+## Step 4: Cutaneous Dysbiosis Across Anatomical Sites
 
 Differential abundance bubble matrix across anatomical sites:
 
@@ -95,7 +131,7 @@ p_bubble <- cliplot(
 p_bubble
 ```
 
-## Step 4: Cutaneous Microbiome Coupling with Multi-Domain Environmental Drivers
+## Step 5: Cutaneous Microbiome Coupling with Multi-Domain Environmental Drivers
 
 Coupling cutaneous microbial abundance with transepidermal water loss (TEWL), SCORAD, and micro-climate drivers:
 

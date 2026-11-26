@@ -32,9 +32,12 @@ library(ggplot2)
 # Generate reproducible clinical cohort
 set.seed(42)
 df_cohort <- data.frame(
-  Biomarker = factor(rep(c("Control", "Mild_AD", "Severe_AD"), each = 40)),
-  IL13_pg_ml = c(rnorm(40, 4.2, 1.1), rnorm(40, 8.5, 1.8), rnorm(40, 15.2, 2.9)),
-  Age_Group  = factor(rep(c("Pediatric", "Adult"), 60))
+  Biomarker  = factor(rep(c("Control", "Mild_AD", "Severe_AD"), each = 40),
+                      levels = c("Control", "Mild_AD", "Severe_AD")),
+  Treatment  = factor(rep(rep(c("Placebo", "Biologic"), each = 20), 3),
+                      levels = c("Placebo", "Biologic")),
+  Age_Group  = factor(rep(c("Pediatric", "Adult"), 60)),
+  IL13_pg_ml = c(rnorm(40, 4.2, 1.1), rnorm(40, 8.5, 1.8), rnorm(40, 15.2, 2.9))
 )
 
 # Direct character specification
@@ -56,10 +59,83 @@ Constructor functions configure geometry-specific options with autocomplete supp
 p_viol <- cliplot(
   IL13_pg_ml ~ Biomarker,
   data  = df_cohort,
-  type  = type_violin(add_boxplot = TRUE, trim = FALSE),
+  type  = type_violin(inner = "boxplot", trim = FALSE),
   theme = "lancet"
 )
 p_viol
+```
+
+## Distribution Architectures: Violin and Split-Violin Plots
+
+Violin plots show probability density distributions across categorical cohorts. `cliomicplot` provides four interior anatomy modes (`inner`), two-condition split violins, and hypothesis tests.
+
+### 1. Interior Quantile Density Lines: `inner = "quartiles"`
+
+Drawing 25%, 50% (median), and 75% quantile lines inside the density polygon avoids visual clutter while reporting the interquartile range:
+
+```{r violin-quantiles-demo, fig.width=7.5, fig.height=4.8}
+p_quant <- cliplot(
+  IL13_pg_ml ~ Biomarker,
+  data    = df_cohort,
+  by      = "Biomarker",
+  type    = type_violin(inner = "quartiles", quantiles = c(0.25, 0.5, 0.75), add_jitter = FALSE),
+  palette = "nature",
+  legend  = "none",
+  title   = "Serum IL-13 Distribution with Interior Quartiles",
+  subtitle = "Quantile lines at 25%, median, and 75% within each density contour",
+  ylab    = "Serum IL-13 (pg/mL)"
+)
+p_quant
+```
+
+### 2. Dual-Condition Contrast: `type_split_violin()`
+
+When evaluating two treatment arms (such as Placebo vs. Biologic) across multiple disease severity tiers, `type_split_violin()` draws the left half for group 1 and the right half for group 2 on a shared category axis:
+
+```{r split-violin-demo, fig.width=8.0, fig.height=5.0}
+p_split <- cliplot(
+  IL13_pg_ml ~ Biomarker | Treatment,
+  data    = df_cohort,
+  type    = type_split_violin(
+    inner     = "quartiles",
+    quantiles = c(0.25, 0.5, 0.75),
+    scale     = "width"
+  ),
+  palette = "jco",
+  title   = "IL-13 Shift Under Biologic vs. Placebo Across Severity Tiers",
+  subtitle = "Split-half density comparison: Placebo (left) vs. Biologic (right)",
+  ylab    = "Serum IL-13 (pg/mL)",
+  xlab    = "Biomarker Severity Tier"
+)
+p_split
+```
+
+`type_violin(split = TRUE)` produces the same split geometry when the formula contains a two-level conditioning variable (`| group`).
+
+### 3. Mean Diamond Glyphs and Hypothesis Testing: `inner = "mean_se"`
+
+Setting `inner = "mean_se"` overlays a central diamond for the arithmetic mean with standard error errorbars. Adding `stat.test = "wilcox.test"` calculates the non-parametric Wilcoxon rank-sum p-value:
+
+```{r violin-mean-stat-demo, fig.width=6.0, fig.height=4.8}
+p_stat <- cliplot(
+  IL13_pg_ml ~ Treatment,
+  data      = df_cohort,
+  by        = "Treatment",
+  type      = type_violin(
+    inner        = "mean_se",
+    add_jitter   = TRUE,
+    jitter_width = 0.12,
+    jitter_alpha = 0.40,
+    jitter_size  = 1.6
+  ),
+  palette   = "cell",
+  legend    = "none",
+  stat.test = "wilcox.test",
+  title     = "Biologic Efficacy on Circulating IL-13",
+  subtitle  = "Violin density with raw observations, mean ± SEM diamond, and Wilcoxon test",
+  ylab      = "Serum IL-13 (pg/mL)"
+)
+p_stat
 ```
 
 ## The Parameter Object: `clipar()`

@@ -76,7 +76,18 @@
     "href": "01-grammar-and-api.html#function-dispatch-and-plot-types",
     "title": "1  Graphic Grammar and Core API",
     "section": "1.2 Function Dispatch and Plot Types",
-    "text": "1.2 Function Dispatch and Plot Types\nThe type argument selects the geometry and statistical layer. It accepts either character aliases or typed constructor functions:\n\n\nCode\nlibrary(cliomicplot)\nlibrary(ggplot2)\n\n# Generate reproducible clinical cohort\nset.seed(42)\ndf_cohort &lt;- data.frame(\n  Biomarker = factor(rep(c(\"Control\", \"Mild_AD\", \"Severe_AD\"), each = 40)),\n  IL13_pg_ml = c(rnorm(40, 4.2, 1.1), rnorm(40, 8.5, 1.8), rnorm(40, 15.2, 2.9)),\n  Age_Group  = factor(rep(c(\"Pediatric\", \"Adult\"), 60))\n)\n\n# Direct character specification\np_box &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data   = df_cohort,\n  type   = \"boxplot\",\n  preset = \"nature\",\n  title  = \"Serum IL-13 by Clinical Severity\"\n)\np_box\n\n\n\n\n\n\n\n\n\n\n1.2.1 Typed Constructor Functions\nConstructor functions configure geometry-specific options with autocomplete support:\n\n\nCode\np_viol &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data  = df_cohort,\n  type  = type_violin(add_boxplot = TRUE, trim = FALSE),\n  theme = \"lancet\"\n)\np_viol",
+    "text": "1.2 Function Dispatch and Plot Types\nThe type argument selects the geometry and statistical layer. It accepts either character aliases or typed constructor functions:\n\n\nCode\nlibrary(cliomicplot)\nlibrary(ggplot2)\n\n# Generate reproducible clinical cohort\nset.seed(42)\ndf_cohort &lt;- data.frame(\n  Biomarker  = factor(rep(c(\"Control\", \"Mild_AD\", \"Severe_AD\"), each = 40),\n                      levels = c(\"Control\", \"Mild_AD\", \"Severe_AD\")),\n  Treatment  = factor(rep(rep(c(\"Placebo\", \"Biologic\"), each = 20), 3),\n                      levels = c(\"Placebo\", \"Biologic\")),\n  Age_Group  = factor(rep(c(\"Pediatric\", \"Adult\"), 60)),\n  IL13_pg_ml = c(rnorm(40, 4.2, 1.1), rnorm(40, 8.5, 1.8), rnorm(40, 15.2, 2.9))\n)\n\n# Direct character specification\np_box &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data   = df_cohort,\n  type   = \"boxplot\",\n  preset = \"nature\",\n  title  = \"Serum IL-13 by Clinical Severity\"\n)\np_box\n\n\n\n\n\n\n\n\n\n\n1.2.1 Typed Constructor Functions\nConstructor functions configure geometry-specific options with autocomplete support:\n\n\nCode\np_viol &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data  = df_cohort,\n  type  = type_violin(inner = \"boxplot\", trim = FALSE),\n  theme = \"lancet\"\n)\np_viol",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
+    ]
+  },
+  {
+    "objectID": "01-grammar-and-api.html#distribution-architectures-violin-and-split-violin-plots",
+    "href": "01-grammar-and-api.html#distribution-architectures-violin-and-split-violin-plots",
+    "title": "1  Graphic Grammar and Core API",
+    "section": "1.3 Distribution Architectures: Violin and Split-Violin Plots",
+    "text": "1.3 Distribution Architectures: Violin and Split-Violin Plots\nViolin plots show probability density distributions across categorical cohorts. cliomicplot provides four interior anatomy modes (inner), two-condition split violins, and hypothesis tests.\n\n1.3.1 1. Interior Quantile Density Lines: inner = \"quartiles\"\nDrawing 25%, 50% (median), and 75% quantile lines inside the density polygon avoids visual clutter while reporting the interquartile range:\n\n\nCode\np_quant &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data    = df_cohort,\n  by      = \"Biomarker\",\n  type    = type_violin(inner = \"quartiles\", quantiles = c(0.25, 0.5, 0.75), add_jitter = FALSE),\n  palette = \"nature\",\n  legend  = \"none\",\n  title   = \"Serum IL-13 Distribution with Interior Quartiles\",\n  subtitle = \"Quantile lines at 25%, median, and 75% within each density contour\",\n  ylab    = \"Serum IL-13 (pg/mL)\"\n)\np_quant\n\n\n\n\n\n\n\n\n\n\n\n1.3.2 2. Dual-Condition Contrast: type_split_violin()\nWhen evaluating two treatment arms (such as Placebo vs. Biologic) across multiple disease severity tiers, type_split_violin() draws the left half for group 1 and the right half for group 2 on a shared category axis:\n\n\nCode\np_split &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker | Treatment,\n  data    = df_cohort,\n  type    = type_split_violin(\n    inner     = \"quartiles\",\n    quantiles = c(0.25, 0.5, 0.75),\n    scale     = \"width\"\n  ),\n  palette = \"jco\",\n  title   = \"IL-13 Shift Under Biologic vs. Placebo Across Severity Tiers\",\n  subtitle = \"Split-half density comparison: Placebo (left) vs. Biologic (right)\",\n  ylab    = \"Serum IL-13 (pg/mL)\",\n  xlab    = \"Biomarker Severity Tier\"\n)\np_split\n\n\n\n\n\n\n\n\n\ntype_violin(split = TRUE) produces the same split geometry when the formula contains a two-level conditioning variable (| group).\n\n\n1.3.3 3. Mean Diamond Glyphs and Hypothesis Testing: inner = \"mean_se\"\nSetting inner = \"mean_se\" overlays a central diamond for the arithmetic mean with standard error errorbars. Adding stat.test = \"wilcox.test\" calculates the non-parametric Wilcoxon rank-sum p-value:\n\n\nCode\np_stat &lt;- cliplot(\n  IL13_pg_ml ~ Treatment,\n  data      = df_cohort,\n  by        = \"Treatment\",\n  type      = type_violin(\n    inner        = \"mean_se\",\n    add_jitter   = TRUE,\n    jitter_width = 0.12,\n    jitter_alpha = 0.40,\n    jitter_size  = 1.6\n  ),\n  palette   = \"cell\",\n  legend    = \"none\",\n  stat.test = \"wilcox.test\",\n  title     = \"Biologic Efficacy on Circulating IL-13\",\n  subtitle  = \"Violin density with raw observations, mean ± SEM diamond, and Wilcoxon test\",\n  ylab      = \"Serum IL-13 (pg/mL)\"\n)\np_stat",
     "crumbs": [
       "Part I — Graphic Grammar and Design System",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
@@ -86,8 +97,8 @@
     "objectID": "01-grammar-and-api.html#the-parameter-object-clipar",
     "href": "01-grammar-and-api.html#the-parameter-object-clipar",
     "title": "1  Graphic Grammar and Core API",
-    "section": "1.3 The Parameter Object: clipar()",
-    "text": "1.3 The Parameter Object: clipar()\nclipar() sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:\n\n\nCode\npars &lt;- clipar(\n  point_size  = 2.2,\n  line_width  = 0.9,\n  alpha       = 0.75,\n  font_size   = 10\n)\n\np_custom &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data   = df_cohort,\n  type   = \"beeswarm\",\n  params = pars,\n  preset = \"science\"\n)\np_custom",
+    "section": "1.4 The Parameter Object: clipar()",
+    "text": "1.4 The Parameter Object: clipar()\nclipar() sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:\n\n\nCode\npars &lt;- clipar(\n  point_size  = 2.2,\n  line_width  = 0.9,\n  alpha       = 0.75,\n  font_size   = 10\n)\n\np_custom &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data   = df_cohort,\n  type   = \"beeswarm\",\n  params = pars,\n  preset = \"science\"\n)\np_custom",
     "crumbs": [
       "Part I — Graphic Grammar and Design System",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
@@ -97,8 +108,8 @@
     "objectID": "01-grammar-and-api.html#plot-composition-and-layer-addition",
     "href": "01-grammar-and-api.html#plot-composition-and-layer-addition",
     "title": "1  Graphic Grammar and Core API",
-    "section": "1.4 Plot Composition and Layer Addition",
-    "text": "1.4 Plot Composition and Layer Addition\ncliplot() objects are ggplot2 instances. You can extend them using the standard + operator or the cliplot_add() helper:\n\n\nCode\np_final &lt;- p_box +\n  geom_hline(yintercept = 10, linetype = \"dashed\", color = \"#B22222\", linewidth = 0.6) +\n  annotate(\"text\", x = 1.2, y = 10.8, label = \"Diagnostic Threshold (10 pg/mL)\",\n           size = 2.8, color = \"#B22222\", fontface = \"bold\")\np_final",
+    "section": "1.5 Plot Composition and Layer Addition",
+    "text": "1.5 Plot Composition and Layer Addition\ncliplot() objects are ggplot2 instances. You can extend them using the standard + operator or the cliplot_add() helper:\n\n\nCode\np_final &lt;- p_box +\n  geom_hline(yintercept = 10, linetype = \"dashed\", color = \"#B22222\", linewidth = 0.6) +\n  annotate(\"text\", x = 1.2, y = 10.8, label = \"Diagnostic Threshold (10 pg/mL)\",\n           size = 2.8, color = \"#B22222\", fontface = \"bold\")\np_final",
     "crumbs": [
       "Part I — Graphic Grammar and Design System",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
@@ -765,22 +776,33 @@
     ]
   },
   {
-    "objectID": "17-case-study-atopic-dermatitis.html#step-3-cutaneous-dysbiosis-across-anatomical-sites",
-    "href": "17-case-study-atopic-dermatitis.html#step-3-cutaneous-dysbiosis-across-anatomical-sites",
+    "objectID": "17-case-study-atopic-dermatitis.html#step-3-cytokine-activation-across-cutaneous-lineages-split-violins",
+    "href": "17-case-study-atopic-dermatitis.html#step-3-cytokine-activation-across-cutaneous-lineages-split-violins",
     "title": "17  Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis",
-    "section": "17.4 Step 3: Cutaneous Dysbiosis Across Anatomical Sites",
-    "text": "17.4 Step 3: Cutaneous Dysbiosis Across Anatomical Sites\nDifferential abundance bubble matrix across anatomical sites:\n\n\nCode\nspecies &lt;- c(\"S. aureus\", \"S. epidermidis\", \"S. hominis\", \"C. acnes\", \"M. restricta\")\nsites   &lt;- c(\"Cheek\", \"Forehead\", \"Antecubital\")\n\nda_ad &lt;- expand.grid(Species = species, Comparison = sites, stringsAsFactors = FALSE)\nda_ad$log2FC &lt;- c(2.8, -1.9, -1.2, -1.8, 1.4,\n                  2.1, -1.5, -0.8, -1.2, 0.9,\n                  3.2, -2.4, -1.4, -2.1, 1.6)\nda_ad$qval   &lt;- c(1.5e-5, 2.8e-3, 0.04, 3.1e-4, 0.02,\n                  7.2e-4, 1.5e-3, 0.08, 1.2e-3, 0.05,\n                  2.8e-6, 3.9e-4, 0.01, 9.8e-5, 0.007)\n\np_bubble &lt;- cliplot(\n  Species ~ Comparison,\n  data = da_ad,\n  type = type_bubble_matrix(\n    size_col = \"qval\",\n    fill_col = \"log2FC\",\n    min_size = 2.0,\n    max_size = 7.0,\n    palette  = \"nature\"\n  ),\n  title = \"Cutaneous Dysbiosis Across Anatomic Predilection Sites\"\n)\np_bubble",
+    "section": "17.4 Step 3: Cytokine Activation Across Cutaneous Lineages: Split Violins",
+    "text": "17.4 Step 3: Cytokine Activation Across Cutaneous Lineages: Split Violins\nSingle-cell IL4R expression across cutaneous immune lineages in paired non-lesional versus lesional skin:\n\n\nCode\nset.seed(42)\ncell_types &lt;- c(\"Th2 Cells\", \"ILC2\", \"Eosinophils\", \"Mast Cells\", \"DC2\")\nn_per_group &lt;- 60\nsc_ad &lt;- do.call(rbind, lapply(cell_types, function(ct) {\n  base_expr &lt;- switch(ct, \"Th2 Cells\" = 3.8, \"ILC2\" = 4.5, \"Eosinophils\" = 2.4, \"Mast Cells\" = 3.1, \"DC2\" = 1.6)\n  nl &lt;- pmax(0, rnorm(n_per_group, mean = base_expr, sd = 0.75))\n  ls &lt;- pmax(0, rnorm(n_per_group, mean = base_expr + switch(ct, \"Th2 Cells\" = 1.8, \"ILC2\" = 2.1, \"Eosinophils\" = 1.2, \"Mast Cells\" = 0.9, \"DC2\" = 0.4), sd = 0.85))\n  data.frame(\n    Lineage = factor(rep(ct, n_per_group * 2), levels = cell_types),\n    Skin = factor(rep(c(\"Non-Lesional\", \"Lesional\"), each = n_per_group), levels = c(\"Non-Lesional\", \"Lesional\")),\n    Expression = c(nl, ls)\n  )\n}))\n\np_vln &lt;- cliplot(\n  Expression ~ Lineage | Skin,\n  data    = sc_ad,\n  type    = type_split_violin(\n    inner     = \"quartiles\",\n    quantiles = c(0.25, 0.5, 0.75),\n    scale     = \"width\"\n  ),\n  palette = \"jco\",\n  title   = \"Single-Cell IL4R Expression in Non-Lesional vs. Lesional Skin\",\n  subtitle = \"Split-half density distributions with interior quartiles across immune lineages\",\n  xlab    = \"Immune Cell Lineage\",\n  ylab    = \"Normalized IL4R Expression (log2 CPM)\"\n)\np_vln",
     "crumbs": [
       "Part V — Publication Composites and Applied Case Studies",
       "<span class='chapter-number'>17</span>  <span class='chapter-title'>Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis</span>"
     ]
   },
   {
-    "objectID": "17-case-study-atopic-dermatitis.html#step-4-cutaneous-microbiome-coupling-with-multi-domain-environmental-drivers",
-    "href": "17-case-study-atopic-dermatitis.html#step-4-cutaneous-microbiome-coupling-with-multi-domain-environmental-drivers",
+    "objectID": "17-case-study-atopic-dermatitis.html#step-4-cutaneous-dysbiosis-across-anatomical-sites",
+    "href": "17-case-study-atopic-dermatitis.html#step-4-cutaneous-dysbiosis-across-anatomical-sites",
     "title": "17  Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis",
-    "section": "17.5 Step 4: Cutaneous Microbiome Coupling with Multi-Domain Environmental Drivers",
-    "text": "17.5 Step 4: Cutaneous Microbiome Coupling with Multi-Domain Environmental Drivers\nCoupling cutaneous microbial abundance with transepidermal water loss (TEWL), SCORAD, and micro-climate drivers:\n\n\nCode\np_env &lt;- cliplot_env_network(\n  title              = \"Cutaneous Microbiome Coupling with Biophysical Barrier and Clinical Drivers\",\n  show_values        = TRUE,\n  show_domain_labels = TRUE,\n  compact            = TRUE,\n  preset             = \"clinical\",\n  scifig             = TRUE\n)\np_env",
+    "section": "17.5 Step 4: Cutaneous Dysbiosis Across Anatomical Sites",
+    "text": "17.5 Step 4: Cutaneous Dysbiosis Across Anatomical Sites\nDifferential abundance bubble matrix across anatomical sites:\n\n\nCode\nspecies &lt;- c(\"S. aureus\", \"S. epidermidis\", \"S. hominis\", \"C. acnes\", \"M. restricta\")\nsites   &lt;- c(\"Cheek\", \"Forehead\", \"Antecubital\")\n\nda_ad &lt;- expand.grid(Species = species, Comparison = sites, stringsAsFactors = FALSE)\nda_ad$log2FC &lt;- c(2.8, -1.9, -1.2, -1.8, 1.4,\n                  2.1, -1.5, -0.8, -1.2, 0.9,\n                  3.2, -2.4, -1.4, -2.1, 1.6)\nda_ad$qval   &lt;- c(1.5e-5, 2.8e-3, 0.04, 3.1e-4, 0.02,\n                  7.2e-4, 1.5e-3, 0.08, 1.2e-3, 0.05,\n                  2.8e-6, 3.9e-4, 0.01, 9.8e-5, 0.007)\n\np_bubble &lt;- cliplot(\n  Species ~ Comparison,\n  data = da_ad,\n  type = type_bubble_matrix(\n    size_col = \"qval\",\n    fill_col = \"log2FC\",\n    min_size = 2.0,\n    max_size = 7.0,\n    palette  = \"nature\"\n  ),\n  title = \"Cutaneous Dysbiosis Across Anatomic Predilection Sites\"\n)\np_bubble",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis</span>"
+    ]
+  },
+  {
+    "objectID": "17-case-study-atopic-dermatitis.html#step-5-cutaneous-microbiome-coupling-with-multi-domain-environmental-drivers",
+    "href": "17-case-study-atopic-dermatitis.html#step-5-cutaneous-microbiome-coupling-with-multi-domain-environmental-drivers",
+    "title": "17  Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis",
+    "section": "17.6 Step 5: Cutaneous Microbiome Coupling with Multi-Domain Environmental Drivers",
+    "text": "17.6 Step 5: Cutaneous Microbiome Coupling with Multi-Domain Environmental Drivers\nCoupling cutaneous microbial abundance with transepidermal water loss (TEWL), SCORAD, and micro-climate drivers:\n\n\nCode\np_env &lt;- cliplot_env_network(\n  title              = \"Cutaneous Microbiome Coupling with Biophysical Barrier and Clinical Drivers\",\n  show_values        = TRUE,\n  show_domain_labels = TRUE,\n  compact            = TRUE,\n  preset             = \"clinical\",\n  scifig             = TRUE\n)\np_env",
     "crumbs": [
       "Part V — Publication Composites and Applied Case Studies",
       "<span class='chapter-number'>17</span>  <span class='chapter-title'>Case Study: Biomarker Stratification and Dysbiosis in Atopic Dermatitis</span>"
