@@ -116,11 +116,22 @@
     ]
   },
   {
+    "objectID": "01-grammar-and-api.html#ecology-demographic-viability-rainclouds-type_ecology_raincloud",
+    "href": "01-grammar-and-api.html#ecology-demographic-viability-rainclouds-type_ecology_raincloud",
+    "title": "1  Graphic Grammar and Core API",
+    "section": "1.6 Ecology & Demographic Viability Rainclouds: type_ecology_raincloud()",
+    "text": "1.6 Ecology & Demographic Viability Rainclouds: type_ecology_raincloud()\nIn ecology, evolutionary demographics, and population viability analyses, distributions are often visualized using half-boxed raincloud composites. type_ecology_raincloud() (alias type_half_boxed()) implements this architecture with six components:\n\nWhite-filled boxplot with colored outline: A vertical boxplot nudged to the left (box_nudge = -0.15, width = 0.17) with solid white fill (#FFFFFF), thick category-colored borders (linewidth = 1.1), and open square outlier markers (shape = 0, size = 2.0).\nCentral mean dot: A solid circular marker (shape = 16, size = 3.8) positioned directly between the boxplot and the violin density.\nRight-facing half-violin density: A density slab (ggdist::stat_halfeye or base R fallback) extending rightward from a flat vertical spine.\nReference baseline: A dashed horizontal line (e.g. ref_line = 1.0 representing demographic population replacement equilibrium \\lambda = 1.0).\nMean and 95% CI text annotation: Automated Student’s t 95% Confidence Interval calculation rendered directly below each category: \\lambda = \\bar{y}, \\quad (95\\%\\text{ CI: } \\bar{y} \\pm t_{n-1, 0.975} \\times \\text{SE})\nEcology theme: theme = \"ecology\" establishes a 4-sided rectangular border, clean white interior, outward ticks, and bold axis typography.\n\n\n\nCode\n# Simulate reseeding viability data (population growth rate lambda across years)\nset.seed(42)\nn_reps &lt;- 250\ny_2yr  &lt;- rnorm(n_reps, mean = 0.869, sd = 0.055)\ny_5yr  &lt;- rnorm(n_reps, mean = 0.713, sd = 0.042)\ny_10yr &lt;- rnorm(n_reps, mean = 0.727, sd = 0.045)\n# Add outlier replicates matching open square glyphs\ny_2yr[1:4]  &lt;- c(1.03, 1.05, 0.72, 0.71)\ny_5yr[1:3]  &lt;- c(0.85, 0.60, 0.59)\ny_10yr[1:3] &lt;- c(0.86, 0.84, 0.60)\n\nreseeding_df &lt;- data.frame(\n  years = factor(rep(c(\"2 yr\", \"5 yr\", \"10 yr\"), each = n_reps), levels = c(\"2 yr\", \"5 yr\", \"10 yr\")),\n  growth_rate = c(y_2yr, y_5yr, y_10yr)\n)\n\np_ecology &lt;- cliplot(\n  growth_rate ~ years,\n  data       = reseeding_df,\n  type       = type_ecology_raincloud(\n    ref_line       = 1.0,\n    show_stats     = TRUE,\n    stat_param     = \"\\u03bb\",\n    stat_digits    = 3,\n    stat_y_pos     = 0.52\n  ),\n  palette    = \"ecology\",\n  theme      = \"ecology\",\n  xlab       = \"Reseeding years\",\n  ylab       = expression(paste(\"population growth rate (\", lambda, \")\"))\n) +\n  ggplot2::scale_y_continuous(\n    limits = c(0.48, 1.11),\n    breaks = seq(0.5, 1.1, by = 0.1)\n  )\np_ecology",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
+    ]
+  },
+  {
     "objectID": "01-grammar-and-api.html#the-parameter-object-clipar",
     "href": "01-grammar-and-api.html#the-parameter-object-clipar",
     "title": "1  Graphic Grammar and Core API",
-    "section": "1.6 The Parameter Object: clipar()",
-    "text": "1.6 The Parameter Object: clipar()\nclipar() sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:\n\n\nCode\npars &lt;- clipar(\n  point_size  = 2.2,\n  line_width  = 0.9,\n  alpha       = 0.75,\n  font_size   = 10\n)\n\np_custom &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data   = df_cohort,\n  type   = \"beeswarm\",\n  params = pars,\n  preset = \"science\"\n)\np_custom",
+    "section": "1.7 The Parameter Object: clipar()",
+    "text": "1.7 The Parameter Object: clipar()\nclipar() sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:\n\n\nCode\npars &lt;- clipar(\n  point_size  = 2.2,\n  line_width  = 0.9,\n  alpha       = 0.75,\n  font_size   = 10\n)\n\np_custom &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data   = df_cohort,\n  type   = \"beeswarm\",\n  params = pars,\n  preset = \"science\"\n)\np_custom",
     "crumbs": [
       "Part I — Graphic Grammar and Design System",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
@@ -130,8 +141,8 @@
     "objectID": "01-grammar-and-api.html#plot-composition-and-layer-addition",
     "href": "01-grammar-and-api.html#plot-composition-and-layer-addition",
     "title": "1  Graphic Grammar and Core API",
-    "section": "1.7 Plot Composition and Layer Addition",
-    "text": "1.7 Plot Composition and Layer Addition\ncliplot() objects are ggplot2 instances. You can extend them using the standard + operator or the cliplot_add() helper:\n\n\nCode\np_final &lt;- p_box +\n  geom_hline(yintercept = 10, linetype = \"dashed\", color = \"#B22222\", linewidth = 0.6) +\n  annotate(\"text\", x = 1.2, y = 10.8, label = \"Diagnostic Threshold (10 pg/mL)\",\n           size = 2.8, color = \"#B22222\", fontface = \"bold\")\np_final",
+    "section": "1.8 Plot Composition and Layer Addition",
+    "text": "1.8 Plot Composition and Layer Addition\ncliplot() objects are ggplot2 instances. You can extend them using the standard + operator or the cliplot_add() helper:\n\n\nCode\np_final &lt;- p_box +\n  geom_hline(yintercept = 10, linetype = \"dashed\", color = \"#B22222\", linewidth = 0.6) +\n  annotate(\"text\", x = 1.2, y = 10.8, label = \"Diagnostic Threshold (10 pg/mL)\",\n           size = 2.8, color = \"#B22222\", fontface = \"bold\")\np_final",
     "crumbs": [
       "Part I — Graphic Grammar and Design System",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
