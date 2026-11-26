@@ -48,6 +48,7 @@ book:
         - 18-case-study-cancer-immunotherapy.qmd
         - 19-case-study-nature-communications.qmd
         - 20-case-study-leakage-benchmark.qmd
+        - 21-case-study-cross-disease-deconvolution.qmd
 
     - references.qmd
 
