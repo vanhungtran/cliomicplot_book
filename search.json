@@ -884,5 +884,104 @@
       "Part V — Publication Composites and Applied Case Studies",
       "<span class='chapter-number'>18</span>  <span class='chapter-title'>Case Study: Immuno-Oncology Biomarkers and Trial Endpoints</span>"
     ]
+  },
+  {
+    "objectID": "19-case-study-nature-communications.html",
+    "href": "19-case-study-nature-communications.html",
+    "title": "19  Replicating Multi-Modal Omics: Nature Communications Case Study",
+    "section": "",
+    "text": "19.1 1. Study Architecture and Multi-Modal Datasets\nThis case study demonstrates the replication of all publication figures from Nature Communications (2024) 15:10413 (PMC11607458): “Granzyme K⁺CD8⁺ T cells interact with fibroblasts to promote neutrophilic inflammation in nasal polyps”.\nUsing real Source Data from 41467_2024_54685_MOESM4_ESM.xlsx, we implement the figures across clinical flow cytometry (95 donors), single-cell RNA-seq (208,757 cells), Visium HD spatial transcriptomics, in vitro functional assays, and a cross-tissue inflammatory atlas (159 donors across 10 chronic diseases including Skin Atopic Dermatitis).\nThe study investigates how non-cytotoxic Granzyme K⁺ (GZMK⁺) CD8⁺ T cells drive neutrophilic pathology rather than classic Type 2 eosinophilic inflammation in chronic rhinosinusitis with nasal polyps (CRSwNP):",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Replicating Multi-Modal Omics: Nature Communications Case Study</span>"
+    ]
+  },
+  {
+    "objectID": "19-case-study-nature-communications.html#study-architecture-and-multi-modal-datasets",
+    "href": "19-case-study-nature-communications.html#study-architecture-and-multi-modal-datasets",
+    "title": "19  Replicating Multi-Modal Omics: Nature Communications Case Study",
+    "section": "",
+    "text": "Clinical Discovery Cohort (scRNA-seq): 25 samples recovered from 5 control blood (CBL), 8 patient blood (NP-BL), 4 control inferior turbinate (CIT), and 8 nasal polyp (NP) tissues.\nClinical Validation Cohort (Flow Cytometry): 95 independent donors (CBL n=22, NP-BL n=27, CIT n=14, NP n=30).\nHigh-Definition Spatial Transcriptomics (Visium HD): 10 clinical specimens (CIT n=4, NP n=6) profiling 19 cell lineages at 2 μm resolution.\nSpatial Cell-Cell Distance Analysis: HALO spatial neighborhood counts (&lt; 25 μm) and physical Euclidean distances between T/B cells and COL1A1⁺ fibroblasts.\nFunctional In Vitro Assays: Nasal polyp-derived primary fibroblasts (NPDF) stimulated with recombinant GZMK, GZMA, GZMB, and LIT-927 CXCR4/CXCL12 neutraligand.\nCross-Disease Pan-Tissue Validation: Integration of 108,969 CD8⁺ T cells across 9 public datasets (159 donors) spanning Atopic Dermatitis (AD), Prurigo Nodularis (PN), Eosinophilic Esophagitis (EoE), Asthma, COPD, Lupus Erythematosus (DLE/SLE), Thyroiditis, Sepsis, and Hepatitis B (HBV).",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Replicating Multi-Modal Omics: Nature Communications Case Study</span>"
+    ]
+  },
+  {
+    "objectID": "19-case-study-nature-communications.html#figure-2-single-cell-phenotype-and-transcriptional-signature",
+    "href": "19-case-study-nature-communications.html#figure-2-single-cell-phenotype-and-transcriptional-signature",
+    "title": "19  Replicating Multi-Modal Omics: Nature Communications Case Study",
+    "section": "19.2 2. Figure 2: Single-Cell Phenotype and Transcriptional Signature",
+    "text": "19.2 2. Figure 2: Single-Cell Phenotype and Transcriptional Signature\nFigure 2 resolves 81,202 CD8⁺ T cells into 9 subclusters, identifying a preferential expansion of GZMK⁺CD8⁺ T cells in nasal polyp tissue with a non-cytotoxic inflammatory signature.\n\n\n\nNature Communications Figure 2 Composite: Subsets (d), Volcano (f), Top DEGs (h), GSEA NES (g), and KEGG Dotplot (i)\n\n\n\n19.2.1 Grammar & Assembly Highlights\n\nPanel 2d: 100% stacked bar chart displaying the 9 canonical CD8⁺ subsets across compartments (Blood vs Nasal tissue).\nPanel 2f: Single-cell differential expression scatter plot (\\Delta\\text{ Percent of cells} vs \\text{Average }\\log_2(\\text{Fold Change})), with upregulated genes in red (#DE3533), downregulated in blue (#3B75AF), and non-significant in grey (#D0D0D0).\nPanel 2h: Horizontal bar plot ranking the top 10 differentially expressed genes between GZMK⁺ and GZMB⁺ CD8⁺ T cells, showing elevated GZMK, CD74, DUSP4, RGS1, and JUNB.\nPanel 2g & 2i: Reactome GSEA normalized enrichment scores and KEGG immunological disease pathway dotplots.",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Replicating Multi-Modal Omics: Nature Communications Case Study</span>"
+    ]
+  },
+  {
+    "objectID": "19-case-study-nature-communications.html#figure-3-clinical-flow-cytometry-validation-95-donors",
+    "href": "19-case-study-nature-communications.html#figure-3-clinical-flow-cytometry-validation-95-donors",
+    "title": "19  Replicating Multi-Modal Omics: Nature Communications Case Study",
+    "section": "19.3 3. Figure 3: Clinical Flow Cytometry Validation (95 Donors)",
+    "text": "19.3 3. Figure 3: Clinical Flow Cytometry Validation (95 Donors)\nTo validate single-cell transcriptomic predictions, 95 clinical donors were analyzed by multi-parameter flow cytometry and functional cytotoxicity assays.\n\n\n\nNature Communications Figure 3 Composite: 95-Donor Flow Cytometry (g), Receptor MFI (j), Dual Cytokines (l), and Target Lysis (n)\n\n\n\n19.3.1 Statistical Observations\n\nGZMK⁺GZMB⁻ CD8⁺ T cells are selectively enriched in nasal polyps (NP, median 22.4%) compared to control tissue (CIT, median 4.5%, P &lt; 0.0001).\nPaired MFI demonstrates marked upregulation of the homing receptor CXCR4 (P = 0.0371) and exhaustion marker PD-1 (P = 0.0031) in GZMK⁺ compared to GZMB⁺ subsets from the same donors.\nTarget cell lysis confirmed that GZMK⁺ cells possess reduced cytotoxicity (P = 0.0063), functioning primarily as cytokine/chemokine producers.",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Replicating Multi-Modal Omics: Nature Communications Case Study</span>"
+    ]
+  },
+  {
+    "objectID": "19-case-study-nature-communications.html#figure-4-5-visium-hd-spatial-deconvolution",
+    "href": "19-case-study-nature-communications.html#figure-4-5-visium-hd-spatial-deconvolution",
+    "title": "19  Replicating Multi-Modal Omics: Nature Communications Case Study",
+    "section": "19.4 4. Figure 4 & 5: Visium HD Spatial Deconvolution",
+    "text": "19.4 4. Figure 4 & 5: Visium HD Spatial Deconvolution\nVisium HD resolves single-cell neighborhoods across 10 intact clinical tissue sections.\n\n\n\nNature Communications Figure 5 Composite: Visium HD 19-Cell Lineage Stack (f), Total Counts (g), Frequency in CD8 (h), and Immune/Structural Cell Proportions (i, j)\n\n\n\n19.4.1 Key Visual Elements\n\nPanel 5f: 100% stacked bar chart of all 19 cell lineages across 4 control inferior turbinates (HD_CIT1–4) and 6 polyps (HD_NP1–6).\nPanel 5g: Ranked cell abundance across all spatial spots.\nPanel 5h: Direct frequency comparison of CD8T_GZMK (P = 0.0667) versus CD8T_GZMB (\\text{ns}) in total CD8⁺ T cells.\nPanel 5i & 5j: Proportions of infiltrating B cells (P = 0.0381), CD4⁺ T cells (P = 0.0190), and smooth muscle cells (SMCs, P = 0.0095).",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Replicating Multi-Modal Omics: Nature Communications Case Study</span>"
+    ]
+  },
+  {
+    "objectID": "19-case-study-nature-communications.html#figure-6-spatial-neighborhood-and-fibroblast-activation-assays",
+    "href": "19-case-study-nature-communications.html#figure-6-spatial-neighborhood-and-fibroblast-activation-assays",
+    "title": "19  Replicating Multi-Modal Omics: Nature Communications Case Study",
+    "section": "19.5 5. Figure 6: Spatial Neighborhood and Fibroblast Activation Assays",
+    "text": "19.5 5. Figure 6: Spatial Neighborhood and Fibroblast Activation Assays\nFigure 6 demonstrates the central biological discovery: GZMK⁺CD8⁺ T cells physically co-localize with fibroblasts (&lt; 25 μm) and trigger high-level secretion of neutrophil-recruiting chemokines (CXCL1, CXCL2, CXCL6, CXCL8).\n\n\n\nNature Communications Figure 6 Composite: Fibroblast Density (c), Distance (d), Chemotaxis (j), qPCR (g), Secretome (h), MPO Counts (m), and Neutrophil/Eosinophil Correlations (n, o)\n\n\n\n19.5.1 Highlights & Quantitative Endpoints\n\nSpatial Proximity (c & d): Average number of COL1A1⁺ fibroblasts within 25 μm is highest around GZMK⁺CD8⁺ T cells in NP tissue (P = 0.0004 vs CD4⁺ T, P = 0.0030 vs CD19⁺ B).\nqPCR (g) & Secretome (h): Stimulation of primary fibroblasts (NPDF, n=10) with GZMK drives a 10- to 25-fold induction of neutrophil chemokines (CXCL1, CXCL2, CXCL6, CXCL8) exceeding GZMA and GZMB controls (P &lt; 0.001).\nChemotaxis (j): Transwell migration of GZMK⁺CD8⁺ T cells towards fibroblasts is abrogated by the CXCR4 neutraligand LIT-927 (P = 0.0001).\nNeutrophil Infiltration (m, n, o): MPO⁺ neutrophils are elevated in NP tissue (P &lt; 0.0001) and correlate positively with GZMK⁺CD8⁺ T cell density (R = 0.456, P = 0.007), whereas eosinophil infiltration does not correlate (R = 0.151, P = 0.262).",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Replicating Multi-Modal Omics: Nature Communications Case Study</span>"
+    ]
+  },
+  {
+    "objectID": "19-case-study-nature-communications.html#figure-7-single-cell-tcr-repertoire-diversity-and-clonal-expansion",
+    "href": "19-case-study-nature-communications.html#figure-7-single-cell-tcr-repertoire-diversity-and-clonal-expansion",
+    "title": "19  Replicating Multi-Modal Omics: Nature Communications Case Study",
+    "section": "19.6 6. Figure 7: Single-Cell TCR Repertoire Diversity and Clonal Expansion",
+    "text": "19.6 6. Figure 7: Single-Cell TCR Repertoire Diversity and Clonal Expansion\nT cell receptor (TCR) sequencing of 25 donors tracks clonal development and transition states.\n\n\n\nNature Communications Figure 7 Composite: Alpha Diversity Indices (b) and Clonal Expansion Hierarchy (c)\n\n\n\nPanel 7b: Boxplots of Shannon diversity across CBL, NP-BL, CIT, and NP with Dunn’s multiple comparison brackets (P = 0.0381, P = 0.0356).\nPanel 7c: Clonal expansion hierarchy from singletons (clone size = 1, light grey #D9D9D9) to hyper-expanded clones (&gt; 50, dark navy #084594).",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Replicating Multi-Modal Omics: Nature Communications Case Study</span>"
+    ]
+  },
+  {
+    "objectID": "19-case-study-nature-communications.html#figure-8-pan-tissue-cross-condition-atlas-10-diseases-159-donors",
+    "href": "19-case-study-nature-communications.html#figure-8-pan-tissue-cross-condition-atlas-10-diseases-159-donors",
+    "title": "19  Replicating Multi-Modal Omics: Nature Communications Case Study",
+    "section": "19.7 7. Figure 8: Pan-Tissue Cross-Condition Atlas (10 Diseases, 159 Donors)",
+    "text": "19.7 7. Figure 8: Pan-Tissue Cross-Condition Atlas (10 Diseases, 159 Donors)\nTo test whether the GZMK⁺CD8⁺ T cell-fibroblast interaction represents a general mechanism of chronic tissue inflammation, the authors integrated 108,969 CD8⁺ T cells from 9 public scRNA-seq datasets across 10 disease conditions.\n\n\n\nNature Communications Figure 8e: Cross-Tissue Expansion Across 10 Chronic Inflammatory Diseases (Skin AD, EoE, Asthma, COPD, Bladder, Lupus, Sepsis, HBV)\n\n\n\n19.7.1 Skin Atopic Dermatitis Focus\nIn lesional skin from patients with Atopic Dermatitis (AD, GSE197023) and Prurigo Nodularis (PN), GZMK⁺CD8⁺ T cells outnumber GZMB⁺CD8⁺ T cells:\n\n\n\nSkin Atopic Dermatitis & Prurigo Nodularis: GZMB⁺ vs GZMK⁺ CD8⁺ T Cells\n\n\n\nSkin AD: GZMK⁺CD8⁺ percentage is elevated compared to GZMB⁺CD8⁺ cells (P = 0.012).\nSkin PN: Elevated GZMK⁺CD8⁺ proportion (P = 0.0022).\nSpatial transcriptomics in AD lesional sections confirmed positive neighborhood enrichment between GZMK⁺CD8⁺ T cells and fibroblasts, driven by the CXCL12–CXCR4 signaling axis.",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Replicating Multi-Modal Omics: Nature Communications Case Study</span>"
+    ]
+  },
+  {
+    "objectID": "19-case-study-nature-communications.html#summary-of-replicated-assets",
+    "href": "19-case-study-nature-communications.html#summary-of-replicated-assets",
+    "title": "19  Replicating Multi-Modal Omics: Nature Communications Case Study",
+    "section": "19.8 8. Summary of Replicated Assets",
+    "text": "19.8 8. Summary of Replicated Assets\nAll 37 figure files and underlying R scripts are available in the cliomicplot package under inst/examples/nature_communications/:\n\ngenerate_nature_commun_figures.R: Figures 1e, 2d, 2f, 2g, 2i, 5h, 7b, 7c.\nassemble_composites.R: Figure 2 Composite (d, f, h, g, i) and Figure 7 Composite (b, c).\ngenerate_figure3_figures.R: Figures 3g, 3j, 3l, 3n, and Figure 3 Composite.\ngenerate_figure4_5_figures.R: Figures 4b, 5f, 5g, 5h, 5i, 5j, and Figure 5 Complete Composite.\ngenerate_figure6_figures.R: Figures 6c, 6d, 6g, 6h, 6i, 6j, 6m, 6n, 6o, and Figure 6 Complete Composite.\ngenerate_figure8_figures.R: Figure 8e (Skin AD & 10-tissue chronic disease atlas).\ngenerate_supp_figures.R: Supplementary Figures S2c, S3c, S12c.",
+    "crumbs": [
+      "Part V — Publication Composites and Applied Case Studies",
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Replicating Multi-Modal Omics: Nature Communications Case Study</span>"
+    ]
   }
 ]
