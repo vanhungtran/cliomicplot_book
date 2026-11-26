@@ -50,6 +50,7 @@ book:
         - 20-case-study-leakage-benchmark.qmd
         - 21-case-study-cross-disease-deconvolution.qmd
         - 22-case-study-bayesian-network-meta-analysis.qmd
+        - 23-case-study-model-based-meta-analysis-placebo-kinetics.qmd
 
     - references.qmd
 
