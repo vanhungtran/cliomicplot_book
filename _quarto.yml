@@ -46,6 +46,7 @@ book:
         - 16-assembling-composites.qmd
         - 17-case-study-atopic-dermatitis.qmd
         - 18-case-study-cancer-immunotherapy.qmd
+        - 19-case-study-nature-communications.qmd
 
     - references.qmd
 
