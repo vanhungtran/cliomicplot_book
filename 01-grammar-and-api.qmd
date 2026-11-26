@@ -65,59 +65,109 @@ p_viol <- cliplot(
 p_viol
 ```
 
-## Distribution Architectures: Violin and Split-Violin Plots
+## The 4-Step Progressive Pipeline: Basic, Color, Template, and Statistics
 
-Violin plots show probability density distributions across categorical cohorts. `cliomicplot` provides four interior anatomy modes (`inner`), two-condition split violins, and hypothesis tests.
+Scientific figures in `cliomicplot` are constructed through a four-step layered workflow: geometry baseline, palette coloring, journal templating, and statistical testing with comparison bars.
 
-### 1. Interior Quantile Density Lines: `inner = "quartiles"`
+### Step 1: The Basic Geometry
 
-Drawing 25%, 50% (median), and 75% quantile lines inside the density polygon avoids visual clutter while reporting the interquartile range:
+A single formula call renders the unadorned baseline geometry using default styling:
 
-```{r violin-quantiles-demo, fig.width=7.5, fig.height=4.8}
-p_quant <- cliplot(
+```{r step1-basic-demo, fig.width=6.0, fig.height=4.2}
+p_step1 <- cliplot(
   IL13_pg_ml ~ Biomarker,
-  data    = df_cohort,
-  by      = "Biomarker",
-  type    = type_violin(inner = "quartiles", quantiles = c(0.25, 0.5, 0.75), add_jitter = FALSE),
-  palette = "nature",
-  legend  = "none",
-  title   = "Serum IL-13 Distribution with Interior Quartiles",
-  subtitle = "Quantile lines at 25%, median, and 75% within each density contour",
-  ylab    = "Serum IL-13 (pg/mL)"
+  data = df_cohort,
+  type = "violin"
 )
-p_quant
+p_step1
 ```
 
-### 2. Dual-Condition Contrast: `type_split_violin()`
+### Step 2: Add Curated Scientific Color
 
-When evaluating two treatment arms (such as Placebo vs. Biologic) across multiple disease severity tiers, `type_split_violin()` draws the left half for group 1 and the right half for group 2 on a shared category axis:
+Applying a publication palette (`palette = "nature"`) assigns coordinated categorical hues across experimental cohorts:
 
-```{r split-violin-demo, fig.width=8.0, fig.height=5.0}
+```{r step2-color-demo, fig.width=6.0, fig.height=4.2}
+p_step2 <- cliplot(
+  IL13_pg_ml ~ Biomarker,
+  data    = df_cohort,
+  type    = "violin",
+  palette = "nature"
+)
+p_step2
+```
+
+### Step 3: Add Journal Template and Typography
+
+Applying a journal template (`theme = "nature"`) configures open axes, tick direction, typography, panel titles, and axis labels:
+
+```{r step3-template-demo, fig.width=6.8, fig.height=4.6}
+p_step3 <- cliplot(
+  IL13_pg_ml ~ Biomarker,
+  data     = df_cohort,
+  type     = type_violin(inner = "quartiles", quantiles = c(0.25, 0.5, 0.75)),
+  palette  = "nature",
+  theme    = "nature",
+  title    = "Serum IL-13 by Clinical Severity Tier",
+  subtitle = "Nature template with interior quartile contours (25%, median, 75%)",
+  ylab     = "Serum IL-13 (pg/mL)",
+  xlab     = "Biomarker Severity Tier"
+)
+p_step3
+```
+
+### Step 4: Add Statistical Hypothesis Testing with Comparison Bars
+
+Setting `stat.test = "wilcox.test"` calculates non-parametric rank-sum statistics and draws comparison bracket bars across cohorts:
+
+```{r step4-stats-demo, fig.width=7.2, fig.height=5.2}
+p_step4 <- cliplot(
+  IL13_pg_ml ~ Biomarker,
+  data      = df_cohort,
+  type      = type_violin(inner = "boxplot", add_jitter = TRUE, jitter_alpha = 0.35),
+  palette   = "nature",
+  theme     = "nature",
+  stat.test = "wilcox.test",
+  title     = "Serum IL-13 Across Clinical Severity Stages",
+  subtitle  = "Pairwise Wilcoxon rank-sum test with comparison bracket bars",
+  ylab      = "Serum IL-13 (pg/mL)",
+  xlab      = "Biomarker Severity Tier"
+)
+p_step4
+```
+
+## Advanced Distribution Architectures: Split Violins and Rainclouds
+
+`cliomicplot` provides specialized distribution types for multi-arm clinical trials and single-cell cohorts.
+
+### Dual-Condition Contrast: `type_split_violin()`
+
+When comparing two treatment arms (Placebo vs. Biologic) across multiple severity tiers, `type_split_violin()` renders both distributions back-to-back along a shared category spine. Adding `stat.test = "t.test"` performs within-tier comparisons:
+
+```{r split-violin-demo, fig.width=8.0, fig.height=5.2}
 p_split <- cliplot(
   IL13_pg_ml ~ Biomarker | Treatment,
-  data    = df_cohort,
-  type    = type_split_violin(
-    inner     = "quartiles",
-    quantiles = c(0.25, 0.5, 0.75),
+  data      = df_cohort,
+  type      = type_split_violin(
+    inner     = "boxplot",
     scale     = "width"
   ),
-  palette = "jco",
-  title   = "IL-13 Shift Under Biologic vs. Placebo Across Severity Tiers",
-  subtitle = "Split-half density comparison: Placebo (left) vs. Biologic (right)",
-  ylab    = "Serum IL-13 (pg/mL)",
-  xlab    = "Biomarker Severity Tier"
+  palette   = "jco",
+  theme     = "scifig",
+  stat.test = "t.test",
+  title     = "IL-13 Modulation Under Biologic vs. Placebo Across Severity Tiers",
+  subtitle  = "Split-half comparison with within-tier two-sample t-test",
+  ylab      = "Serum IL-13 (pg/mL)",
+  xlab      = "Biomarker Severity Tier"
 )
 p_split
 ```
 
-`type_violin(split = TRUE)` produces the same split geometry when the formula contains a two-level conditioning variable (`| group`).
+### Mean Diamond Glyphs with Standard Error: `inner = "mean_se"`
 
-### 3. Mean Diamond Glyphs and Hypothesis Testing: `inner = "mean_se"`
-
-Setting `inner = "mean_se"` overlays a central diamond for the arithmetic mean with standard error errorbars. Adding `stat.test = "wilcox.test"` calculates the non-parametric Wilcoxon rank-sum p-value:
+Setting `inner = "mean_se"` replaces median boxplots with an arithmetic mean diamond and standard error errorbars:
 
 ```{r violin-mean-stat-demo, fig.width=6.0, fig.height=4.8}
-p_stat <- cliplot(
+p_mean_stat <- cliplot(
   IL13_pg_ml ~ Treatment,
   data      = df_cohort,
   by        = "Treatment",
@@ -135,7 +185,7 @@ p_stat <- cliplot(
   subtitle  = "Violin density with raw observations, mean ± SEM diamond, and Wilcoxon test",
   ylab      = "Serum IL-13 (pg/mL)"
 )
-p_stat
+p_mean_stat
 ```
 
 ## The Parameter Object: `clipar()`
