@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -379,8 +379,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="step-1-transcriptomic-signature-geo-gse121212-volcano-plot" class="level2" data-number="17.2">
 <h2 data-number="17.2" class="anchored" data-anchor-id="step-1-transcriptomic-signature-geo-gse121212-volcano-plot"><span class="header-section-number">17.2</span> Step 1: Transcriptomic Signature (GEO GSE121212 Volcano Plot)</h2>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -418,8 +418,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="17.3" class="anchored" data-anchor-id="step-2-clinical-severity-stratified-by-host-flg-status"><span class="header-section-number">17.3</span> Step 2: Clinical Severity Stratified by Host FLG Status</h2>
 <p>Host genetic lesions in filaggrin (<em>FLG</em>) drive increased eczema severity:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>cohort_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Subgroup =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Healthy Control"</span>, <span class="st">"AD (FLG Wildtype)"</span>, <span class="st">"AD (FLG Mutant)"</span>), <span class="fu">c</span>(<span class="dv">35</span>, <span class="dv">45</span>, <span class="dv">28</span>)),</span>
@@ -457,8 +457,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="17.4" class="anchored" data-anchor-id="step-3-cytokine-activation-across-cutaneous-lineages-split-violins"><span class="header-section-number">17.4</span> Step 3: Cytokine Activation Across Cutaneous Lineages: Split Violins</h2>
 <p>Single-cell <em>IL4R</em> expression across cutaneous immune lineages in paired non-lesional versus lesional skin:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>cell_types <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Th2 Cells"</span>, <span class="st">"ILC2"</span>, <span class="st">"Eosinophils"</span>, <span class="st">"Mast Cells"</span>, <span class="st">"DC2"</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>n_per_group <span class="ot">&lt;-</span> <span class="dv">60</span></span>
@@ -502,8 +502,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="17.5" class="anchored" data-anchor-id="step-4-cutaneous-dysbiosis-across-anatomical-sites"><span class="header-section-number">17.5</span> Step 4: Cutaneous Dysbiosis Across Anatomical Sites</h2>
 <p>Differential abundance bubble matrix across anatomical sites:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. aureus"</span>, <span class="st">"S. epidermidis"</span>, <span class="st">"S. hominis"</span>, <span class="st">"C. acnes"</span>, <span class="st">"M. restricta"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sites   <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Cheek"</span>, <span class="st">"Forehead"</span>, <span class="st">"Antecubital"</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -542,8 +542,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="17.6" class="anchored" data-anchor-id="step-5-cutaneous-microbiome-coupling-with-multi-domain-environmental-drivers"><span class="header-section-number">17.6</span> Step 5: Cutaneous Microbiome Coupling with Multi-Domain Environmental Drivers</h2>
 <p>Coupling cutaneous microbial abundance with transepidermal water loss (TEWL), SCORAD, and micro-climate drivers:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p_env <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Cutaneous Microbiome Coupling with Biophysical Barrier and Clinical Drivers"</span>,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>

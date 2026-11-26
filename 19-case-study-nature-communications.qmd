@@ -1,8 +1,8 @@
 # Replicating Multi-Modal Omics: Nature Communications Case Study
 
-This case study demonstrates the replication of all publication figures from *Nature Communications* (2024) 15:10413 ([PMC11607458](https://pmc.ncbi.nlm.nih.gov/articles/PMC11607458/)): *"Granzyme K⁺CD8⁺ T cells interact with fibroblasts to promote neutrophilic inflammation in nasal polyps"*.
+This case study demonstrates the replication of publication figures from *Nature Communications* (2024) 15:10413 ([PMC11607458](https://pmc.ncbi.nlm.nih.gov/articles/PMC11607458/)): *"Granzyme K⁺CD8⁺ T cells interact with fibroblasts to promote neutrophilic inflammation in nasal polyps"*.
 
-Using real Source Data from `41467_2024_54685_MOESM4_ESM.xlsx`, we implement the figures across clinical flow cytometry (95 donors), single-cell RNA-seq (208,757 cells), Visium HD spatial transcriptomics, in vitro functional assays, and a cross-tissue inflammatory atlas (159 donors across 10 chronic diseases including Skin Atopic Dermatitis).
+Using Source Data from `41467_2024_54685_MOESM4_ESM.xlsx`, we implement the figures across clinical flow cytometry (95 donors), single-cell RNA-seq (208,757 cells), Visium HD spatial transcriptomics, in vitro functional assays, and a cross-tissue inflammatory atlas (159 donors across 10 chronic diseases including Skin Atopic Dermatitis).
 
 ---
 
@@ -31,6 +31,49 @@ Figure 2 resolves 81,202 CD8⁺ T cells into 9 subclusters, identifying a prefer
 - **Panel 2h**: Horizontal bar plot ranking the top 10 differentially expressed genes between `GZMK⁺` and `GZMB⁺` CD8⁺ T cells, showing elevated *GZMK*, *CD74*, *DUSP4*, *RGS1*, and *JUNB*.
 - **Panel 2g & 2i**: Reactome GSEA normalized enrichment scores and KEGG immunological disease pathway dotplots.
 
+```{r}
+#| eval: false
+#| echo: true
+library(cliomicplot)
+library(ggplot2)
+library(patchwork)
+
+# Panel 2d: 100% Stacked CD8+ Subsets Across Blood and Tissue Compartments
+p_fig2d <- ggplot(df_2d_long, aes(x = Sample, y = Share, fill = Subset)) +
+  geom_bar(stat = "identity", position = "stack", width = 0.82, color = "black", linewidth = 0.2) +
+  facet_grid(~ Compartment, scales = "free_x", space = "free_x") +
+  scale_fill_manual(values = pal_2d, breaks = cd8_subsets, name = "CD8+ T cell subsets") +
+  scale_y_continuous(limits = c(0, 100.1), expand = c(0, 0), breaks = seq(0, 100, 25)) +
+  labs(tag = "d", x = NULL, y = "Cell proportion (%)") +
+  clitheme(preset = "nature", base_size = 9)
+
+# Panel 2f: Differential Expression Scatter Plot (GZMK vs Others)
+p_fig2f <- ggplot(df_volcano, aes(x = delta_pct, y = logfc)) +
+  geom_point(aes(color = status), size = 1.3, alpha = 0.85) +
+  scale_color_manual(values = c("Up" = "#DE3533", "Down" = "#3B75AF", "NS" = "#D0D0D0")) +
+  labs(tag = "f", x = "Δ Percent of cells", y = "Average log2(Fold Change)") +
+  clitheme(preset = "nature", base_size = 9)
+
+# Panel 2h: Top 10 Ranked DEGs (Horizontal Bar)
+p_fig2h <- ggplot(df_top10, aes(x = logfc, y = gene)) +
+  geom_bar(stat = "identity", fill = "#DE3533", width = 0.72) +
+  labs(tag = "h", x = "Average log2(Fold Change)", y = NULL) +
+  clitheme(preset = "nature", base_size = 9)
+
+# Panel 2g & 2i: Reactome GSEA Enrichment & KEGG Dotplots
+p_fig2g <- ggplot(df_gsea, aes(x = NES, y = Pathway, fill = Direction)) +
+  geom_bar(stat = "identity", width = 0.72) +
+  scale_fill_manual(values = c("Upregulated" = "#DE3533", "Downregulated" = "#3B75AF")) +
+  labs(tag = "g", x = "Normalized Enrichment Score (NES)", y = NULL) +
+  clitheme(preset = "nature", base_size = 9)
+
+p_fig2i <- ggplot(df_kegg, aes(x = GeneRatio, y = Description)) +
+  geom_point(aes(size = Count, color = p.adjust)) +
+  scale_color_gradient(low = "#DE3533", high = "#3B75AF") +
+  labs(tag = "i", x = "Gene Ratio", y = NULL) +
+  clitheme(preset = "nature", base_size = 9)
+```
+
 ---
 
 ## 3. Figure 3: Clinical Flow Cytometry Validation (95 Donors)
@@ -43,6 +86,54 @@ To validate single-cell transcriptomic predictions, 95 clinical donors were anal
 - `GZMK⁺GZMB⁻` CD8⁺ T cells are selectively enriched in nasal polyps (`NP`, median 22.4%) compared to control tissue (`CIT`, median 4.5%, $P < 0.0001$).
 - Paired MFI demonstrates marked upregulation of the homing receptor *CXCR4* ($P = 0.0371$) and exhaustion marker *PD-1* ($P = 0.0031$) in `GZMK⁺` compared to `GZMB⁺` subsets from the same donors.
 - Target cell lysis confirmed that `GZMK⁺` cells possess reduced cytotoxicity ($P = 0.0063$), functioning primarily as cytokine/chemokine producers.
+
+```{r}
+#| eval: false
+#| echo: true
+library(cliomicplot)
+library(ggplot2)
+library(ggsignif)
+
+# Panel 3g: 95-Donor Flow Cytometry with Pairwise Significance Brackets
+p_fig3g <- cliplot(
+  GZMK_Pct ~ Group,
+  data        = df_3g,
+  type        = type_boxplot(notch = FALSE, outlier.shape = 16, outlier.size = 1.2),
+  stat.test   = "wilcox.test",
+  comparisons = list(c("CBL", "NP-BL"), c("CIT", "NP")),
+  palette     = c("CBL" = "#6BAED6", "NP-BL" = "#3182BD", "CIT" = "#74C476", "NP" = "#E6550D"),
+  theme       = "nature",
+  title       = "GZMK+ CD8+ T Cell Flow Cytometry",
+  ylab        = "% of CD8+ T cells"
+)
+
+# Panel 3j: Paired Receptor MFI (CXCR4, PD-1) in GZMB+ vs GZMK+
+p_fig3j <- cliplot(
+  MFI ~ Subset | Receptor,
+  data      = df_3j_paired,
+  type      = type_slope(pair = "Donor", reference_line = NULL),
+  palette   = c("GZMB+CD8" = "#DE3533", "GZMK+CD8" = "#F58518"),
+  theme     = "nature",
+  ylab      = "Normalized Mean Fluorescence Intensity (MFI)"
+)
+
+# Panel 3l & 3n: Functional Cytotoxicity and Target Cell Lysis
+p_fig3n <- cliplot(
+  Lysis_Pct ~ Effector_Target_Ratio | Subset,
+  data      = df_cytotoxicity,
+  type      = type_trajectory(
+    show_errorbar = TRUE,
+    errorbar      = "se",
+    point_fill    = "white",
+    dodge         = 0.16
+  ),
+  palette   = c("GZMB+CD8" = "#DE3533", "GZMK+CD8" = "#F58518"),
+  theme     = "nature",
+  title     = "Target Cell Lysis Curve (Reduced Cytotoxicity in GZMK+, P = 0.0063)",
+  ylab      = "% Specific Lysis",
+  xlab      = "Effector : Target Ratio"
+)
+```
 
 ---
 
@@ -58,6 +149,35 @@ Visium HD resolves single-cell neighborhoods across 10 intact clinical tissue se
 - **Panel 5h**: Direct frequency comparison of `CD8T_GZMK` ($P = 0.0667$) versus `CD8T_GZMB` ($\text{ns}$) in total CD8⁺ T cells.
 - **Panel 5i & 5j**: Proportions of infiltrating B cells ($P = 0.0381$), CD4⁺ T cells ($P = 0.0190$), and smooth muscle cells (SMCs, $P = 0.0095$).
 
+```{r}
+#| eval: false
+#| echo: true
+library(cliomicplot)
+library(ggplot2)
+
+# Panel 5f: 100% Stacked Bar Chart of 19 Cell Lineages Across Visium HD Sections
+p_fig5f <- ggplot(df_5f_long, aes(x = Sample, y = Share, fill = CellType)) +
+  geom_bar(stat = "identity", position = "stack", width = 0.82, color = "black", linewidth = 0.15) +
+  facet_grid(~ Group, scales = "free_x", space = "free_x") +
+  scale_fill_manual(values = pal_19, name = "19 Visium HD Lineages") +
+  scale_y_continuous(limits = c(0, 100.1), expand = c(0, 0), breaks = seq(0, 100, 25)) +
+  labs(tag = "f", x = NULL, y = "Lineage proportion (%)") +
+  clitheme(preset = "nature", base_size = 9)
+
+# Panel 5h: CD8T_GZMK Frequency in Total CD8+ T Cells Across CIT vs NP
+p_fig5h <- cliplot(
+  Frequency ~ Group,
+  data        = df_5h_gzmk,
+  type        = type_boxplot(outlier.shape = 16),
+  stat.test   = "wilcox.test",
+  comparisons = list(c("CIT", "NP")),
+  palette     = c("CIT" = "#74C476", "NP" = "#E6550D"),
+  theme       = "nature",
+  title       = "CD8T_GZMK Frequency (P = 0.0667)",
+  ylab        = "% of CD8+ T cells"
+)
+```
+
 ---
 
 ## 5. Figure 6: Spatial Neighborhood and Fibroblast Activation Assays
@@ -72,6 +192,44 @@ Figure 6 demonstrates the central biological discovery: `GZMK⁺CD8⁺` T cells 
 - **Chemotaxis (j)**: Transwell migration of `GZMK⁺CD8⁺` T cells towards fibroblasts is abrogated by the CXCR4 neutraligand `LIT-927` ($P = 0.0001$).
 - **Neutrophil Infiltration (m, n, o)**: MPO⁺ neutrophils are elevated in NP tissue ($P < 0.0001$) and correlate positively with `GZMK⁺CD8⁺` T cell density ($R = 0.456, P = 0.007$), whereas eosinophil infiltration does not correlate ($R = 0.151, P = 0.262$).
 
+```{r}
+#| eval: false
+#| echo: true
+library(cliomicplot)
+library(ggplot2)
+
+# Panel 6c: HALO Spatial Cell Neighborhood (< 25 µm from COL1A1+ Fibroblasts)
+p_fig6c <- cliplot(
+  Fibroblast_Count ~ CellType,
+  data        = df_6c,
+  type        = type_boxplot(notch = FALSE),
+  stat.test   = "t.test",
+  comparisons = list(c("GZMK+CD8", "CD4+T"), c("GZMK+CD8", "B cells")),
+  palette     = c("GZMK+CD8" = "#F58518", "CD4+T" = "#3B75AF", "B cells" = "#2CA02C"),
+  theme       = "nature",
+  ylab        = "Fibroblast counts within 25 μm"
+)
+
+# Panel 6h: Secretome Quantification After GZMK Stimulation (CXCL1, CXCL2, CXCL6, CXCL8)
+p_fig6h <- ggplot(df_6h, aes(x = Chemokine, y = Concentration_pg_ml, fill = Treatment)) +
+  geom_bar(stat = "identity", position = position_dodge(0.78), width = 0.72) +
+  scale_fill_manual(values = c("PBS" = "#B0C4DE", "GZMK" = "#E6550D")) +
+  labs(tag = "h", x = NULL, y = "Concentration (pg/mL)") +
+  clitheme(preset = "nature", base_size = 9)
+
+# Panel 6n & 6o: Spearman Correlation with Tissue Infiltrating Neutrophils
+p_fig6n <- cliplot(
+  MPO_Neutrophils ~ GZMK_Density,
+  data      = df_correlations,
+  type      = "scatter",
+  theme     = "nature",
+  stat.test = "cor.test",
+  title     = "Tissue Neutrophil Infiltration (R = 0.456, P = 0.007)",
+  ylab      = "MPO+ Neutrophils / mm²",
+  xlab      = "GZMK+ CD8+ T cells / mm²"
+)
+```
+
 ---
 
 ## 6. Figure 7: Single-Cell TCR Repertoire Diversity and Clonal Expansion
@@ -82,6 +240,38 @@ T cell receptor (TCR) sequencing of 25 donors tracks clonal development and tran
 
 - **Panel 7b**: Boxplots of Shannon diversity across `CBL`, `NP-BL`, `CIT`, and `NP` with Dunn's multiple comparison brackets ($P = 0.0381, P = 0.0356$).
 - **Panel 7c**: Clonal expansion hierarchy from singletons (clone size = 1, light grey `#D9D9D9`) to hyper-expanded clones (> 50, dark navy `#084594`).
+
+```{r}
+#| eval: false
+#| echo: true
+library(cliomicplot)
+library(ggplot2)
+
+# Panel 7b: TCR Shannon Diversity Index Across Cohort Compartments
+p_fig7b <- cliplot(
+  Shannon_Index ~ Group,
+  data        = df_7b,
+  type        = type_boxplot(outlier.shape = 16),
+  comparisons = list(c("CBL", "CIT"), c("CIT", "NP")),
+  palette     = c("CBL" = "#6BAED6", "NP-BL" = "#3182BD", "CIT" = "#74C476", "NP" = "#E6550D"),
+  theme       = "nature",
+  title       = "TCR Shannon Diversity Index",
+  ylab        = "Shannon entropy"
+)
+
+# Panel 7c: Clonal Expansion Dynamics from Singletons to Hyper-Expanded Clones
+p_fig7c <- ggplot(df_7c, aes(x = Sample, y = Share, fill = Clone_Tier)) +
+  geom_bar(stat = "identity", position = "stack", width = 0.82) +
+  scale_fill_manual(values = c(
+    "Single (1)"    = "#D9D9D9",
+    "Small (2-5)"   = "#9ECAE1",
+    "Medium (6-20)" = "#4292C6",
+    "Large (21-50)" = "#08519C",
+    "Hyper (>50)"   = "#08306B"
+  )) +
+  labs(tag = "c", x = NULL, y = "Clonal proportion (%)") +
+  clitheme(preset = "nature", base_size = 9)
+```
 
 ---
 
@@ -99,6 +289,36 @@ In lesional skin from patients with Atopic Dermatitis (`AD`, GSE197023) and Prur
 - Skin AD: `GZMK⁺CD8⁺` percentage is elevated compared to `GZMB⁺CD8⁺` cells ($P = 0.012$).
 - Skin PN: Elevated `GZMK⁺CD8⁺` proportion ($P = 0.0022$).
 - Spatial transcriptomics in AD lesional sections confirmed positive neighborhood enrichment between `GZMK⁺CD8⁺` T cells and fibroblasts, driven by the *CXCL12*–*CXCR4* signaling axis.
+
+```{r}
+#| eval: false
+#| echo: true
+library(cliomicplot)
+library(ggplot2)
+
+# Panel 8e: Skin Atopic Dermatitis (GSE197023) - GZMK+ vs GZMB+ CD8+ T Cells
+p_fig8e_ad <- cliplot(
+  Cell_Proportion ~ Subset,
+  data      = df_ad_skin,
+  type      = type_boxplot(outlier.shape = 16),
+  stat.test = "t.test",
+  palette   = c("GZMB+CD8" = "#DE3533", "GZMK+CD8" = "#F58518"),
+  theme     = "nature",
+  title     = "Atopic Dermatitis Lesional Skin (P = 0.012)",
+  ylab      = "% of CD8+ T cells"
+)
+
+# Panel 8e: Cross-Tissue Inflammation Boxplots Across 10 Chronic Diseases
+p_fig8e_atlas <- cliplot(
+  Proportion ~ Disease | Subset,
+  data      = df_atlas_10d,
+  type      = type_boxplot(outlier.shape = 16),
+  palette   = "jco",
+  theme     = "nature",
+  title     = "Pan-Tissue Chronic Inflammation Atlas (159 Donors)",
+  ylab      = "% of CD8+ T cells"
+)
+```
 
 ---
 

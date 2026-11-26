@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -427,8 +427,8 @@ window.Quarto = {
 <h2 data-number="7.2" class="anchored" data-anchor-id="contrast-1-atopic-dermatitis-vs.-control-skin-ncbi-geo-gse121212"><span class="header-section-number">7.2</span> Contrast 1: Atopic Dermatitis vs.&nbsp;Control Skin (NCBI GEO GSE121212)</h2>
 <p>Using the bundled dermatology series dataset (<code>geo_dermatology_series_de.rds</code>), we evaluate lesional skin from patients with Atopic Dermatitis (AD) against Healthy Controls (HC):</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -442,8 +442,8 @@ window.Quarto = {
 <pre><code>[1] "ad_vs_hc"       "pso_vs_hc"      "ad_vs_pso"      "treatment_meta"
 [5] "series_tidy"   </code></pre>
 </div>
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># AD vs. Healthy Control volcano plot</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ad_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"SERPINB4"</span>, <span class="st">"CCL18"</span>, <span class="st">"S100A7"</span>, <span class="st">"LCE3A"</span>, <span class="st">"SPRR2G"</span>, <span class="st">"ALOX15"</span>, <span class="st">"GPLD1"</span>, <span class="st">"SPTLC3"</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -479,8 +479,8 @@ window.Quarto = {
 <h2 data-number="7.3" class="anchored" data-anchor-id="contrast-2-psoriasis-vs.-control-skin-gse121212"><span class="header-section-number">7.3</span> Contrast 2: Psoriasis vs.&nbsp;Control Skin (GSE121212)</h2>
 <p>Evaluating Psoriasis (PSO) lesions from the same cohort captures the contrasting IL-23/Th17 antimicrobial signature:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pso_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"DEFB4A"</span>, <span class="st">"DEFB4B"</span>, <span class="st">"PI3"</span>, <span class="st">"S100A8"</span>, <span class="st">"S100A9"</span>, <span class="st">"SPRR2A"</span>, <span class="st">"KRT16"</span>, <span class="st">"NOS2"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>p_pso_volc <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
@@ -517,8 +517,8 @@ window.Quarto = {
 <h2 data-number="7.4" class="anchored" data-anchor-id="contrast-3-head-to-head-divergence-ad-vs.-psoriasis"><span class="header-section-number">7.4</span> Contrast 3: Head-to-Head Divergence (AD vs.&nbsp;Psoriasis)</h2>
 <p>Directly contrasting AD against Psoriasis isolates disease-specific markers:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>head_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"ALOX15"</span>, <span class="st">"CCL18"</span>, <span class="st">"COL6A6"</span>, <span class="st">"COL4A4"</span>, <span class="st">"NOS2"</span>, <span class="st">"DEFB4A"</span>, <span class="st">"DEFB4B"</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>p_head <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
@@ -554,8 +554,8 @@ window.Quarto = {
 <section id="multi-contrast-4-panel-grid" class="level2" data-number="7.5">
 <h2 data-number="7.5" class="anchored" data-anchor-id="multi-contrast-4-panel-grid"><span class="header-section-number">7.5</span> Multi-Contrast 4-Panel Grid</h2>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>p_a <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(<span class="sc">-</span><span class="fu">log10</span>(padj) <span class="sc">~</span> log2FC, <span class="at">data =</span> series<span class="sc">$</span>ad_vs_hc,</span>

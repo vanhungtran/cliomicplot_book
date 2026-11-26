@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -446,8 +446,8 @@ window.Quarto = {
 <section id="composing-with-the-operator" class="level3" data-number="13.2.1">
 <h3 data-number="13.2.1" class="anchored" data-anchor-id="composing-with-the-operator"><span class="header-section-number">13.2.1</span> Composing with the <code>+</code> Operator</h3>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -479,8 +479,8 @@ window.Quarto = {
 <h3 data-number="13.2.2" class="anchored" data-anchor-id="s3-plot-dispatch"><span class="header-section-number">13.2.2</span> S3 Plot Dispatch</h3>
 <p>The <code>cli_env_network_data</code> S3 object supports direct plotting:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>d_circ <span class="ot">&lt;-</span> <span class="fu">cli_env_network_data</span>(<span class="at">preset =</span> <span class="st">"circadian"</span>, <span class="at">show_values =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(d_circ)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
@@ -498,8 +498,8 @@ window.Quarto = {
 <h2 data-number="13.3" class="anchored" data-anchor-id="formula-interface"><span class="header-section-number">13.3</span> Formula Interface</h2>
 <p>You can call <code>cliplot()</code> using formula syntax <code>env_data ~ comm_data</code>:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Community abundance matrix: 20 samples, 7 taxa</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>comm <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rpois</span>(<span class="dv">140</span>, <span class="at">lambda =</span> <span class="dv">12</span>), <span class="at">nrow =</span> <span class="dv">20</span>, <span class="at">ncol =</span> <span class="dv">7</span>,</span>
@@ -608,8 +608,8 @@ window.Quarto = {
 <section id="seasonal-environmental-succession" class="level4">
 <h4 class="anchored" data-anchor-id="seasonal-environmental-succession">Seasonal Environmental Succession</h4>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p_env_seas <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Seasonal Environmental Succession Coupled with Microbial Network"</span>,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
@@ -633,8 +633,8 @@ window.Quarto = {
 <section id="multi-tissue-axis-coupling" class="level4">
 <h4 class="anchored" data-anchor-id="multi-tissue-axis-coupling">Multi-Tissue Axis Coupling</h4>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p_env_mt <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Multi-Tissue Systemic Coupling (Epidermis, Dermis, Serum, Gut)"</span>,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
@@ -658,8 +658,8 @@ window.Quarto = {
 <section id="bipolar-contrasts" class="level4">
 <h4 class="anchored" data-anchor-id="bipolar-contrasts">Bipolar Contrasts</h4>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>p_env_bip <span class="ot">&lt;-</span> <span class="fu">cliplot_env_network</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title              =</span> <span class="st">"Bipolar Divergent Coupling (Cohort A vs Cohort B)"</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_values        =</span> <span class="cn">TRUE</span>,</span>
@@ -687,8 +687,8 @@ window.Quarto = {
 <p>While the 4-corner canvas of <code>cliplot_env_network()</code> accommodates up to four independent environmental domains simultaneously, ecological microbiome studies frequently link pairwise environmental variables with target taxonomic phyla using lower-triangular correlation heatmaps and curved Mantel test arcs (<code>MatCorPlot2</code> in <code>ggClusterNet 2</code>, Wen et al.&nbsp;<em>iMeta</em> 2025; <code>linkET</code>).</p>
 <p><code>type_mantel_triangle()</code> pairs in-tile correlation values (<span class="math inline">r</span>) and significance asterisks with smooth bezier arcs scaled by Mantel correlation magnitude and colored by <span class="math inline">p</span>-value tiers:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>p_mantel <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">type  =</span> <span class="fu">type_mantel_triangle</span>(<span class="at">label_size =</span> <span class="fl">2.8</span>, <span class="at">node_size =</span> <span class="fl">3.8</span>),</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Environmental Factors Coupled with Microbial Phyla (Mantel Correlation)"</span></span>

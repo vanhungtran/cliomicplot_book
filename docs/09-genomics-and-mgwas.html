@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -419,8 +419,8 @@ window.Quarto = {
 <p>In human genetics, variants are distributed across chromosomes 1 through 22. Alternating chromosome colors and standard significance thresholds (<span class="math inline">\tau_{\text{GWAS}} = 5 \times 10^{-8}</span> and suggestive <span class="math inline">1 \times 10^{-5}</span>) mark genome-wide hits:</p>
 <p><span class="math display">\tau_{\text{GWAS}} = -\log_{10}(5 \times 10^{-8}) \approx 7.30</span></p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -472,8 +472,8 @@ window.Quarto = {
 <h2 data-number="9.2" class="anchored" data-anchor-id="microbial-gwas-mgwas-along-bacterial-genomes"><span class="header-section-number">9.2</span> Microbial GWAS (mGWAS) Along Bacterial Genomes</h2>
 <p>Microbial GWAS evaluates single nucleotide variants along circular bacterial chromosomes (e.g.&nbsp;<em>Staphylococcus aureus</em>, ~2.8 Mb):</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mgwas_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">pos  =</span> <span class="fu">seq</span>(<span class="dv">2000</span>, <span class="dv">400000</span>, <span class="at">by =</span> <span class="dv">2500</span>),</span>
@@ -526,8 +526,8 @@ window.Quarto = {
 </ul>
 <p><code>type_mr_coloc()</code> integrates these statistical criteria into a publication-ready matrix:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pqtl_mr_coloc)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Cis-pQTL MR &amp; Colocalization heatmap (UKB-PPP to FinnGen R12)</span></span>
@@ -565,8 +565,8 @@ window.Quarto = {
 <p>Single-cell transcriptomics often tracks changes in cellular proportions across patient cohorts and treatment arms. However, standard ggplot2 limitations allow only one fill scale per plot, preventing concurrent visualization of cell lineages and patient clinical phenotypes.</p>
 <p><code>type_composition()</code> resolves this by plotting stacked leukocyte proportions with an independent phenotypic metadata track along the base of the bars:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(immune_cell_composition)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Focus on three clinical series (atopic dermatitis, vascular disease, asthma)</span></span>
@@ -607,8 +607,8 @@ window.Quarto = {
 <h2 data-number="9.5" class="anchored" data-anchor-id="paired-pre-vs-post-intervention-trajectories-type_slope"><span class="header-section-number">9.5</span> Paired Pre-vs-Post Intervention Trajectories: <code>type_slope()</code></h2>
 <p>For paired clinical cohorts (e.g.&nbsp;patients evaluated before and after targeted biologic therapy or lipid lowering), <code>type_slope()</code> provides paired trajectory lines with horizontal reference thresholds:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Paired GZMK / GZMB balance in blood before and after treatment</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>paired_demo <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">donor     =</span> <span class="fu">rep</span>(<span class="fu">paste0</span>(<span class="st">"PT"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>), <span class="at">each =</span> <span class="dv">2</span>),</span>

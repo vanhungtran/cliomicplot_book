@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -416,8 +416,8 @@ window.Quarto = {
 <h2 data-number="15.1" class="anchored" data-anchor-id="automated-empirical-linkage-cli_calc_env_links"><span class="header-section-number">15.1</span> Automated Empirical Linkage: <code>cli_calc_env_links()</code></h2>
 <p><code>cli_calc_env_links()</code> extracts module eigengenes (the first principal component of each module via singular value decomposition) or standardized mean abundances, tests bivariate correlations against environmental or clinical variables, and applies Benjamini-Hochberg FDR correction.</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>demo_omics <span class="ot">&lt;-</span> <span class="fu">cli_demo_vitality_multiomics</span>(<span class="at">n_samples =</span> <span class="dv">35</span>, <span class="at">n_features =</span> <span class="dv">60</span>, <span class="at">seed =</span> <span class="dv">42</span>)</span>
@@ -456,8 +456,8 @@ window.Quarto = {
 <p><span class="math display">P_{\text{perm}} = \frac{1 + \sum_{b=1}^B \mathbb{I}(|\Delta^{(b)}| \ge |\Delta^{\text{obs}}|)}{B + 1}</span></p>
 <p>The tested metrics are edge density, natural connectivity <span class="math inline">\bar{\lambda}</span>, negative-to-positive edge ratio <span class="math inline">R_{\pm}</span>, mean degree, and clustering coefficient.</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stack reference and test samples</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>comm_combined <span class="ot">&lt;-</span> <span class="fu">rbind</span>(demo_omics<span class="sc">$</span>ref_expr, demo_omics<span class="sc">$</span>test_expr)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>group_combined <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Reference_WT"</span>, <span class="st">"Perturbed_KO"</span>),</span>
@@ -498,8 +498,8 @@ window.Quarto = {
 <h2 data-number="15.3" class="anchored" data-anchor-id="mantel-and-partial-mantel-tests-cli_mantel"><span class="header-section-number">15.3</span> Mantel and Partial Mantel Tests: <code>cli_mantel()</code></h2>
 <p><code>cli_mantel()</code> evaluates matrix correlation between community dissimilarity (Bray-Curtis) and clinical distance (Euclidean):</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mantel_out <span class="ot">&lt;-</span> <span class="fu">cli_mantel</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">comm_data   =</span> demo_omics<span class="sc">$</span>ref_expr,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">env_data    =</span> demo_omics<span class="sc">$</span>env_data[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>],</span>

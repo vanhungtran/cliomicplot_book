@@ -70,7 +70,8 @@ format:
     toc-title: "On this page"
     number-sections: true
     number-depth: 3
-    code-fold: show
+    code-fold: true
+    code-summary: "Show R code"
     code-tools: true
     code-copy: true
     highlight-style: arrow

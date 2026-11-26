@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -426,8 +426,8 @@ window.Quarto = {
 <h3 data-number="4.1.1" class="anchored" data-anchor-id="multivariable-cox-proportional-hazards-model-science-style"><span class="header-section-number">4.1.1</span> Multivariable Cox Proportional Hazards Model (Science Style)</h3>
 <p>We fit a multivariable Cox model directly to the NCCTG lung cancer cohort (<code>survival::lung</code>), estimating independent hazard ratios for age, sex, ECOG performance status, and weight loss:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survival)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
@@ -482,8 +482,8 @@ window.Quarto = {
 <h2 data-number="4.2" class="anchored" data-anchor-id="subgroup-consistency-across-predefined-strata"><span class="header-section-number">4.2</span> Subgroup Consistency Across Predefined Strata</h2>
 <p>In Phase III clinical trials, evaluating consistency across demographic and clinical subgroups assesses whether the overall treatment benefit is driven by a single subpopulation:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>subgroup_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variable =</span> <span class="fu">c</span>(<span class="st">"Overall Population"</span>, <span class="st">"Age &lt; 65"</span>, <span class="st">"Age &gt;= 65"</span>, </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Female"</span>, <span class="st">"Male"</span>, <span class="st">"Stage III"</span>, <span class="st">"Stage IV"</span>),</span>
@@ -529,8 +529,8 @@ window.Quarto = {
 <section id="step-1-basic-paired-line-geometry" class="level4">
 <h4 class="anchored" data-anchor-id="step-1-basic-paired-line-geometry">Step 1: Basic Paired Line Geometry</h4>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate paired translational cohort (GSE183953 AD dupilumab and GSE272294 lipid lowering)</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>n_ad <span class="ot">&lt;-</span> <span class="dv">16</span></span>
@@ -574,8 +574,8 @@ window.Quarto = {
 <h4 class="anchored" data-anchor-id="step-2-add-scientific-color-mapping-across-cohorts">Step 2: Add Scientific Color Mapping Across Cohorts</h4>
 <p>Assigning dedicated palette tones (<code>palette = "nature"</code>) distinguishes the disease indications while highlighting individual trajectories:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p_pair_step2 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  balance <span class="sc">~</span> timepoint <span class="sc">|</span> cohort,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> df_pairs_long,</span>
@@ -597,8 +597,8 @@ window.Quarto = {
 <h4 class="anchored" data-anchor-id="step-3-add-journal-template-dotted-baseline-and-point-markers">Step 3: Add Journal Template, Dotted Baseline, and Point Markers</h4>
 <p>Configuring <code>theme = "nature"</code> with a horizontal zero reference line (<span class="math inline">y = 0</span>) and faceted subpanels:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p_pair_step3 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  balance <span class="sc">~</span> timepoint <span class="sc">|</span> cohort,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> df_pairs_long,</span>
@@ -630,8 +630,8 @@ window.Quarto = {
 <h4 class="anchored" data-anchor-id="step-4-add-paired-statistical-significance-testing">Step 4: Add Paired Statistical Significance Testing</h4>
 <p>Applying paired Student’s <span class="math inline">t</span>-tests (<span class="math inline">t = -11.4, P = 1.8 \times 10^{-8}</span> for Atopic Dermatitis; <span class="math inline">t = -5.2, P = 1.9 \times 10^{-4}</span> for Atherosclerosis) with statistical brackets:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>p_pair_step4 <span class="ot">&lt;-</span> p_pair_step3 <span class="sc">+</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fl">1.05</span>, <span class="at">xend =</span> <span class="fl">1.95</span>, <span class="at">y =</span> <span class="fl">2.6</span>, <span class="at">yend =</span> <span class="fl">2.6</span>), <span class="at">linewidth =</span> <span class="fl">0.4</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fl">1.05</span>, <span class="at">xend =</span> <span class="fl">1.05</span>, <span class="at">y =</span> <span class="fl">2.45</span>, <span class="at">yend =</span> <span class="fl">2.6</span>), <span class="at">linewidth =</span> <span class="fl">0.4</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>

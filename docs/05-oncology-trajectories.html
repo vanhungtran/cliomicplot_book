@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-eb89a3e8467b0347e4822c73f939f1c7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-89efeaea6deded9a0a9a43acd257e2d0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-896be38f4f4d3286e4c7f3677c521389.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -424,8 +424,8 @@ window.Quarto = {
 <p><span class="math display">\Delta\% = \frac{\text{SLD}_{\text{post}} - \text{SLD}_{\text{baseline}}}{\text{SLD}_{\text{baseline}}} \times 100</span></p>
 <p>Standard RECIST 1.1 thresholds define response categories: - <strong>Partial Response (PR)</strong>: <span class="math inline">\Delta\% \le -30\%</span> - <strong>Progressive Disease (PD)</strong>: <span class="math inline">\Delta\% \ge +20\%</span> - <strong>Stable Disease (SD)</strong>: Between <span class="math inline">-30\%</span> and <span class="math inline">+20\%</span></p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -474,8 +474,8 @@ window.Quarto = {
 <h2 data-number="5.2" class="anchored" data-anchor-id="swimmer-plots-with-ongoing-arrows-type-swimmer"><span class="header-section-number">5.2</span> Swimmer Plots with Ongoing Arrows: <code>type = "swimmer"</code></h2>
 <p>Following Clinical Archetype 13, swimmer plots track individual patient treatment timelines. Patients actively continuing therapy at database lock are distinguished by arrowheads at their bar tips (<code>ongoing = "Ongoing"</code>), and key clinical events are overlaid with RECIST glyphs:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n_events_per_pt <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, n_pts, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>events_list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">seq_len</span>(n_pts), <span class="cf">function</span>(i) {</span>
@@ -530,8 +530,8 @@ window.Quarto = {
 <h3 data-number="5.3.1" class="anchored" data-anchor-id="step-1-basic-mean-trajectory-geometry"><span class="header-section-number">5.3.1</span> Step 1: Basic Mean Trajectory Geometry</h3>
 <p>A single formula call renders the baseline trajectory with raw patient spaghetti paths and overall mean line:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate reproducible 2-arm longitudinal trial cohort with recovery milestone</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>n_per_arm <span class="ot">&lt;-</span> <span class="dv">20</span></span>
@@ -577,8 +577,8 @@ window.Quarto = {
 <h3 data-number="5.3.2" class="anchored" data-anchor-id="step-2-add-scientific-color-mapping-across-treatment-arms"><span class="header-section-number">5.3.2</span> Step 2: Add Scientific Color Mapping Across Treatment Arms</h3>
 <p>Mapping the formula to <code>Score ~ Visit | Treatment</code> stratifies both patient spaghetti paths and bold mean trajectories by treatment arm using a publication palette (<code>palette = "nature"</code>):</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p_traj_step2 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  Score <span class="sc">~</span> Visit <span class="sc">|</span> Treatment,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> df_trial,</span>
@@ -600,8 +600,8 @@ window.Quarto = {
 <h3 data-number="5.3.3" class="anchored" data-anchor-id="step-3-add-journal-template-and-standard-error-crossbars"><span class="header-section-number">5.3.3</span> Step 3: Add Journal Template and Standard Error Crossbars</h3>
 <p>Configuring <code>type_trajectory()</code> with standard error bars (<code>show_errorbar = TRUE</code>, <code>errorbar = "se"</code>), white-filled circular markers (<code>point_fill = "white"</code>), horizontal dodging (<code>dodge = 0.16</code>), and <code>theme = "nature"</code> produces a clean publication figure:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p_traj_step3 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  Score <span class="sc">~</span> Visit <span class="sc">|</span> Treatment,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> df_trial,</span>
@@ -638,8 +638,8 @@ window.Quarto = {
 <h3 data-number="5.3.4" class="anchored" data-anchor-id="step-4-add-statistical-significance-comparison-at-recovery-milestone"><span class="header-section-number">5.3.4</span> Step 4: Add Statistical Significance Comparison at Recovery Milestone</h3>
 <p>At the primary endpoint (Week 8) and post-treatment recovery milestone, between-arm differences can be tested and annotated with comparison bracket bars:</p>
 <div class="cell">
-<details open="" class="code-fold">
-<summary>Code</summary>
+<details class="code-fold">
+<summary>Show R code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>p_traj_step4 <span class="ot">&lt;-</span> p_traj_step3 <span class="sc">+</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"segment"</span>, <span class="at">x =</span> <span class="fl">4.92</span>, <span class="at">xend =</span> <span class="fl">5.08</span>, <span class="at">y =</span> <span class="dv">60</span>, <span class="at">yend =</span> <span class="dv">60</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"#222222"</span>) <span class="sc">+</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"segment"</span>, <span class="at">x =</span> <span class="fl">4.92</span>, <span class="at">xend =</span> <span class="fl">4.92</span>, <span class="at">y =</span> <span class="fl">58.5</span>, <span class="at">yend =</span> <span class="dv">60</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"#222222"</span>) <span class="sc">+</span></span>
