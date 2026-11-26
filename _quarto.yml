@@ -49,6 +49,7 @@ book:
         - 19-case-study-nature-communications.qmd
         - 20-case-study-leakage-benchmark.qmd
         - 21-case-study-cross-disease-deconvolution.qmd
+        - 22-case-study-bayesian-network-meta-analysis.qmd
 
     - references.qmd
 
