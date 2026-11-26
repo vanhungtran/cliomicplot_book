@@ -160,3 +160,19 @@ code {
   padding: 0.15em 0.35em;
   border-radius: 4px;
 }
+
+/* Figure & Image Lightbox Zoom Styling */
+.lightbox, .figure-img, figure img, p > img {
+  cursor: zoom-in;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lightbox:hover img, p > a.lightbox:hover img {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: scale(1.006);
+}
+
+.gslide-image img {
+  cursor: zoom-out;
+}
+

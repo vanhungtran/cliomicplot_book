@@ -65,6 +65,12 @@ format:
     theme:
       - cosmo
       - custom.scss
+    lightbox:
+      match: auto
+      effect: zoom
+      desc-position: bottom
+      loop: false
+    include-after-body: custom.js
     toc: true
     toc-depth: 3
     toc-expand: 2
