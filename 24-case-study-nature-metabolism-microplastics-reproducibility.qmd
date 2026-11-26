@@ -2,13 +2,12 @@
 
 Rigorous computational reproduction requires verifying raw deposited data against published figures, numbers, and statistical claims. In environmental toxicology and metabolic disease, *Makdissi et al.* (*Nature Metabolism* 2026, [doi:10.1038/s42255-026-01615-8](https://doi.org/10.1038/s42255-026-01615-8)) investigated how oral exposure to 50 nm nanopolystyrene (NP) and 500 nm micropolystyrene (MP) triggers liver lipid remodeling, Kupffer-cell activation, and insulin resistance in mice.
 
-This case study demonstrates the visual grammar, statistical verification, and publication composites across all 10 reproduction figures (Figures R1–R10) generated from the raw data:
+This case study demonstrates the visual grammar, statistical verification, and publication composites across the reproduction figures (Figures R1–R5, R7–R10) generated from the raw data:
 
 - **Lipidomics** (Metabolomics Workbench ST003776; 28 livers, class amounts and double-bond index).
 - **Single-nucleus RNA-seq** (NCBI GEO GSE291616; 35,151 nuclei across 9 liver cell types).
 - **Macrophage Proteomics** (PRIDE PXD072158; 15 timsTOF diaPASEF runs).
 - **Histology & Microscopy** (Bonn Dataverse FK2/M42B8O; 721 Zeiss CZI micrographs and 28 whole-slide Axioscan scans).
-- **Scientific Audit Scorecard** (Multi-layer verification matrix comparing published vs. re-analyzed findings).
 
 ---
 
@@ -146,7 +145,8 @@ Figure R3 evaluates differential expression (Wilcoxon test, NP/MP vs Ctrl per ce
 
 - **Panel A, B**: Number of DEGs per cell type and share of published DEGs recovered (median 98% recall across cell types).
 - **Panel C**: Over-representation analysis (ORA) terms recovered across Hallmark, Reactome, and GO BP.
-- **Panel D**: Gene-for-gene log2FC concordance (Spearman $ho = 0.94	ext{--}0.99$ in main cell types).
+- **Panel D**: Gene-for-gene log2FC concordance (Spearman $
+ho = 0.94	ext{--}0.99$ in main cell types).
 - **Panel E**: Hepatocyte DEG threshold check showing that published tables used $|	ext{log2FC}| \ge 0.25$, whereas Methods stated $\ge 0.75$.
 
 ![Figure R3: Differential expression and pathway enrichment reproduced almost gene for gene (Makdissi et al. 2026 reproduction). (a) DEG counts published vs reproduced. (b) Share of published DEGs recovered. (c) Over-representation terms recovered. (d) Published vs reproduced log2FC concordance. (e) Hepatocyte cut-off reconciliation.](images/natmetab_mnp/fig_R3_snrna_de.png){width=100%}
@@ -217,81 +217,7 @@ Figure R5 audits the PRIDE PXD072158 proteomics dataset (15 timsTOF diaPASEF run
 
 ---
 
-## 6. Figure R6: Multi-Layer Scientific Reproduction Scorecard
-
-Figure R6 provides the row-by-row scientific verdict scorecard synthesized across all 5 modalities using `type_scorecard()`:
-
-- **Lipidomics**: Direction of lipid remodeling reproduced (3 of 7 statements nominally significant; DAG double-bond index FDR $< 0.05$).
-- **snRNA-seq**: 9 cell types, DEGs, and pathway terms recovered gene-for-gene (reproduced).
-- **Proteomics**: Sample exclusion set and direction reproduced; FDR significance not reproduced.
-- **Histology**: Glycogen PAS reduction reproduced ($P < 0.001$); insulin area lack of effect reproduced.
-
-![Figure R6: Comprehensive multi-omics reproduction scorecard (Makdissi et al. 2026 reproduction). One row per published quantity: published claim, re-analysis outcome, and categorical verdict status dot.](images/natmetab_mnp/fig_R6_scorecard.png){width=100%}
-
-### Reproducible R Code
-
-```{r}
-#| eval: false
-#| echo: true
-#| code-fold: true
-#| code-summary: "Show R code: Figure R6 Reproduction Scorecard Table"
-library(ggplot2)
-library(dplyr)
-library(cliomicplot)
-
-scorecard_df <- data.frame(
-  group = c(
-    rep("Lipidomics (ST003776; 28 livers)", 4),
-    rep("snRNA-seq (GSE291616; 35,151 nuclei)", 5),
-    rep("Proteomics (PXD072158; 12 of 15 runs)", 4),
-    rep("Histology (Bonn Dataverse; 78 GB)", 4)
-  ),
-  what = c(
-    "LPE species increased", "DAG double-bond index up", "Species starred in Fig. 1j", "Any class at FDR < 0.05",
-    "Cell types recovered", "Published DEGs recovered", "Log2FC concordance (rho)", "Hepatocyte LPC/PC program up", "KC-hepatocyte pathways (ED 9b)",
-    "3 excluded runs identified", "Log2 difference concordance", "Proteins significant at FDR 5%", "Published proteins with P <= 0.05",
-    "Liver glycogen (PAS) reduction", "Liver lipid (ORO) 4 weeks", "Liver lipid (ORO) 12 weeks", "Pancreas insulin+ area"
-  ),
-  pub = c(
-    "up", "up", "15 species", "none stated",
-    "9 cell types", "Supp. Table 1", "Supp. Table 1", "up", "VCAM, OCLN, AGT, SEMA4",
-    "3, not named", "Supp. Table 5", "46 (NP) / 170 (MP)", "all",
-    "MP 0.38x Ctrl, P < 0.001", "MP 1.85x Ctrl, P < 0.05", "MP 2.10x Ctrl, P < 0.01", "no difference"
-  ),
-  rep = c(
-    "+0.42, P = 0.021", "NP FDR 0.032, MP FDR 0.018", "14 of 15 confirmed (P < 0.05)", "DAG DBI only",
-    "8 recovered (DCs merge with mono)", "median 98% recall across cell types", "Spearman rho 0.94 - 0.99", "+0.04 NP, +0.05 MP (all 4 up)", "same 4 rise; 18 of 18 agree",
-    "C212, C213, C214 (rank 1 of 455)", "r = 0.82 with >= 2 peptides", "0 / 0 (permutation FDR 5%)", "58% / 64% with >= 2 peptides",
-    "MP 0.35x Ctrl, P < 0.001", "MP 1.72x Ctrl, P = 0.038", "MP 1.15x Ctrl, P = 0.42", "no difference (NP 1.02x, MP 0.98x)"
-  ),
-  verdict = c(
-    "reproduced", "reproduced", "reproduced", "partly",
-    "reproduced", "reproduced", "reproduced", "reproduced", "reproduced",
-    "reproduced", "partly", "not reproduced", "not reproduced",
-    "reproduced", "partly", "not reproduced", "reproduced"
-  )
-)
-
-p_scorecard <- cliplot(
-  verdict ~ what,
-  data = scorecard_df,
-  type = type_scorecard(
-    dot_size = 2.8,
-    text_size = 3.2,
-    header_size = 3.6
-  )
-) +
-  labs(
-    title = "Scientific Reproduction Scorecard: Makdissi et al. (Nature Metabolism 2026)",
-    subtitle = "Re-analysis of raw deposited data across five multi-omics and imaging modalities"
-  )
-
-p_scorecard
-```
-
----
-
-## 7. Figure R7: Re-Quantified Liver Histology
+## 6. Figure R7: Re-Quantified Liver Histology
 
 Figure R7 re-analyzes 721 raw microscopy images (426 Oil Red O Zeiss CZI images and 295 PAS glycogen images):
 
@@ -302,7 +228,7 @@ Figure R7 re-analyzes 721 raw microscopy images (426 Oil Red O Zeiss CZI images 
 
 ---
 
-## 8. Figure R8: CellChat Cell-Cell Communication
+## 7. Figure R8: CellChat Cell-Cell Communication
 
 Figure R8 re-runs CellChat 2.2.0 across the 9 cell types:
 
@@ -314,7 +240,7 @@ Figure R8 re-runs CellChat 2.2.0 across the 9 cell types:
 
 ---
 
-## 9. Figure R9: Pancreas Insulin IHC & Liver Iba1 Immunofluorescence
+## 8. Figure R9: Pancreas Insulin IHC & Liver Iba1 Immunofluorescence
 
 Figure R9 verifies endocrine and tissue macrophage responses:
 
@@ -325,7 +251,7 @@ Figure R9 verifies endocrine and tissue macrophage responses:
 
 ---
 
-## 10. Figure R10: Epididymal Adipose Tissue (gWAT) Adipocyte Sizing
+## 9. Figure R10: Epididymal Adipose Tissue (gWAT) Adipocyte Sizing
 
 Figure R10 re-quantifies 703,735 adipocytes across 28 Axioscan whole-slide images (10x, $0.44\,\mu\text{m}/\text{px}$) using `type_binned_shift()`:
 
@@ -399,16 +325,16 @@ p10_composite
 
 ---
 
-## 11. Multi-Omics Reproduction & Audit Taxonomy
+## 10. Multi-Omics Reproduction & Audit Taxonomy
 
 | Figure | Source Modality | Key Re-Analysis Result | Method / Function | Scientific Verdict |
 |:---|:---|:---|:---|:---|
 | **Fig R1** | Liver lipidomics (ST003776) | Direction of LPE/LPC elevation confirmed | `type_heatmap()` + Welch's t-test | Nominally reproduced (3 of 7 claims $P < 0.05$) |
 | **Fig R2** | snRNA-seq (GSE291616) | 9 cell types resolved from 35,151 nuclei | UMAP + dotplot marker profiles | Fully reproduced |
-| **Fig R3** | Differential expression | Gene-for-gene log2FC recall ($ho \ge 0.96$) | DEG scatter concordance | Fully reproduced |
+| **Fig R3** | Differential expression | Gene-for-gene log2FC recall ($
+ho \ge 0.96$) | DEG scatter concordance | Fully reproduced |
 | **Fig R4** | Pathway & TF activity | LPC/PC module $+0.04/+0.05$; KC cluster 1 artifact | DoRothEA VIPER + RPCA | Partly reproduced (KC subclusters re-integrated) |
 | **Fig R5** | Macrophage proteomics | Drop C212+C213+C214 rank 1 of 455; 0 FDR hits | diaPASEF scan + permutation FDR | Sample set reproduced; significance not reproduced |
-| **Fig R6** | Multi-layer audit | Matrix of 17 published vs re-analyzed findings | `type_scorecard()` | Overall synthesis: Transcriptomics high, Proteomics low |
 | **Fig R7** | Liver histology (Zeiss CZI) | PAS glycogen depletion ($P < 0.001$); ORO 12-wk NS | CIELAB $a^*$ & optical density | Glycogen reproduced; chronic lipid NS |
 | **Fig R8** | CellChat signaling | VCAM, OCLN, AGT, SEMA4 confirmed raised | CellChat 2.2 information flow | Fully reproduced |
 | **Fig R9** | Pancreas & liver IHC | Insulin area unchanged; Iba1 threshold-dependent | Whole-slide optical density | Insulin reproduced; Iba1 ambiguous |
