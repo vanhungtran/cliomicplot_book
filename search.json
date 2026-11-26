@@ -147,11 +147,22 @@
     ]
   },
   {
+    "objectID": "01-grammar-and-api.html#transparent-data-distribution-scatter-box-violin-plots-david-baranger-style",
+    "href": "01-grammar-and-api.html#transparent-data-distribution-scatter-box-violin-plots-david-baranger-style",
+    "title": "1  Graphic Grammar and Core API",
+    "section": "1.7 Transparent Data Distribution: Scatter-Box-Violin Plots (David Baranger Style)",
+    "text": "1.7 Transparent Data Distribution: Scatter-Box-Violin Plots (David Baranger Style)\nA recognized issue in biomedical and behavioral data visualization is the over-reliance on bar plots with standard error bars (“dynamite plungers”), which obscure sample sizes, bimodal clusters, skewness, and outliers. In “Showing your data: Scatter, box, & violin plots” (2018), David Baranger advocates layering three complementary representations of the data:\n\nBackground Kernel Density (geom_violin): Shows the overall probability density and distribution shape (alpha = 0.30, scale = \"width\", linewidth = 0.55).\nForeground Notched Boxplot (geom_boxplot): A narrow summary structure (width = 0.22, alpha = 0.75) with black borders and notches indicating the 95% confidence interval of the median (1.58 \\times \\text{IQR} / \\sqrt{n}). Outliers are hidden (outlier.shape = NA) to eliminate duplicate points.\nOverlaid Raw Data Points (geom_jitter / geom_point): Individual observations displayed with black borders (shape = 21, stroke = 0.35, size = 1.8, alpha = 0.65) and fill colors matching the treatment category, ensuring complete transparency.\n\ncliomicplot provides type_scatter_box_violin() (aliases: type_baranger(), type_sbv(), and type_boxplot(style = \"baranger\")), as well as two-component variants type_scatter_box() and type_box_violin().\n\n1.7.1 Single-Factor Demonstration\n\n\nShow R code\np_sbv_single &lt;- cliplot(\n  Sepal.Length ~ Species,\n  data     = iris,\n  type     = type_scatter_box_violin(notch = TRUE),\n  palette  = \"nature\",\n  theme    = \"nature\",\n  title    = \"Fisher Iris Sepal Length Distribution\",\n  subtitle = \"David Baranger scatter-box-violin architecture with 95% median CI notches\",\n  ylab     = \"Sepal Length (cm)\",\n  xlab     = \"Iris Species\"\n)\np_sbv_single\n\n\n\n\n\n\n\n\n\n\n\n1.7.2 Dodged 2-Way Grouping Demonstration\nWhen conditioning on a secondary treatment or demographic factor (y ~ x | group), type_scatter_box_violin() automatically coordinates synchronized dodging across all three visual layers using position_dodge(0.80) and position_jitterdodge(0.12, 0.80):\n\n\nShow R code\ntg &lt;- ToothGrowth\ntg$dose &lt;- factor(tg$dose, levels = c(0.5, 1.0, 2.0), labels = c(\"0.5 mg/day\", \"1.0 mg/day\", \"2.0 mg/day\"))\n\np_sbv_grouped &lt;- cliplot(\n  len ~ dose | supp,\n  data     = tg,\n  type     = type_scatter_box_violin(notch = FALSE, width = 0.20, position_dodge = 0.80),\n  palette  = \"jco\",\n  theme    = \"nature\",\n  title    = \"Odontoblast Growth by Ascorbic Acid Regimen and Delivery Vehicle\",\n  subtitle = \"Synchronized 2-way dodging across violin, notched box, and raw observation points\",\n  ylab     = \"Tooth Length\",\n  xlab     = \"Dose Level\"\n)\np_sbv_grouped",
+    "crumbs": [
+      "Part I — Graphic Grammar and Design System",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
+    ]
+  },
+  {
     "objectID": "01-grammar-and-api.html#the-parameter-object-clipar",
     "href": "01-grammar-and-api.html#the-parameter-object-clipar",
     "title": "1  Graphic Grammar and Core API",
-    "section": "1.7 The Parameter Object: clipar()",
-    "text": "1.7 The Parameter Object: clipar()\nclipar() sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:\n\n\nShow R code\npars &lt;- clipar(\n  point_size  = 2.2,\n  line_width  = 0.9,\n  alpha       = 0.75,\n  font_size   = 10\n)\n\np_custom &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data   = df_cohort,\n  type   = \"beeswarm\",\n  params = pars,\n  preset = \"science\"\n)\np_custom",
+    "section": "1.8 The Parameter Object: clipar()",
+    "text": "1.8 The Parameter Object: clipar()\nclipar() sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:\n\n\nShow R code\npars &lt;- clipar(\n  point_size  = 2.2,\n  line_width  = 0.9,\n  alpha       = 0.75,\n  font_size   = 10\n)\n\np_custom &lt;- cliplot(\n  IL13_pg_ml ~ Biomarker,\n  data   = df_cohort,\n  type   = \"beeswarm\",\n  params = pars,\n  preset = \"science\"\n)\np_custom",
     "crumbs": [
       "Part I — Graphic Grammar and Design System",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
@@ -161,8 +172,8 @@
     "objectID": "01-grammar-and-api.html#plot-composition-and-layer-addition",
     "href": "01-grammar-and-api.html#plot-composition-and-layer-addition",
     "title": "1  Graphic Grammar and Core API",
-    "section": "1.8 Plot Composition and Layer Addition",
-    "text": "1.8 Plot Composition and Layer Addition\ncliplot() objects are ggplot2 instances. You can extend them using the standard + operator or the cliplot_add() helper:\n\n\nShow R code\np_final &lt;- p_box +\n  geom_hline(yintercept = 10, linetype = \"dashed\", color = \"#B22222\", linewidth = 0.6) +\n  annotate(\"text\", x = 1.2, y = 10.8, label = \"Diagnostic Threshold (10 pg/mL)\",\n           size = 2.8, color = \"#B22222\", fontface = \"bold\")\np_final",
+    "section": "1.9 Plot Composition and Layer Addition",
+    "text": "1.9 Plot Composition and Layer Addition\ncliplot() objects are ggplot2 instances. You can extend them using the standard + operator or the cliplot_add() helper:\n\n\nShow R code\np_final &lt;- p_box +\n  geom_hline(yintercept = 10, linetype = \"dashed\", color = \"#B22222\", linewidth = 0.6) +\n  annotate(\"text\", x = 1.2, y = 10.8, label = \"Diagnostic Threshold (10 pg/mL)\",\n           size = 2.8, color = \"#B22222\", fontface = \"bold\")\np_final",
     "crumbs": [
       "Part I — Graphic Grammar and Design System",
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Graphic Grammar and Core API</span>"
