@@ -37,7 +37,11 @@ df_cohort <- data.frame(
   Treatment  = factor(rep(rep(c("Placebo", "Biologic"), each = 20), 3),
                       levels = c("Placebo", "Biologic")),
   Age_Group  = factor(rep(c("Pediatric", "Adult"), 60)),
-  IL13_pg_ml = c(rnorm(40, 4.2, 1.1), rnorm(40, 8.5, 1.8), rnorm(40, 15.2, 2.9))
+  IL13_pg_ml = c(
+    rnorm(20, 5.2, 0.9), rnorm(20, 3.8, 0.8),
+    rnorm(20, 10.5, 1.4), rnorm(20, 7.2, 1.2),
+    rnorm(20, 18.2, 2.1), rnorm(20, 11.5, 1.8)
+  )
 )
 
 # Direct character specification
@@ -141,7 +145,7 @@ p_step4
 
 ### Dual-Condition Contrast: `type_split_violin()`
 
-When comparing two treatment arms (Placebo vs. Biologic) across multiple severity tiers, `type_split_violin()` renders both distributions back-to-back along a shared category spine. Adding `stat.test = "t.test"` performs within-tier comparisons:
+When comparing two treatment arms (Placebo vs. Biologic) across multiple severity tiers, `type_split_violin()` renders both distributions back-to-back along a shared category spine. Each condition is highlighted by group color, with inner boxplots dodged inside each split half. Adding `stat.test = "t.test"` performs within-tier comparisons with horizontal bracket bars:
 
 ```{r split-violin-demo, fig.width=8.0, fig.height=5.2}
 p_split <- cliplot(
