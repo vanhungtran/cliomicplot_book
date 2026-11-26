@@ -109,6 +109,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -357,8 +400,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#dual-condition-contrast-type_split_violin" id="toc-dual-condition-contrast-type_split_violin" class="nav-link" data-scroll-target="#dual-condition-contrast-type_split_violin"><span class="header-section-number">1.4.1</span> Dual-Condition Contrast: <code>type_split_violin()</code></a></li>
   <li><a href="#mean-diamond-glyphs-with-standard-error-inner-mean_se" id="toc-mean-diamond-glyphs-with-standard-error-inner-mean_se" class="nav-link" data-scroll-target="#mean-diamond-glyphs-with-standard-error-inner-mean_se"><span class="header-section-number">1.4.2</span> Mean Diamond Glyphs with Standard Error: <code>inner = "mean_se"</code></a></li>
   </ul></li>
-  <li><a href="#the-parameter-object-clipar" id="toc-the-parameter-object-clipar" class="nav-link" data-scroll-target="#the-parameter-object-clipar"><span class="header-section-number">1.5</span> The Parameter Object: <code>clipar()</code></a></li>
-  <li><a href="#plot-composition-and-layer-addition" id="toc-plot-composition-and-layer-addition" class="nav-link" data-scroll-target="#plot-composition-and-layer-addition"><span class="header-section-number">1.6</span> Plot Composition and Layer Addition</a></li>
+  <li><a href="#nature-aging-pathology-boxplots-type_pathology_boxplot" id="toc-nature-aging-pathology-boxplots-type_pathology_boxplot" class="nav-link" data-scroll-target="#nature-aging-pathology-boxplots-type_pathology_boxplot"><span class="header-section-number">1.5</span> Nature Aging Pathology Boxplots: <code>type_pathology_boxplot()</code></a></li>
+  <li><a href="#the-parameter-object-clipar" id="toc-the-parameter-object-clipar" class="nav-link" data-scroll-target="#the-parameter-object-clipar"><span class="header-section-number">1.6</span> The Parameter Object: <code>clipar()</code></a></li>
+  <li><a href="#plot-composition-and-layer-addition" id="toc-plot-composition-and-layer-addition" class="nav-link" data-scroll-target="#plot-composition-and-layer-addition"><span class="header-section-number">1.7</span> Plot Composition and Layer Addition</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/01-grammar-and-api.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -645,27 +689,89 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
-<section id="the-parameter-object-clipar" class="level2" data-number="1.5">
-<h2 data-number="1.5" class="anchored" data-anchor-id="the-parameter-object-clipar"><span class="header-section-number">1.5</span> The Parameter Object: <code>clipar()</code></h2>
+<section id="nature-aging-pathology-boxplots-type_pathology_boxplot" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="nature-aging-pathology-boxplots-type_pathology_boxplot"><span class="header-section-number">1.5</span> Nature Aging Pathology Boxplots: <code>type_pathology_boxplot()</code></h2>
+<p><code>type_pathology_boxplot()</code> implements the Nature Aging and SciFig boxplot standard established in Yadav et al.&nbsp;2026. Designed for large-cohort clinical and multi-tissue omics contrasts (such as GTEx donors stratified by microscopic pathology findings), it incorporates seven publication elements:</p>
+<ol type="1">
+<li><strong>Category-matched colored outlines</strong>: Box outlines and whiskers match the group palette (<code>#0F4D92</code> vs.&nbsp;<code>#D55E00</code>), while box interiors retain low-alpha fill (<code>alpha = 0.22</code>).</li>
+<li><strong>Bold black median bar</strong>: An explicit <code>#111111</code> horizontal crossbar (<code>linewidth = 0.85</code>) highlights the sample median without obscuring point distributions.</li>
+<li><strong>Paired mean connecting lines</strong>: Dotted trajectories connect group means across conditions within each category, showing effect direction.</li>
+<li><strong>Mean diamond glyphs</strong>: A white-filled diamond marker (<code>shape = 23</code>) displays the arithmetic mean.</li>
+<li><strong>Dashed zero baseline</strong>: A horizontal reference line (<code>y = 0</code>) renders behind all distributions.</li>
+<li><strong>Subsampled jitter</strong>: <code>jitter_subsample</code> downsamples massive background groups (e.g.&nbsp;<span class="math inline">N \approx 20\text{k}</span>) to prevent overplotting while keeping box statistics computed on all observations.</li>
+<li><strong>Mathematical significance brackets</strong>: <code>stat.label = "p.nature"</code> renders two-line significance annotations with exact Unicode scientific exponents (<span class="math inline">***\text{ (P = }1.7 \times 10^{-9}\text{)}</span> or <span class="math inline">\text{n.s. (P = 0.55)}</span>).</li>
+</ol>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate multi-tissue pathology data</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>pathology_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">feature =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Calcification</span><span class="sc">\n</span><span class="st">(n = 225)"</span>, <span class="st">"Fibrosis</span><span class="sc">\n</span><span class="st">(n = 531)"</span>, <span class="st">"Atrophy</span><span class="sc">\n</span><span class="st">(n = 301)"</span>), <span class="at">each =</span> <span class="dv">80</span>)),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">status  =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Absent (~20k)"</span>, <span class="st">"Present"</span>), <span class="at">each =</span> <span class="dv">40</span>, <span class="at">times =</span> <span class="dv">3</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Absent (~20k)"</span>, <span class="st">"Present"</span>)),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">delta   =</span> <span class="fu">c</span>(</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="fl">0.10</span>, <span class="at">sd =</span> <span class="fl">0.07</span>), <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="fl">0.13</span>, <span class="at">sd =</span> <span class="fl">0.08</span>),</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="fl">0.13</span>, <span class="at">sd =</span> <span class="fl">0.08</span>), <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="fl">0.16</span>, <span class="at">sd =</span> <span class="fl">0.09</span>),</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="fl">0.13</span>, <span class="at">sd =</span> <span class="fl">0.08</span>), <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="fl">0.14</span>, <span class="at">sd =</span> <span class="fl">0.14</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>p_pathology <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  delta <span class="sc">~</span> feature <span class="sc">|</span> status,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> pathology_df,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_pathology_boxplot</span>(</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">width            =</span> <span class="fl">0.30</span>,</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">position_dodge   =</span> <span class="fl">0.42</span>,</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha            =</span> <span class="fl">0.22</span>,</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth        =</span> <span class="fl">0.45</span>,</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">jitter_subsample =</span> <span class="dv">40</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">jitter_size      =</span> <span class="fl">0.85</span>,</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">jitter_alpha     =</span> <span class="fl">0.35</span>,</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_size        =</span> <span class="fl">1.8</span>,</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">bold_median_lwd  =</span> <span class="fl">0.85</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette    =</span> <span class="st">"pathology"</span>,</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme      =</span> <span class="st">"pathology"</span>,</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test  =</span> <span class="st">"t.test"</span>,</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.label =</span> <span class="st">"p.nature"</span>,</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.y     =</span> <span class="fu">c</span>(<span class="fl">0.38</span>, <span class="fl">0.42</span>, <span class="fl">0.48</span>),</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Structural Aging Across Microscopic Pathology Findings"</span>,</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Nature Aging boxplot architecture with paired mean trajectory lines"</span>,</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab       =</span> <span class="st">"Microscopic Pathology Finding"</span>,</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab       =</span> <span class="st">"Structural Aging Δ Score"</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>p_pathology</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01-grammar-and-api_files/figure-html/pathology-boxplot-demo-1.png" class="img-fluid figure-img" width="2250"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-parameter-object-clipar" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="the-parameter-object-clipar"><span class="header-section-number">1.6</span> The Parameter Object: <code>clipar()</code></h2>
 <p><code>clipar()</code> sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pars <span class="ot">&lt;-</span> <span class="fu">clipar</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">point_size  =</span> <span class="fl">2.2</span>,</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">line_width  =</span> <span class="fl">0.9</span>,</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha       =</span> <span class="fl">0.75</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">font_size   =</span> <span class="dv">10</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>p_custom <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> df_cohort,</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="st">"beeswarm"</span>,</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">params =</span> pars,</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"science"</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>p_custom</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pars <span class="ot">&lt;-</span> <span class="fu">clipar</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">point_size  =</span> <span class="fl">2.2</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">line_width  =</span> <span class="fl">0.9</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha       =</span> <span class="fl">0.75</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">font_size   =</span> <span class="dv">10</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>p_custom <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> df_cohort,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="st">"beeswarm"</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">params =</span> pars,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"science"</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>p_custom</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -676,17 +782,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="plot-composition-and-layer-addition" class="level2" data-number="1.6">
-<h2 data-number="1.6" class="anchored" data-anchor-id="plot-composition-and-layer-addition"><span class="header-section-number">1.6</span> Plot Composition and Layer Addition</h2>
+<section id="plot-composition-and-layer-addition" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="plot-composition-and-layer-addition"><span class="header-section-number">1.7</span> Plot Composition and Layer Addition</h2>
 <p><code>cliplot()</code> objects are <code>ggplot2</code> instances. You can extend them using the standard <code>+</code> operator or the <code>cliplot_add()</code> helper:</p>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>p_final <span class="ot">&lt;-</span> p_box <span class="sc">+</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">10</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#B22222"</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">1.2</span>, <span class="at">y =</span> <span class="fl">10.8</span>, <span class="at">label =</span> <span class="st">"Diagnostic Threshold (10 pg/mL)"</span>,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">size =</span> <span class="fl">2.8</span>, <span class="at">color =</span> <span class="st">"#B22222"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>p_final</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>p_final <span class="ot">&lt;-</span> p_box <span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">10</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#B22222"</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">1.2</span>, <span class="at">y =</span> <span class="fl">10.8</span>, <span class="at">label =</span> <span class="st">"Diagnostic Threshold (10 pg/mL)"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">size =</span> <span class="fl">2.8</span>, <span class="at">color =</span> <span class="st">"#B22222"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>p_final</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1173,233 +1279,285 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Graphic Grammar and Core API</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="in">`cliplot()`</span> provides a single entry point for generating biomedical visualizations through a formula syntax. This chapter details the formula grammar, the parameter system (<span class="in">`clipar`</span>), and the type dispatch architecture.</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Formula Syntax</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="in">`cliplot()`</span> accepts standard R formulas mapping variables to visual roles:</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`y ~ x`</span>: Bivariate plots (boxplots, scatter plots, violin plots, ROC curves).</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`y ~ x | facet`</span>: Conditioned plots faceted across biological subgroups or clinical trial cohorts.</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`Surv(time, event) ~ arm`</span>: Time-to-event outcomes with survival curves, risk tables, and hazard ratios.</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`~ x`</span>: Univariate distributions (histograms, density estimates, rank-abundance curves).</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co"># General syntax</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> Value <span class="sc">~</span> Biomarker,</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> clinical_data,</span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">type    =</span> <span class="st">"boxplot"</span>,</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset  =</span> <span class="st">"nature"</span></span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## Function Dispatch and Plot Types</span></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>The <span class="in">`type`</span> argument selects the geometry and statistical layer. It accepts either character aliases or typed constructor functions:</span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="in">```{r grammar-demo}</span></span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate reproducible clinical cohort</span></span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>df_cohort <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">Biomarker  =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Mild_AD"</span>, <span class="st">"Severe_AD"</span>), <span class="at">each =</span> <span class="dv">40</span>),</span>
-<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>                      <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Mild_AD"</span>, <span class="st">"Severe_AD"</span>)),</span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">Treatment  =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Placebo"</span>, <span class="st">"Biologic"</span>), <span class="at">each =</span> <span class="dv">20</span>), <span class="dv">3</span>),</span>
-<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>                      <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Placebo"</span>, <span class="st">"Biologic"</span>)),</span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">Age_Group  =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Pediatric"</span>, <span class="st">"Adult"</span>), <span class="dv">60</span>)),</span>
-<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">IL13_pg_ml =</span> <span class="fu">c</span>(</span>
-<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="fl">5.2</span>, <span class="fl">0.9</span>), <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="fl">3.8</span>, <span class="fl">0.8</span>),</span>
-<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="fl">10.5</span>, <span class="fl">1.4</span>), <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="fl">7.2</span>, <span class="fl">1.2</span>),</span>
-<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="fl">18.2</span>, <span class="fl">2.1</span>), <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="fl">11.5</span>, <span class="fl">1.8</span>)</span>
-<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Direct character specification</span></span>
-<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>p_box <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
-<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> df_cohort,</span>
-<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="st">"boxplot"</span>,</span>
-<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
-<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Serum IL-13 by Clinical Severity"</span></span>
-<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>p_box</span>
-<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a><span class="fu">### Typed Constructor Functions</span></span>
-<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a>Constructor functions configure geometry-specific options with autocomplete support:</span>
-<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a><span class="in">```{r constructor-demo}</span></span>
-<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a>p_viol <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
-<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">data  =</span> df_cohort,</span>
-<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">type  =</span> <span class="fu">type_violin</span>(<span class="at">inner =</span> <span class="st">"boxplot"</span>, <span class="at">trim =</span> <span class="cn">FALSE</span>),</span>
-<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="st">"lancet"</span></span>
-<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a>p_viol</span>
-<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a><span class="fu">## The 4-Step Progressive Pipeline: Basic, Color, Template, and Statistics</span></span>
-<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a>Scientific figures in <span class="in">`cliomicplot`</span> are constructed through a four-step layered workflow: geometry baseline, palette coloring, journal templating, and statistical testing with comparison bars.</span>
-<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 1: The Basic Geometry</span></span>
-<span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-78"><a href="#cb12-78" aria-hidden="true" tabindex="-1"></a>A single formula call renders the unadorned baseline geometry using default styling:</span>
-<span id="cb12-79"><a href="#cb12-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a><span class="in">```{r step1-basic-demo, fig.width=6.0, fig.height=4.2}</span></span>
-<span id="cb12-81"><a href="#cb12-81" aria-hidden="true" tabindex="-1"></a>p_step1 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb12-82"><a href="#cb12-82" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
-<span id="cb12-83"><a href="#cb12-83" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df_cohort,</span>
-<span id="cb12-84"><a href="#cb12-84" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"violin"</span></span>
-<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-86"><a href="#cb12-86" aria-hidden="true" tabindex="-1"></a>p_step1</span>
-<span id="cb12-87"><a href="#cb12-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-88"><a href="#cb12-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 2: Add Curated Scientific Color</span></span>
-<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a>Applying a publication palette (<span class="in">`palette = "nature"`</span>) assigns coordinated categorical hues across experimental cohorts:</span>
-<span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{r step2-color-demo, fig.width=6.0, fig.height=4.2}</span></span>
-<span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a>p_step2 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
-<span id="cb12-96"><a href="#cb12-96" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> df_cohort,</span>
-<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a>  <span class="at">type    =</span> <span class="st">"violin"</span>,</span>
-<span id="cb12-98"><a href="#cb12-98" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="st">"nature"</span></span>
-<span id="cb12-99"><a href="#cb12-99" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-100"><a href="#cb12-100" aria-hidden="true" tabindex="-1"></a>p_step2</span>
-<span id="cb12-101"><a href="#cb12-101" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-102"><a href="#cb12-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-103"><a href="#cb12-103" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 3: Add Journal Template and Typography</span></span>
-<span id="cb12-104"><a href="#cb12-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-105"><a href="#cb12-105" aria-hidden="true" tabindex="-1"></a>Applying a journal template (<span class="in">`theme = "nature"`</span>) configures open axes, tick direction, typography, panel titles, and axis labels:</span>
-<span id="cb12-106"><a href="#cb12-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-107"><a href="#cb12-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{r step3-template-demo, fig.width=6.8, fig.height=4.6}</span></span>
-<span id="cb12-108"><a href="#cb12-108" aria-hidden="true" tabindex="-1"></a>p_step3 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb12-109"><a href="#cb12-109" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
-<span id="cb12-110"><a href="#cb12-110" aria-hidden="true" tabindex="-1"></a>  <span class="at">data     =</span> df_cohort,</span>
-<span id="cb12-111"><a href="#cb12-111" aria-hidden="true" tabindex="-1"></a>  <span class="at">type     =</span> <span class="fu">type_violin</span>(<span class="at">inner =</span> <span class="st">"quartiles"</span>, <span class="at">quantiles =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>)),</span>
-<span id="cb12-112"><a href="#cb12-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette  =</span> <span class="st">"nature"</span>,</span>
-<span id="cb12-113"><a href="#cb12-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme    =</span> <span class="st">"nature"</span>,</span>
-<span id="cb12-114"><a href="#cb12-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Serum IL-13 by Clinical Severity Tier"</span>,</span>
-<span id="cb12-115"><a href="#cb12-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Nature template with interior quartile contours (25%, median, 75%)"</span>,</span>
-<span id="cb12-116"><a href="#cb12-116" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="st">"Serum IL-13 (pg/mL)"</span>,</span>
-<span id="cb12-117"><a href="#cb12-117" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Biomarker Severity Tier"</span></span>
-<span id="cb12-118"><a href="#cb12-118" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-119"><a href="#cb12-119" aria-hidden="true" tabindex="-1"></a>p_step3</span>
-<span id="cb12-120"><a href="#cb12-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-121"><a href="#cb12-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-122"><a href="#cb12-122" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 4: Add Statistical Hypothesis Testing with Comparison Bars</span></span>
-<span id="cb12-123"><a href="#cb12-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-124"><a href="#cb12-124" aria-hidden="true" tabindex="-1"></a>Setting <span class="in">`stat.test = "wilcox.test"`</span> calculates non-parametric rank-sum statistics and draws comparison bracket bars across cohorts:</span>
-<span id="cb12-125"><a href="#cb12-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-126"><a href="#cb12-126" aria-hidden="true" tabindex="-1"></a><span class="in">```{r step4-stats-demo, fig.width=7.2, fig.height=5.2}</span></span>
-<span id="cb12-127"><a href="#cb12-127" aria-hidden="true" tabindex="-1"></a>p_step4 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb12-128"><a href="#cb12-128" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
-<span id="cb12-129"><a href="#cb12-129" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_cohort,</span>
-<span id="cb12-130"><a href="#cb12-130" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_violin</span>(<span class="at">inner =</span> <span class="st">"boxplot"</span>, <span class="at">add_jitter =</span> <span class="cn">TRUE</span>, <span class="at">jitter_alpha =</span> <span class="fl">0.35</span>),</span>
-<span id="cb12-131"><a href="#cb12-131" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="st">"nature"</span>,</span>
-<span id="cb12-132"><a href="#cb12-132" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"nature"</span>,</span>
-<span id="cb12-133"><a href="#cb12-133" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"wilcox.test"</span>,</span>
-<span id="cb12-134"><a href="#cb12-134" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Serum IL-13 Across Clinical Severity Stages"</span>,</span>
-<span id="cb12-135"><a href="#cb12-135" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle  =</span> <span class="st">"Pairwise Wilcoxon rank-sum test with comparison bracket bars"</span>,</span>
-<span id="cb12-136"><a href="#cb12-136" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Serum IL-13 (pg/mL)"</span>,</span>
-<span id="cb12-137"><a href="#cb12-137" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab      =</span> <span class="st">"Biomarker Severity Tier"</span></span>
-<span id="cb12-138"><a href="#cb12-138" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-139"><a href="#cb12-139" aria-hidden="true" tabindex="-1"></a>p_step4</span>
-<span id="cb12-140"><a href="#cb12-140" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-141"><a href="#cb12-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-142"><a href="#cb12-142" aria-hidden="true" tabindex="-1"></a><span class="fu">## Advanced Distribution Architectures: Split Violins and Rainclouds</span></span>
-<span id="cb12-143"><a href="#cb12-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-144"><a href="#cb12-144" aria-hidden="true" tabindex="-1"></a><span class="in">`cliomicplot`</span> provides specialized distribution types for multi-arm clinical trials and single-cell cohorts.</span>
-<span id="cb12-145"><a href="#cb12-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-146"><a href="#cb12-146" aria-hidden="true" tabindex="-1"></a><span class="fu">### Dual-Condition Contrast: `type_split_violin()`</span></span>
-<span id="cb12-147"><a href="#cb12-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-148"><a href="#cb12-148" aria-hidden="true" tabindex="-1"></a>When comparing two treatment arms (Placebo vs. Biologic) across multiple severity tiers, <span class="in">`type_split_violin()`</span> renders both distributions back-to-back along a shared category spine. Each condition is highlighted by group color, with inner boxplots dodged inside each split half. Adding <span class="in">`stat.test = "t.test"`</span> performs within-tier comparisons with horizontal bracket bars:</span>
-<span id="cb12-149"><a href="#cb12-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-150"><a href="#cb12-150" aria-hidden="true" tabindex="-1"></a><span class="in">```{r split-violin-demo, fig.width=8.0, fig.height=5.2}</span></span>
-<span id="cb12-151"><a href="#cb12-151" aria-hidden="true" tabindex="-1"></a>p_split <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb12-152"><a href="#cb12-152" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker <span class="sc">|</span> Treatment,</span>
-<span id="cb12-153"><a href="#cb12-153" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_cohort,</span>
-<span id="cb12-154"><a href="#cb12-154" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_split_violin</span>(</span>
-<span id="cb12-155"><a href="#cb12-155" aria-hidden="true" tabindex="-1"></a>    <span class="at">inner     =</span> <span class="st">"boxplot"</span>,</span>
-<span id="cb12-156"><a href="#cb12-156" aria-hidden="true" tabindex="-1"></a>    <span class="at">scale     =</span> <span class="st">"width"</span></span>
-<span id="cb12-157"><a href="#cb12-157" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb12-158"><a href="#cb12-158" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="st">"jco"</span>,</span>
-<span id="cb12-159"><a href="#cb12-159" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"scifig"</span>,</span>
-<span id="cb12-160"><a href="#cb12-160" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"t.test"</span>,</span>
-<span id="cb12-161"><a href="#cb12-161" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"IL-13 Modulation Under Biologic vs. Placebo Across Severity Tiers"</span>,</span>
-<span id="cb12-162"><a href="#cb12-162" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle  =</span> <span class="st">"Split-half comparison with within-tier two-sample t-test"</span>,</span>
-<span id="cb12-163"><a href="#cb12-163" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Serum IL-13 (pg/mL)"</span>,</span>
-<span id="cb12-164"><a href="#cb12-164" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab      =</span> <span class="st">"Biomarker Severity Tier"</span></span>
-<span id="cb12-165"><a href="#cb12-165" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-166"><a href="#cb12-166" aria-hidden="true" tabindex="-1"></a>p_split</span>
-<span id="cb12-167"><a href="#cb12-167" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-168"><a href="#cb12-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-169"><a href="#cb12-169" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mean Diamond Glyphs with Standard Error: `inner = "mean_se"`</span></span>
-<span id="cb12-170"><a href="#cb12-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-171"><a href="#cb12-171" aria-hidden="true" tabindex="-1"></a>Setting <span class="in">`inner = "mean_se"`</span> replaces median boxplots with an arithmetic mean diamond and standard error errorbars:</span>
-<span id="cb12-172"><a href="#cb12-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-173"><a href="#cb12-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{r violin-mean-stat-demo, fig.width=6.0, fig.height=4.8}</span></span>
-<span id="cb12-174"><a href="#cb12-174" aria-hidden="true" tabindex="-1"></a>p_mean_stat <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb12-175"><a href="#cb12-175" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Treatment,</span>
-<span id="cb12-176"><a href="#cb12-176" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_cohort,</span>
-<span id="cb12-177"><a href="#cb12-177" aria-hidden="true" tabindex="-1"></a>  <span class="at">by        =</span> <span class="st">"Treatment"</span>,</span>
-<span id="cb12-178"><a href="#cb12-178" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_violin</span>(</span>
-<span id="cb12-179"><a href="#cb12-179" aria-hidden="true" tabindex="-1"></a>    <span class="at">inner        =</span> <span class="st">"mean_se"</span>,</span>
-<span id="cb12-180"><a href="#cb12-180" aria-hidden="true" tabindex="-1"></a>    <span class="at">add_jitter   =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb12-181"><a href="#cb12-181" aria-hidden="true" tabindex="-1"></a>    <span class="at">jitter_width =</span> <span class="fl">0.12</span>,</span>
-<span id="cb12-182"><a href="#cb12-182" aria-hidden="true" tabindex="-1"></a>    <span class="at">jitter_alpha =</span> <span class="fl">0.40</span>,</span>
-<span id="cb12-183"><a href="#cb12-183" aria-hidden="true" tabindex="-1"></a>    <span class="at">jitter_size  =</span> <span class="fl">1.6</span></span>
-<span id="cb12-184"><a href="#cb12-184" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb12-185"><a href="#cb12-185" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="st">"cell"</span>,</span>
-<span id="cb12-186"><a href="#cb12-186" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend    =</span> <span class="st">"none"</span>,</span>
-<span id="cb12-187"><a href="#cb12-187" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"wilcox.test"</span>,</span>
-<span id="cb12-188"><a href="#cb12-188" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Biologic Efficacy on Circulating IL-13"</span>,</span>
-<span id="cb12-189"><a href="#cb12-189" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle  =</span> <span class="st">"Violin density with raw observations, mean ± SEM diamond, and Wilcoxon test"</span>,</span>
-<span id="cb12-190"><a href="#cb12-190" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Serum IL-13 (pg/mL)"</span></span>
-<span id="cb12-191"><a href="#cb12-191" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-192"><a href="#cb12-192" aria-hidden="true" tabindex="-1"></a>p_mean_stat</span>
-<span id="cb12-193"><a href="#cb12-193" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-194"><a href="#cb12-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-195"><a href="#cb12-195" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Parameter Object: `clipar()`</span></span>
-<span id="cb12-196"><a href="#cb12-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-197"><a href="#cb12-197" aria-hidden="true" tabindex="-1"></a><span class="in">`clipar()`</span> sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:</span>
-<span id="cb12-198"><a href="#cb12-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-199"><a href="#cb12-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{r clipar-demo}</span></span>
-<span id="cb12-200"><a href="#cb12-200" aria-hidden="true" tabindex="-1"></a>pars <span class="ot">&lt;-</span> <span class="fu">clipar</span>(</span>
-<span id="cb12-201"><a href="#cb12-201" aria-hidden="true" tabindex="-1"></a>  <span class="at">point_size  =</span> <span class="fl">2.2</span>,</span>
-<span id="cb12-202"><a href="#cb12-202" aria-hidden="true" tabindex="-1"></a>  <span class="at">line_width  =</span> <span class="fl">0.9</span>,</span>
-<span id="cb12-203"><a href="#cb12-203" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha       =</span> <span class="fl">0.75</span>,</span>
-<span id="cb12-204"><a href="#cb12-204" aria-hidden="true" tabindex="-1"></a>  <span class="at">font_size   =</span> <span class="dv">10</span></span>
-<span id="cb12-205"><a href="#cb12-205" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-206"><a href="#cb12-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-207"><a href="#cb12-207" aria-hidden="true" tabindex="-1"></a>p_custom <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb12-208"><a href="#cb12-208" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
-<span id="cb12-209"><a href="#cb12-209" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> df_cohort,</span>
-<span id="cb12-210"><a href="#cb12-210" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="st">"beeswarm"</span>,</span>
-<span id="cb12-211"><a href="#cb12-211" aria-hidden="true" tabindex="-1"></a>  <span class="at">params =</span> pars,</span>
-<span id="cb12-212"><a href="#cb12-212" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"science"</span></span>
-<span id="cb12-213"><a href="#cb12-213" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb12-214"><a href="#cb12-214" aria-hidden="true" tabindex="-1"></a>p_custom</span>
-<span id="cb12-215"><a href="#cb12-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb12-216"><a href="#cb12-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-217"><a href="#cb12-217" aria-hidden="true" tabindex="-1"></a><span class="fu">## Plot Composition and Layer Addition</span></span>
-<span id="cb12-218"><a href="#cb12-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-219"><a href="#cb12-219" aria-hidden="true" tabindex="-1"></a><span class="in">`cliplot()`</span> objects are <span class="in">`ggplot2`</span> instances. You can extend them using the standard <span class="in">`+`</span> operator or the <span class="in">`cliplot_add()`</span> helper:</span>
-<span id="cb12-220"><a href="#cb12-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-221"><a href="#cb12-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{r add-layers}</span></span>
-<span id="cb12-222"><a href="#cb12-222" aria-hidden="true" tabindex="-1"></a>p_final <span class="ot">&lt;-</span> p_box <span class="sc">+</span></span>
-<span id="cb12-223"><a href="#cb12-223" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">10</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#B22222"</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb12-224"><a href="#cb12-224" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">1.2</span>, <span class="at">y =</span> <span class="fl">10.8</span>, <span class="at">label =</span> <span class="st">"Diagnostic Threshold (10 pg/mL)"</span>,</span>
-<span id="cb12-225"><a href="#cb12-225" aria-hidden="true" tabindex="-1"></a>           <span class="at">size =</span> <span class="fl">2.8</span>, <span class="at">color =</span> <span class="st">"#B22222"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>)</span>
-<span id="cb12-226"><a href="#cb12-226" aria-hidden="true" tabindex="-1"></a>p_final</span>
-<span id="cb12-227"><a href="#cb12-227" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Graphic Grammar and Core API</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="in">`cliplot()`</span> provides a single entry point for generating biomedical visualizations through a formula syntax. This chapter details the formula grammar, the parameter system (<span class="in">`clipar`</span>), and the type dispatch architecture.</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Formula Syntax</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="in">`cliplot()`</span> accepts standard R formulas mapping variables to visual roles:</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`y ~ x`</span>: Bivariate plots (boxplots, scatter plots, violin plots, ROC curves).</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`y ~ x | facet`</span>: Conditioned plots faceted across biological subgroups or clinical trial cohorts.</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`Surv(time, event) ~ arm`</span>: Time-to-event outcomes with survival curves, risk tables, and hazard ratios.</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`~ x`</span>: Univariate distributions (histograms, density estimates, rank-abundance curves).</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co"># General syntax</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">formula =</span> Value <span class="sc">~</span> Biomarker,</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> clinical_data,</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">type    =</span> <span class="st">"boxplot"</span>,</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset  =</span> <span class="st">"nature"</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## Function Dispatch and Plot Types</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>The <span class="in">`type`</span> argument selects the geometry and statistical layer. It accepts either character aliases or typed constructor functions:</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="in">```{r grammar-demo}</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate reproducible clinical cohort</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>df_cohort <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">Biomarker  =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Mild_AD"</span>, <span class="st">"Severe_AD"</span>), <span class="at">each =</span> <span class="dv">40</span>),</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>                      <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Mild_AD"</span>, <span class="st">"Severe_AD"</span>)),</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">Treatment  =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Placebo"</span>, <span class="st">"Biologic"</span>), <span class="at">each =</span> <span class="dv">20</span>), <span class="dv">3</span>),</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>                      <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Placebo"</span>, <span class="st">"Biologic"</span>)),</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">Age_Group  =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Pediatric"</span>, <span class="st">"Adult"</span>), <span class="dv">60</span>)),</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">IL13_pg_ml =</span> <span class="fu">c</span>(</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="fl">5.2</span>, <span class="fl">0.9</span>), <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="fl">3.8</span>, <span class="fl">0.8</span>),</span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="fl">10.5</span>, <span class="fl">1.4</span>), <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="fl">7.2</span>, <span class="fl">1.2</span>),</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="fl">18.2</span>, <span class="fl">2.1</span>), <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="fl">11.5</span>, <span class="fl">1.8</span>)</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Direct character specification</span></span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>p_box <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> df_cohort,</span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="st">"boxplot"</span>,</span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"nature"</span>,</span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">title  =</span> <span class="st">"Serum IL-13 by Clinical Severity"</span></span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>p_box</span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a><span class="fu">### Typed Constructor Functions</span></span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>Constructor functions configure geometry-specific options with autocomplete support:</span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a><span class="in">```{r constructor-demo}</span></span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>p_viol <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">data  =</span> df_cohort,</span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">type  =</span> <span class="fu">type_violin</span>(<span class="at">inner =</span> <span class="st">"boxplot"</span>, <span class="at">trim =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme =</span> <span class="st">"lancet"</span></span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a>p_viol</span>
+<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a><span class="fu">## The 4-Step Progressive Pipeline: Basic, Color, Template, and Statistics</span></span>
+<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a>Scientific figures in <span class="in">`cliomicplot`</span> are constructed through a four-step layered workflow: geometry baseline, palette coloring, journal templating, and statistical testing with comparison bars.</span>
+<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 1: The Basic Geometry</span></span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a>A single formula call renders the unadorned baseline geometry using default styling:</span>
+<span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a><span class="in">```{r step1-basic-demo, fig.width=6.0, fig.height=4.2}</span></span>
+<span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a>p_step1 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
+<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df_cohort,</span>
+<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"violin"</span></span>
+<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a>p_step1</span>
+<span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-89"><a href="#cb13-89" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 2: Add Curated Scientific Color</span></span>
+<span id="cb13-90"><a href="#cb13-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-91"><a href="#cb13-91" aria-hidden="true" tabindex="-1"></a>Applying a publication palette (<span class="in">`palette = "nature"`</span>) assigns coordinated categorical hues across experimental cohorts:</span>
+<span id="cb13-92"><a href="#cb13-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-93"><a href="#cb13-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{r step2-color-demo, fig.width=6.0, fig.height=4.2}</span></span>
+<span id="cb13-94"><a href="#cb13-94" aria-hidden="true" tabindex="-1"></a>p_step2 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
+<span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a>  <span class="at">data    =</span> df_cohort,</span>
+<span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a>  <span class="at">type    =</span> <span class="st">"violin"</span>,</span>
+<span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette =</span> <span class="st">"nature"</span></span>
+<span id="cb13-99"><a href="#cb13-99" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-100"><a href="#cb13-100" aria-hidden="true" tabindex="-1"></a>p_step2</span>
+<span id="cb13-101"><a href="#cb13-101" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-102"><a href="#cb13-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-103"><a href="#cb13-103" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 3: Add Journal Template and Typography</span></span>
+<span id="cb13-104"><a href="#cb13-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-105"><a href="#cb13-105" aria-hidden="true" tabindex="-1"></a>Applying a journal template (<span class="in">`theme = "nature"`</span>) configures open axes, tick direction, typography, panel titles, and axis labels:</span>
+<span id="cb13-106"><a href="#cb13-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{r step3-template-demo, fig.width=6.8, fig.height=4.6}</span></span>
+<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a>p_step3 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
+<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a>  <span class="at">data     =</span> df_cohort,</span>
+<span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a>  <span class="at">type     =</span> <span class="fu">type_violin</span>(<span class="at">inner =</span> <span class="st">"quartiles"</span>, <span class="at">quantiles =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>)),</span>
+<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette  =</span> <span class="st">"nature"</span>,</span>
+<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme    =</span> <span class="st">"nature"</span>,</span>
+<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Serum IL-13 by Clinical Severity Tier"</span>,</span>
+<span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Nature template with interior quartile contours (25%, median, 75%)"</span>,</span>
+<span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="st">"Serum IL-13 (pg/mL)"</span>,</span>
+<span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Biomarker Severity Tier"</span></span>
+<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-119"><a href="#cb13-119" aria-hidden="true" tabindex="-1"></a>p_step3</span>
+<span id="cb13-120"><a href="#cb13-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-121"><a href="#cb13-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-122"><a href="#cb13-122" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 4: Add Statistical Hypothesis Testing with Comparison Bars</span></span>
+<span id="cb13-123"><a href="#cb13-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a>Setting <span class="in">`stat.test = "wilcox.test"`</span> calculates non-parametric rank-sum statistics and draws comparison bracket bars across cohorts:</span>
+<span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-126"><a href="#cb13-126" aria-hidden="true" tabindex="-1"></a><span class="in">```{r step4-stats-demo, fig.width=7.2, fig.height=5.2}</span></span>
+<span id="cb13-127"><a href="#cb13-127" aria-hidden="true" tabindex="-1"></a>p_step4 <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb13-128"><a href="#cb13-128" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
+<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_cohort,</span>
+<span id="cb13-130"><a href="#cb13-130" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_violin</span>(<span class="at">inner =</span> <span class="st">"boxplot"</span>, <span class="at">add_jitter =</span> <span class="cn">TRUE</span>, <span class="at">jitter_alpha =</span> <span class="fl">0.35</span>),</span>
+<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="st">"nature"</span>,</span>
+<span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"nature"</span>,</span>
+<span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"wilcox.test"</span>,</span>
+<span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Serum IL-13 Across Clinical Severity Stages"</span>,</span>
+<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle  =</span> <span class="st">"Pairwise Wilcoxon rank-sum test with comparison bracket bars"</span>,</span>
+<span id="cb13-136"><a href="#cb13-136" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Serum IL-13 (pg/mL)"</span>,</span>
+<span id="cb13-137"><a href="#cb13-137" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab      =</span> <span class="st">"Biomarker Severity Tier"</span></span>
+<span id="cb13-138"><a href="#cb13-138" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-139"><a href="#cb13-139" aria-hidden="true" tabindex="-1"></a>p_step4</span>
+<span id="cb13-140"><a href="#cb13-140" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-141"><a href="#cb13-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-142"><a href="#cb13-142" aria-hidden="true" tabindex="-1"></a><span class="fu">## Advanced Distribution Architectures: Split Violins and Rainclouds</span></span>
+<span id="cb13-143"><a href="#cb13-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-144"><a href="#cb13-144" aria-hidden="true" tabindex="-1"></a><span class="in">`cliomicplot`</span> provides specialized distribution types for multi-arm clinical trials and single-cell cohorts.</span>
+<span id="cb13-145"><a href="#cb13-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-146"><a href="#cb13-146" aria-hidden="true" tabindex="-1"></a><span class="fu">### Dual-Condition Contrast: `type_split_violin()`</span></span>
+<span id="cb13-147"><a href="#cb13-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-148"><a href="#cb13-148" aria-hidden="true" tabindex="-1"></a>When comparing two treatment arms (Placebo vs. Biologic) across multiple severity tiers, <span class="in">`type_split_violin()`</span> renders both distributions back-to-back along a shared category spine. Each condition is highlighted by group color, with inner boxplots dodged inside each split half. Adding <span class="in">`stat.test = "t.test"`</span> performs within-tier comparisons with horizontal bracket bars:</span>
+<span id="cb13-149"><a href="#cb13-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-150"><a href="#cb13-150" aria-hidden="true" tabindex="-1"></a><span class="in">```{r split-violin-demo, fig.width=8.0, fig.height=5.2}</span></span>
+<span id="cb13-151"><a href="#cb13-151" aria-hidden="true" tabindex="-1"></a>p_split <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb13-152"><a href="#cb13-152" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker <span class="sc">|</span> Treatment,</span>
+<span id="cb13-153"><a href="#cb13-153" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_cohort,</span>
+<span id="cb13-154"><a href="#cb13-154" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_split_violin</span>(</span>
+<span id="cb13-155"><a href="#cb13-155" aria-hidden="true" tabindex="-1"></a>    <span class="at">inner     =</span> <span class="st">"boxplot"</span>,</span>
+<span id="cb13-156"><a href="#cb13-156" aria-hidden="true" tabindex="-1"></a>    <span class="at">scale     =</span> <span class="st">"width"</span></span>
+<span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="st">"jco"</span>,</span>
+<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme     =</span> <span class="st">"scifig"</span>,</span>
+<span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"t.test"</span>,</span>
+<span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"IL-13 Modulation Under Biologic vs. Placebo Across Severity Tiers"</span>,</span>
+<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle  =</span> <span class="st">"Split-half comparison with within-tier two-sample t-test"</span>,</span>
+<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Serum IL-13 (pg/mL)"</span>,</span>
+<span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab      =</span> <span class="st">"Biomarker Severity Tier"</span></span>
+<span id="cb13-165"><a href="#cb13-165" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-166"><a href="#cb13-166" aria-hidden="true" tabindex="-1"></a>p_split</span>
+<span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mean Diamond Glyphs with Standard Error: `inner = "mean_se"`</span></span>
+<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-171"><a href="#cb13-171" aria-hidden="true" tabindex="-1"></a>Setting <span class="in">`inner = "mean_se"`</span> replaces median boxplots with an arithmetic mean diamond and standard error errorbars:</span>
+<span id="cb13-172"><a href="#cb13-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-173"><a href="#cb13-173" aria-hidden="true" tabindex="-1"></a><span class="in">```{r violin-mean-stat-demo, fig.width=6.0, fig.height=4.8}</span></span>
+<span id="cb13-174"><a href="#cb13-174" aria-hidden="true" tabindex="-1"></a>p_mean_stat <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb13-175"><a href="#cb13-175" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Treatment,</span>
+<span id="cb13-176"><a href="#cb13-176" aria-hidden="true" tabindex="-1"></a>  <span class="at">data      =</span> df_cohort,</span>
+<span id="cb13-177"><a href="#cb13-177" aria-hidden="true" tabindex="-1"></a>  <span class="at">by        =</span> <span class="st">"Treatment"</span>,</span>
+<span id="cb13-178"><a href="#cb13-178" aria-hidden="true" tabindex="-1"></a>  <span class="at">type      =</span> <span class="fu">type_violin</span>(</span>
+<span id="cb13-179"><a href="#cb13-179" aria-hidden="true" tabindex="-1"></a>    <span class="at">inner        =</span> <span class="st">"mean_se"</span>,</span>
+<span id="cb13-180"><a href="#cb13-180" aria-hidden="true" tabindex="-1"></a>    <span class="at">add_jitter   =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-181"><a href="#cb13-181" aria-hidden="true" tabindex="-1"></a>    <span class="at">jitter_width =</span> <span class="fl">0.12</span>,</span>
+<span id="cb13-182"><a href="#cb13-182" aria-hidden="true" tabindex="-1"></a>    <span class="at">jitter_alpha =</span> <span class="fl">0.40</span>,</span>
+<span id="cb13-183"><a href="#cb13-183" aria-hidden="true" tabindex="-1"></a>    <span class="at">jitter_size  =</span> <span class="fl">1.6</span></span>
+<span id="cb13-184"><a href="#cb13-184" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb13-185"><a href="#cb13-185" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette   =</span> <span class="st">"cell"</span>,</span>
+<span id="cb13-186"><a href="#cb13-186" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend    =</span> <span class="st">"none"</span>,</span>
+<span id="cb13-187"><a href="#cb13-187" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test =</span> <span class="st">"wilcox.test"</span>,</span>
+<span id="cb13-188"><a href="#cb13-188" aria-hidden="true" tabindex="-1"></a>  <span class="at">title     =</span> <span class="st">"Biologic Efficacy on Circulating IL-13"</span>,</span>
+<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle  =</span> <span class="st">"Violin density with raw observations, mean ± SEM diamond, and Wilcoxon test"</span>,</span>
+<span id="cb13-190"><a href="#cb13-190" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab      =</span> <span class="st">"Serum IL-13 (pg/mL)"</span></span>
+<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-192"><a href="#cb13-192" aria-hidden="true" tabindex="-1"></a>p_mean_stat</span>
+<span id="cb13-193"><a href="#cb13-193" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a><span class="fu">## Nature Aging Pathology Boxplots: `type_pathology_boxplot()`</span></span>
+<span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-197"><a href="#cb13-197" aria-hidden="true" tabindex="-1"></a><span class="in">`type_pathology_boxplot()`</span> implements the Nature Aging and SciFig boxplot standard established in Yadav et al. 2026. Designed for large-cohort clinical and multi-tissue omics contrasts (such as GTEx donors stratified by microscopic pathology findings), it incorporates seven publication elements:</span>
+<span id="cb13-198"><a href="#cb13-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-199"><a href="#cb13-199" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Category-matched colored outlines**: Box outlines and whiskers match the group palette (<span class="in">`#0F4D92`</span> vs. <span class="in">`#D55E00`</span>), while box interiors retain low-alpha fill (<span class="in">`alpha = 0.22`</span>).</span>
+<span id="cb13-200"><a href="#cb13-200" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Bold black median bar**: An explicit <span class="in">`#111111`</span> horizontal crossbar (<span class="in">`linewidth = 0.85`</span>) highlights the sample median without obscuring point distributions.</span>
+<span id="cb13-201"><a href="#cb13-201" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Paired mean connecting lines**: Dotted trajectories connect group means across conditions within each category, showing effect direction.</span>
+<span id="cb13-202"><a href="#cb13-202" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Mean diamond glyphs**: A white-filled diamond marker (<span class="in">`shape = 23`</span>) displays the arithmetic mean.</span>
+<span id="cb13-203"><a href="#cb13-203" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Dashed zero baseline**: A horizontal reference line (<span class="in">`y = 0`</span>) renders behind all distributions.</span>
+<span id="cb13-204"><a href="#cb13-204" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Subsampled jitter**: <span class="in">`jitter_subsample`</span> downsamples massive background groups (e.g. $N \approx 20\text{k}$) to prevent overplotting while keeping box statistics computed on all observations.</span>
+<span id="cb13-205"><a href="#cb13-205" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>**Mathematical significance brackets**: `stat.label = "p.nature"` renders two-line significance annotations with exact Unicode scientific exponents ($***\text{ (P = }1.7 \times 10^{-9}\text{)}$ or $\text{n.s. (P = 0.55)}$).</span>
+<span id="cb13-206"><a href="#cb13-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-207"><a href="#cb13-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{r pathology-boxplot-demo, fig.width=7.5, fig.height=5.2}</span></span>
+<span id="cb13-208"><a href="#cb13-208" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate multi-tissue pathology data</span></span>
+<span id="cb13-209"><a href="#cb13-209" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb13-210"><a href="#cb13-210" aria-hidden="true" tabindex="-1"></a>pathology_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb13-211"><a href="#cb13-211" aria-hidden="true" tabindex="-1"></a>  <span class="at">feature =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Calcification</span><span class="sc">\n</span><span class="st">(n = 225)"</span>, <span class="st">"Fibrosis</span><span class="sc">\n</span><span class="st">(n = 531)"</span>, <span class="st">"Atrophy</span><span class="sc">\n</span><span class="st">(n = 301)"</span>), <span class="at">each =</span> <span class="dv">80</span>)),</span>
+<span id="cb13-212"><a href="#cb13-212" aria-hidden="true" tabindex="-1"></a>  <span class="at">status  =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Absent (~20k)"</span>, <span class="st">"Present"</span>), <span class="at">each =</span> <span class="dv">40</span>, <span class="at">times =</span> <span class="dv">3</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Absent (~20k)"</span>, <span class="st">"Present"</span>)),</span>
+<span id="cb13-213"><a href="#cb13-213" aria-hidden="true" tabindex="-1"></a>  <span class="at">delta   =</span> <span class="fu">c</span>(</span>
+<span id="cb13-214"><a href="#cb13-214" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="fl">0.10</span>, <span class="at">sd =</span> <span class="fl">0.07</span>), <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="fl">0.13</span>, <span class="at">sd =</span> <span class="fl">0.08</span>),</span>
+<span id="cb13-215"><a href="#cb13-215" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="fl">0.13</span>, <span class="at">sd =</span> <span class="fl">0.08</span>), <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="fl">0.16</span>, <span class="at">sd =</span> <span class="fl">0.09</span>),</span>
+<span id="cb13-216"><a href="#cb13-216" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="fl">0.13</span>, <span class="at">sd =</span> <span class="fl">0.08</span>), <span class="fu">rnorm</span>(<span class="dv">40</span>, <span class="at">mean =</span> <span class="fl">0.14</span>, <span class="at">sd =</span> <span class="fl">0.14</span>)</span>
+<span id="cb13-217"><a href="#cb13-217" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-218"><a href="#cb13-218" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-219"><a href="#cb13-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-220"><a href="#cb13-220" aria-hidden="true" tabindex="-1"></a>p_pathology <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb13-221"><a href="#cb13-221" aria-hidden="true" tabindex="-1"></a>  delta <span class="sc">~</span> feature <span class="sc">|</span> status,</span>
+<span id="cb13-222"><a href="#cb13-222" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> pathology_df,</span>
+<span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_pathology_boxplot</span>(</span>
+<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a>    <span class="at">width            =</span> <span class="fl">0.30</span>,</span>
+<span id="cb13-225"><a href="#cb13-225" aria-hidden="true" tabindex="-1"></a>    <span class="at">position_dodge   =</span> <span class="fl">0.42</span>,</span>
+<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha            =</span> <span class="fl">0.22</span>,</span>
+<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth        =</span> <span class="fl">0.45</span>,</span>
+<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a>    <span class="at">jitter_subsample =</span> <span class="dv">40</span>,</span>
+<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a>    <span class="at">jitter_size      =</span> <span class="fl">0.85</span>,</span>
+<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a>    <span class="at">jitter_alpha     =</span> <span class="fl">0.35</span>,</span>
+<span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_size        =</span> <span class="fl">1.8</span>,</span>
+<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a>    <span class="at">bold_median_lwd  =</span> <span class="fl">0.85</span></span>
+<span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb13-234"><a href="#cb13-234" aria-hidden="true" tabindex="-1"></a>  <span class="at">palette    =</span> <span class="st">"pathology"</span>,</span>
+<span id="cb13-235"><a href="#cb13-235" aria-hidden="true" tabindex="-1"></a>  <span class="at">theme      =</span> <span class="st">"pathology"</span>,</span>
+<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.test  =</span> <span class="st">"t.test"</span>,</span>
+<span id="cb13-237"><a href="#cb13-237" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.label =</span> <span class="st">"p.nature"</span>,</span>
+<span id="cb13-238"><a href="#cb13-238" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat.y     =</span> <span class="fu">c</span>(<span class="fl">0.38</span>, <span class="fl">0.42</span>, <span class="fl">0.48</span>),</span>
+<span id="cb13-239"><a href="#cb13-239" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Structural Aging Across Microscopic Pathology Findings"</span>,</span>
+<span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Nature Aging boxplot architecture with paired mean trajectory lines"</span>,</span>
+<span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab       =</span> <span class="st">"Microscopic Pathology Finding"</span>,</span>
+<span id="cb13-242"><a href="#cb13-242" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab       =</span> <span class="st">"Structural Aging Δ Score"</span></span>
+<span id="cb13-243"><a href="#cb13-243" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-244"><a href="#cb13-244" aria-hidden="true" tabindex="-1"></a>p_pathology</span>
+<span id="cb13-245"><a href="#cb13-245" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-246"><a href="#cb13-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-247"><a href="#cb13-247" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Parameter Object: `clipar()`</span></span>
+<span id="cb13-248"><a href="#cb13-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-249"><a href="#cb13-249" aria-hidden="true" tabindex="-1"></a><span class="in">`clipar()`</span> sets visual attributes including line widths, point sizes, alpha transparency, jitter jitter-width, and label font sizes:</span>
+<span id="cb13-250"><a href="#cb13-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-251"><a href="#cb13-251" aria-hidden="true" tabindex="-1"></a><span class="in">```{r clipar-demo}</span></span>
+<span id="cb13-252"><a href="#cb13-252" aria-hidden="true" tabindex="-1"></a>pars <span class="ot">&lt;-</span> <span class="fu">clipar</span>(</span>
+<span id="cb13-253"><a href="#cb13-253" aria-hidden="true" tabindex="-1"></a>  <span class="at">point_size  =</span> <span class="fl">2.2</span>,</span>
+<span id="cb13-254"><a href="#cb13-254" aria-hidden="true" tabindex="-1"></a>  <span class="at">line_width  =</span> <span class="fl">0.9</span>,</span>
+<span id="cb13-255"><a href="#cb13-255" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha       =</span> <span class="fl">0.75</span>,</span>
+<span id="cb13-256"><a href="#cb13-256" aria-hidden="true" tabindex="-1"></a>  <span class="at">font_size   =</span> <span class="dv">10</span></span>
+<span id="cb13-257"><a href="#cb13-257" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-258"><a href="#cb13-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-259"><a href="#cb13-259" aria-hidden="true" tabindex="-1"></a>p_custom <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb13-260"><a href="#cb13-260" aria-hidden="true" tabindex="-1"></a>  IL13_pg_ml <span class="sc">~</span> Biomarker,</span>
+<span id="cb13-261"><a href="#cb13-261" aria-hidden="true" tabindex="-1"></a>  <span class="at">data   =</span> df_cohort,</span>
+<span id="cb13-262"><a href="#cb13-262" aria-hidden="true" tabindex="-1"></a>  <span class="at">type   =</span> <span class="st">"beeswarm"</span>,</span>
+<span id="cb13-263"><a href="#cb13-263" aria-hidden="true" tabindex="-1"></a>  <span class="at">params =</span> pars,</span>
+<span id="cb13-264"><a href="#cb13-264" aria-hidden="true" tabindex="-1"></a>  <span class="at">preset =</span> <span class="st">"science"</span></span>
+<span id="cb13-265"><a href="#cb13-265" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-266"><a href="#cb13-266" aria-hidden="true" tabindex="-1"></a>p_custom</span>
+<span id="cb13-267"><a href="#cb13-267" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-268"><a href="#cb13-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-269"><a href="#cb13-269" aria-hidden="true" tabindex="-1"></a><span class="fu">## Plot Composition and Layer Addition</span></span>
+<span id="cb13-270"><a href="#cb13-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-271"><a href="#cb13-271" aria-hidden="true" tabindex="-1"></a><span class="in">`cliplot()`</span> objects are <span class="in">`ggplot2`</span> instances. You can extend them using the standard <span class="in">`+`</span> operator or the <span class="in">`cliplot_add()`</span> helper:</span>
+<span id="cb13-272"><a href="#cb13-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-273"><a href="#cb13-273" aria-hidden="true" tabindex="-1"></a><span class="in">```{r add-layers}</span></span>
+<span id="cb13-274"><a href="#cb13-274" aria-hidden="true" tabindex="-1"></a>p_final <span class="ot">&lt;-</span> p_box <span class="sc">+</span></span>
+<span id="cb13-275"><a href="#cb13-275" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">10</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"#B22222"</span>, <span class="at">linewidth =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb13-276"><a href="#cb13-276" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">1.2</span>, <span class="at">y =</span> <span class="fl">10.8</span>, <span class="at">label =</span> <span class="st">"Diagnostic Threshold (10 pg/mL)"</span>,</span>
+<span id="cb13-277"><a href="#cb13-277" aria-hidden="true" tabindex="-1"></a>           <span class="at">size =</span> <span class="fl">2.8</span>, <span class="at">color =</span> <span class="st">"#B22222"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>)</span>
+<span id="cb13-278"><a href="#cb13-278" aria-hidden="true" tabindex="-1"></a>p_final</span>
+<span id="cb13-279"><a href="#cb13-279" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
