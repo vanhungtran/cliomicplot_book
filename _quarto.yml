@@ -51,6 +51,7 @@ book:
         - 21-case-study-cross-disease-deconvolution.qmd
         - 22-case-study-bayesian-network-meta-analysis.qmd
         - 23-case-study-model-based-meta-analysis-placebo-kinetics.qmd
+        - 24-case-study-nature-metabolism-microplastics-reproducibility.qmd
 
     - references.qmd
 
