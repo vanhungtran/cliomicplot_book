@@ -1,8 +1,8 @@
 # Pathway Enrichment and Multi-Omics Abundance Profiles
 
-Pathway enrichment and multi-omics profiling aggregate molecular alterations into functional signatures. This chapter covers Gene Set Enrichment Analysis (GSEA), bubble heatmap archetypes across glyph shapes and color regimes, and rank-abundance dynamic range curves.
+Pathway enrichment and multi-omics profiling aggregate molecular alterations into functional signatures. This chapter covers Gene Set Enrichment Analysis (GSEA) across multiple visualization modes, bubble heatmap archetypes across glyph shapes and color regimes, and rank-abundance dynamic range curves.
 
-## Gene Set Enrichment Analysis: `type = "gsea"`
+## Gene Set Enrichment Analysis: `type = "gsea"` and `type = "gsea_running"`
 
 Gene Set Enrichment Analysis (Subramanian et al., *PNAS* 2005) evaluates whether an a priori defined gene set $S$ shows cumulative enrichment at the extremes of a ranked gene list $L$:
 
@@ -12,7 +12,17 @@ $$P_{\text{miss}}(S, i) = \sum_{g_j \notin S, j \le i} \frac{1}{N - N_H}$$
 
 $$ES(S) = \arg\max_{i} |P_{\text{hit}}(S, i) - P_{\text{miss}}(S, i)|$$
 
-```{r gsea-demo, fig.width=8.0, fig.height=5.2}
+`cliomicplot` provides four complementary visualizations for GSEA results:
+1. **Preranked Enrichment Dot Plot (`type = "gsea"`)**: Pathway terms ranked by effect magnitude, with dot size encoding $-\log_{10}(\text{FDR})$ and fill encoding Normalized Enrichment Score (NES).
+2. **Three-Tier Running Score Walk Plot (`type = "gsea_running"`)**: The classical GSEA profile displaying the cumulative walk curve, gene hit barcode rug, and ranked metric area.
+3. **Directional Diverging Lollipop Plot (`type = "lollipop"`)**: Horizontal effect size bars comparing positive and negative pathway activation.
+4. **Multi-Phenotype Comparison Matrix (`type = type_bubble_diverging()`)**: Cross-condition pathway activity across disease phenotypes and therapeutic stages.
+
+### Example 1: Preranked Pathway Enrichment Dot Plot
+
+The dot plot displays top enriched pathways sorted by absolute NES, highlighting concurrent upregulation of inflammatory signaling and downregulation of lipid metabolism:
+
+```{r gsea-dotplot-demo, fig.width=8.0, fig.height=5.5}
 library(cliomicplot)
 library(ggplot2)
 
@@ -41,6 +51,129 @@ p_gsea <- cliplot(
   title    = "Normalized Enrichment Scores Across Inflammatory Cascades"
 )
 p_gsea
+```
+
+### Example 2: Three-Tier GSEA Running Enrichment Score Walk
+
+The running enrichment score walk illustrates the cumulative enrichment score $ES(i)$ across ranked genes, identifying the leading-edge subset that accounts for peak enrichment:
+
+```{r gsea-running-demo, fig.width=8.2, fig.height=6.2}
+set.seed(42)
+
+# Simulate transcriptome ranking of 1,200 genes sorted by differential expression t-statistic
+all_genes <- paste0("Gene_", seq_len(1200))
+stats <- sort(rnorm(1200, mean = 0, sd = 2.0), decreasing = TRUE)
+names(stats) <- all_genes
+
+# Define target gene set (40 genes enriched at the top of the ranked list)
+pathway_hits <- all_genes[c(seq(2, 80, by = 2), seq(90, 300, by = 20))]
+
+# Compute exact running enrichment walk using Subramanian algorithm
+walk_df <- cli_calc_gsea_running(stats, pathway_hits, p = 1.0)
+
+# Render 3-tier composite: Running ES curve, Barcode rug, and Ranked metric gradient
+p_running <- cliplot(
+  walk_df,
+  type = type_gsea_running(
+    line_col     = "#1B7837",
+    line_width   = 1.1,
+    barcode_col  = "#182033",
+    show_metric  = TRUE,
+    peak_color   = "#D73027",
+    pathway_name = "Hallmark IL-4 / IL-13 Signaling Pathway",
+    nes          = 2.45,
+    fdr          = 0.0001
+  )
+)
+p_running
+```
+
+### Example 3: Directional Diverging Lollipop Enrichment Plot
+
+Horizontal lollipops provide a clean visualization of pathway activation versus repression relative to the zero null baseline:
+
+```{r gsea-lollipop-demo, fig.width=8.0, fig.height=4.8}
+pathway_subset <- c(
+  "Cytokine-Cytokine Receptor", "JAK-STAT Cascade", "Th2 Differentiation",
+  "Chemokine Cascade", "NF-kB Activation", "IL-17 Signaling",
+  "Fatty Acid Metabolism", "Keratinization", "Steroid Biosynthesis"
+)
+nes_subset <- c(2.65, 2.38, 2.08, 1.95, 1.88, 1.72, -1.65, -1.98, -2.45)
+
+lollipop_df <- data.frame(
+  Term = pathway_subset,
+  NES  = nes_subset,
+  stringsAsFactors = FALSE
+)
+lollipop_df$Term <- factor(lollipop_df$Term, levels = lollipop_df$Term[order(lollipop_df$NES)])
+
+clitheme("science")
+
+p_lollipop <- cliplot(
+  NES ~ Term,
+  data = lollipop_df,
+  type = type_lollipop(
+    point_size  = 3.8,
+    stem_width  = 0.8,
+    point_color = "#3B4992"
+  ),
+  title = "Directional Pathway Enrichment Relative to Zero Baseline",
+  xlab  = "Normalized Enrichment Score (NES)"
+) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "grey50", linewidth = 0.4)
+p_lollipop
+```
+
+### Example 4: Multi-Phenotype GSEA Comparison Matrix
+
+Comparing pathway enrichment across multiple experimental contrasts reveals shared inflammatory mechanisms and disease-specific divergences:
+
+```{r gsea-comparison-matrix-demo, fig.width=8.5, fig.height=5.8}
+set.seed(101)
+pheno_pathways <- c(
+  "IL-4 / IL-13 Signaling", "Th2 Differentiation", "JAK-STAT Cascade",
+  "Chemokine Receptor Activity", "Epidermal Differentiation", "Lipid Synthesis"
+)
+comparisons <- c("AD LS vs Healthy", "AD NL vs Healthy", "AD LS vs NL", "Dupilumab W16")
+
+multi_gsea <- expand.grid(Pathway = pheno_pathways, Comparison = comparisons, stringsAsFactors = FALSE)
+multi_gsea$NES <- c(
+  2.6, 0.8, 2.1, -1.8,
+  2.3, 0.5, 1.9, -1.6,
+  1.9, 0.6, 1.5, -1.2,
+  2.0, 0.4, 1.7, -1.1,
+  -2.4, -0.6, -2.1, 1.8,
+  -2.1, -0.4, -1.8, 1.5
+)
+multi_gsea$FDR <- c(
+  1e-4, 0.08, 2e-4, 5e-4,
+  3e-4, 0.12, 4e-4, 8e-4,
+  2e-3, 0.10, 5e-3, 0.01,
+  1e-3, 0.15, 3e-3, 0.02,
+  2e-4, 0.09, 3e-4, 1e-3,
+  5e-4, 0.14, 8e-4, 2e-3
+)
+
+clitheme("nature")
+
+p_multi_gsea <- cliplot(
+  Pathway ~ Comparison,
+  data       = multi_gsea,
+  by         = -log10(multi_gsea$FDR),
+  type       = type_bubble_diverging(
+    palette      = "nature",
+    midpoint     = 0,
+    max_size     = 7.5,
+    stroke_col   = "grey30",
+    stroke_width = 0.35,
+    size_name    = expression(-log[10]~italic(q)),
+    fill_name    = "NES"
+  ),
+  extra_data = list(fill = multi_gsea$NES),
+  title      = "Cross-Phenotype Pathway Enrichment Concordance",
+  subtitle   = "Circle size encodes -log10 q; fill encodes Normalized Enrichment Score (NES)"
+)
+p_multi_gsea
 ```
 
 ## Bubble Heatmap Archetypes: `type = "bubble_heatmap"`
