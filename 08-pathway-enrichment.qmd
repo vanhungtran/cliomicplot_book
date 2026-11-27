@@ -1,6 +1,6 @@
 # Pathway Enrichment and Multi-Omics Abundance Profiles
 
-Pathway enrichment and multi-omics profiling aggregate molecular alterations into functional signatures. This chapter covers Gene Set Enrichment Analysis (GSEA), diamond bubble heatmaps, rank-abundance curves, and longitudinal expression pattern clustering.
+Pathway enrichment and multi-omics profiling aggregate molecular alterations into functional signatures. This chapter covers Gene Set Enrichment Analysis (GSEA), bubble heatmap archetypes across glyph shapes and color regimes, and rank-abundance dynamic range curves.
 
 ## Gene Set Enrichment Analysis: `type = "gsea"`
 
@@ -43,11 +43,22 @@ p_gsea <- cliplot(
 p_gsea
 ```
 
-## Diamond Bubble Heatmap: `type = "bubble_heatmap"`
+## Bubble Heatmap Archetypes: `type = "bubble_heatmap"`
 
-Diamond bubble heatmaps display two continuous metrics simultaneously across features and experimental contrasts: diamond size encodes effect magnitude ($|\log_2\text{FC}|$), and fill color encodes statistical significance ($-\log_{10}P$):
+Bubble heatmaps display two continuous variables across features (rows) and conditions (columns). Point size encodes magnitude, count, or significance; fill colour encodes directional effect size ($\log_2\text{FC}$, NES) or continuous significance ($-\log_{10}P$).
 
-```{r bubble-heatmap-demo, fig.width=8.5, fig.height=6.5}
+`cliomicplot` provides five bubble forms:
+1. **Diamond Bubble Matrix**: classic diamond glyphs with alternating row bands.
+2. **Circular Dot Bubble Matrix with Divergent Palette**: circular dots centered on zero to show positive and negative regulation.
+3. **Significance-Glyph Annotated Matrix**: bubbles with significance asterisks (`*`, `**`, `***`) based on adjusted $P$-values.
+4. **Square / Tile-Scaled Matrix**: proportional square glyphs in a tile grid.
+5. **Directional Triangle Bubble Matrix**: oriented triangles indicating directional modulation across experimental cohorts.
+
+### Form 1: Classic Diamond Bubble Matrix
+
+Diamond bubble matrices display effect magnitude as diamond area and statistical significance as fill colour. Values exceeding `label_threshold` are labelled directly inside the glyphs.
+
+```{r bubble-diamond-demo, fig.width=8.5, fig.height=6.2}
 set.seed(42)
 proteins <- c("APOE", "MAPT", "APP", "SNCA", "GFAP", "NEFL", "VIM", "SYN1", "GAP43", "UCHL1")
 contrasts <- c("AD vs Control", "PD vs Control", "AD vs PD", "Severe vs Mild")
@@ -58,11 +69,11 @@ bh_df$negLogP <- runif(nrow(bh_df), 1.0, 15.0)
 
 clitheme("cell")
 
-p_bh <- cliplot(
+p_diamond <- cliplot(
   Protein ~ Comparison,
   data       = bh_df,
   by         = bh_df$absFC,
-  type       = type_bubble_heatmap(
+  type       = type_bubble_diamond(
     max_size        = 8.0,
     size_name       = "|log2FC|",
     fill_name       = expression(-log[10]~P),
@@ -71,10 +82,166 @@ p_bh <- cliplot(
     fill_high       = "#D73027"
   ),
   extra_data = list(fill = bh_df$negLogP),
-  title      = "Diamond Bubble Heatmap: Top Neurological Biomarkers",
-  subtitle   = "Size indicates effect magnitude; fill color denotes significance"
+  title      = "Diamond Bubble Matrix: Neurodegenerative Biomarkers",
+  subtitle   = "Point size reflects |log2FC|; colour gradient reflects -log10 P"
 )
-p_bh
+p_diamond
+```
+
+### Form 2: Circular Dot Bubble Matrix with Divergent Palette
+
+For bidirectional metrics such as Normalized Enrichment Scores (NES) or signed $\log_2\text{FC}$, `type_bubble_diverging()` applies a diverging colour gradient centered at 0 (e.g. `palette = "nature"`: navy to white to red). Bubble radius represents $-\log_{10}q$.
+
+```{r bubble-circle-diverging-demo, fig.width=8.5, fig.height=6.2}
+set.seed(101)
+pathways_circ <- c(
+  "IL-4 / IL-13 Signaling", "Th2 Differentiation", "JAK-STAT Cascade",
+  "NF-kB Activation", "Epidermal Barrier", "Keratinization",
+  "Lipid Metabolism", "Interferon Gamma Response"
+)
+stages <- c("Acute Lesional", "Chronic Lesional", "Non-Lesional", "Dupilumab W16")
+
+da_df <- expand.grid(Pathway = pathways_circ, Stage = stages, stringsAsFactors = FALSE)
+da_df$NES <- c(
+  2.4, 2.8, 0.4, -1.8,
+  2.1, 2.5, 0.2, -1.5,
+  1.8, 2.2, 0.5, -1.2,
+  1.9, 1.7, 0.3, -0.9,
+  -2.2, -2.6, -0.3, 1.9,
+  -2.5, -3.1, -0.5, 2.2,
+  -1.7, -2.1, -0.2, 1.4,
+  0.6, 1.2, 0.1, -0.4
+)
+da_df$negLogQ <- runif(nrow(da_df), 1.5, 12.0)
+
+clitheme("nature")
+
+p_circ <- cliplot(
+  Pathway ~ Stage,
+  data       = da_df,
+  by         = da_df$negLogQ,
+  type       = type_bubble_diverging(
+    palette      = "nature",
+    midpoint     = 0,
+    max_size     = 7.5,
+    stroke_col   = "grey30",
+    stroke_width = 0.35,
+    size_name    = expression(-log[10]~italic(q)),
+    fill_name    = "NES"
+  ),
+  extra_data = list(fill = da_df$NES),
+  title      = "Inflammatory Pathway Modulation Across Disease Stages",
+  subtitle   = "Circle size encodes -log10 q; diverging fill encodes Normalized Enrichment Score"
+)
+p_circ
+```
+
+### Form 3: Significance-Glyph Overlaid Matrix
+
+When statistical significance requires explicit discrete thresholds ($* p < 0.05$, $** p < 0.01$, $*** p < 0.001$), `label_metric = "signif"` prints asterisks directly onto the bubbles.
+
+```{r bubble-signif-demo, fig.width=8.5, fig.height=6.2}
+set.seed(202)
+cytokines <- c("IL4", "IL13", "IL22", "IL31", "CCL17", "CCL18", "CCL26", "CXCL10", "IFNG", "IL1B")
+timepoints <- c("Baseline", "Week 4", "Week 16", "Week 52")
+
+cyt_df <- expand.grid(Cytokine = cytokines, Timepoint = timepoints, stringsAsFactors = FALSE)
+cyt_df$log2FC <- runif(nrow(cyt_df), 0.2, 4.0)
+cyt_df$negLogP <- runif(nrow(cyt_df), 0.5, 8.0)
+
+clitheme("science")
+
+p_signif <- cliplot(
+  Cytokine ~ Timepoint,
+  data       = cyt_df,
+  by         = cyt_df$log2FC,
+  type       = type_bubble_heatmap(
+    shape          = "circle",
+    palette        = "viridis",
+    label_metric   = "signif",
+    signif_cutoffs = c(0.05, 0.01, 0.001),
+    label_size     = 3.2,
+    label_col      = "white",
+    stroke_col     = "grey35",
+    stroke_width   = 0.4,
+    size_name      = expression(log[2]~"FC"),
+    fill_name      = expression(-log[10]~P)
+  ),
+  extra_data = list(fill = cyt_df$negLogP),
+  title      = "Cutaneous Biomarker Response Kinetics",
+  subtitle   = "Asterisks denote significance tiers (* p < 0.05, ** p < 0.01, *** p < 0.001)"
+)
+p_signif
+```
+
+### Form 4: Square / Tile-Scaled Matrix
+
+Proportional squares in a tile grid display cell density, taxon abundance, or cross-cohort concordance.
+
+```{r bubble-square-demo, fig.width=8.5, fig.height=6.0}
+set.seed(303)
+taxa <- c("S. aureus", "S. epidermidis", "C. acnes", "M. restricta", "P. melaninogenica", "C. striatum")
+sites <- c("Volar Forearm", "Antecubital Fossa", "Forehead", "Cheek", "Retroauricular")
+
+taxa_df <- expand.grid(Taxon = taxa, Site = sites, stringsAsFactors = FALSE)
+taxa_df$Abundance <- runif(nrow(taxa_df), 1.0, 30.0)
+taxa_df$Prevalence <- runif(nrow(taxa_df), 20.0, 95.0)
+
+clitheme("nejm")
+
+p_square <- cliplot(
+  Taxon ~ Site,
+  data       = taxa_df,
+  by         = taxa_df$Abundance,
+  type       = type_bubble_square(
+    palette      = "mako",
+    max_size     = 8.0,
+    stroke_col   = "white",
+    stroke_width = 0.5,
+    size_name    = "Rel. Abund (%)",
+    fill_name    = "Prevalence (%)"
+  ),
+  extra_data = list(fill = taxa_df$Prevalence),
+  title      = "Microbial Colonization Density Across Skin Microenvironments",
+  subtitle   = "Square area reflects relative abundance; fill intensity reflects cohort prevalence"
+)
+p_square
+```
+
+### Form 5: Directional Triangle Bubble Matrix
+
+Directional triangles (`shape = "triangle_up"` or `"triangle_down"`) emphasize activation or repression across experimental screens.
+
+```{r bubble-triangle-demo, fig.width=8.5, fig.height=6.0}
+set.seed(404)
+genes <- c("STAT3", "STAT6", "GATA3", "TBX21", "RORC", "FOXP3", "NFKB1", "RELA")
+treatments <- c("Vehicle", "IL-4 Stim", "JAKi (Baricitinib)", "Biologic (Dupilumab)")
+
+tri_df <- expand.grid(Gene = genes, Treatment = treatments, stringsAsFactors = FALSE)
+tri_df$Score <- runif(nrow(tri_df), 0.5, 5.0)
+tri_df$Activity <- runif(nrow(tri_df), 1.0, 10.0)
+
+clitheme("nature")
+
+p_tri <- cliplot(
+  Gene ~ Treatment,
+  data       = tri_df,
+  by         = tri_df$Score,
+  type       = type_bubble_heatmap(
+    shape        = "triangle_up",
+    palette      = "rocket",
+    grid_style   = "banded",
+    max_size     = 8.0,
+    stroke_col   = "white",
+    stroke_width = 0.6,
+    size_name    = "TF Score",
+    fill_name    = "Activity Index"
+  ),
+  extra_data = list(fill = tri_df$Activity),
+  title      = "Transcription Factor Activity Profile",
+  subtitle   = "Triangle area encodes binding score; fill denotes computed activity index"
+)
+p_tri
 ```
 
 ## Rank-Abundance Dynamic Range Curves: `type = "rankabundance"`

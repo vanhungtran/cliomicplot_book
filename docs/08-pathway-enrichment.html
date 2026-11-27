@@ -426,7 +426,14 @@ window.Quarto = {
    
   <ul>
   <li><a href="#gene-set-enrichment-analysis-type-gsea" id="toc-gene-set-enrichment-analysis-type-gsea" class="nav-link active" data-scroll-target="#gene-set-enrichment-analysis-type-gsea"><span class="header-section-number">8.1</span> Gene Set Enrichment Analysis: <code>type = "gsea"</code></a></li>
-  <li><a href="#diamond-bubble-heatmap-type-bubble_heatmap" id="toc-diamond-bubble-heatmap-type-bubble_heatmap" class="nav-link" data-scroll-target="#diamond-bubble-heatmap-type-bubble_heatmap"><span class="header-section-number">8.2</span> Diamond Bubble Heatmap: <code>type = "bubble_heatmap"</code></a></li>
+  <li><a href="#bubble-heatmap-archetypes-type-bubble_heatmap" id="toc-bubble-heatmap-archetypes-type-bubble_heatmap" class="nav-link" data-scroll-target="#bubble-heatmap-archetypes-type-bubble_heatmap"><span class="header-section-number">8.2</span> Bubble Heatmap Archetypes: <code>type = "bubble_heatmap"</code></a>
+  <ul class="collapse">
+  <li><a href="#form-1-classic-diamond-bubble-matrix" id="toc-form-1-classic-diamond-bubble-matrix" class="nav-link" data-scroll-target="#form-1-classic-diamond-bubble-matrix"><span class="header-section-number">8.2.1</span> Form 1: Classic Diamond Bubble Matrix</a></li>
+  <li><a href="#form-2-circular-dot-bubble-matrix-with-divergent-palette" id="toc-form-2-circular-dot-bubble-matrix-with-divergent-palette" class="nav-link" data-scroll-target="#form-2-circular-dot-bubble-matrix-with-divergent-palette"><span class="header-section-number">8.2.2</span> Form 2: Circular Dot Bubble Matrix with Divergent Palette</a></li>
+  <li><a href="#form-3-significance-glyph-overlaid-matrix" id="toc-form-3-significance-glyph-overlaid-matrix" class="nav-link" data-scroll-target="#form-3-significance-glyph-overlaid-matrix"><span class="header-section-number">8.2.3</span> Form 3: Significance-Glyph Overlaid Matrix</a></li>
+  <li><a href="#form-4-square-tile-scaled-matrix" id="toc-form-4-square-tile-scaled-matrix" class="nav-link" data-scroll-target="#form-4-square-tile-scaled-matrix"><span class="header-section-number">8.2.4</span> Form 4: Square / Tile-Scaled Matrix</a></li>
+  <li><a href="#form-5-directional-triangle-bubble-matrix" id="toc-form-5-directional-triangle-bubble-matrix" class="nav-link" data-scroll-target="#form-5-directional-triangle-bubble-matrix"><span class="header-section-number">8.2.5</span> Form 5: Directional Triangle Bubble Matrix</a></li>
+  </ul></li>
   <li><a href="#rank-abundance-dynamic-range-curves-type-rankabundance" id="toc-rank-abundance-dynamic-range-curves-type-rankabundance" class="nav-link" data-scroll-target="#rank-abundance-dynamic-range-curves-type-rankabundance"><span class="header-section-number">8.3</span> Rank-Abundance Dynamic Range Curves: <code>type = "rankabundance"</code></a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/08-pathway-enrichment.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -453,7 +460,7 @@ window.Quarto = {
 </header>
 
 
-<p>Pathway enrichment and multi-omics profiling aggregate molecular alterations into functional signatures. This chapter covers Gene Set Enrichment Analysis (GSEA), diamond bubble heatmaps, rank-abundance curves, and longitudinal expression pattern clustering.</p>
+<p>Pathway enrichment and multi-omics profiling aggregate molecular alterations into functional signatures. This chapter covers Gene Set Enrichment Analysis (GSEA), bubble heatmap archetypes across glyph shapes and color regimes, and rank-abundance dynamic range curves.</p>
 <section id="gene-set-enrichment-analysis-type-gsea" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="gene-set-enrichment-analysis-type-gsea"><span class="header-section-number">8.1</span> Gene Set Enrichment Analysis: <code>type = "gsea"</code></h2>
 <p>Gene Set Enrichment Analysis (Subramanian et al., <em>PNAS</em> 2005) evaluates whether an a priori defined gene set <span class="math inline">S</span> shows cumulative enrichment at the extremes of a ranked gene list <span class="math inline">L</span>:</p>
@@ -501,9 +508,13 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="diamond-bubble-heatmap-type-bubble_heatmap" class="level2" data-number="8.2">
-<h2 data-number="8.2" class="anchored" data-anchor-id="diamond-bubble-heatmap-type-bubble_heatmap"><span class="header-section-number">8.2</span> Diamond Bubble Heatmap: <code>type = "bubble_heatmap"</code></h2>
-<p>Diamond bubble heatmaps display two continuous metrics simultaneously across features and experimental contrasts: diamond size encodes effect magnitude (<span class="math inline">|\log_2\text{FC}|</span>), and fill color encodes statistical significance (<span class="math inline">-\log_{10}P</span>):</p>
+<section id="bubble-heatmap-archetypes-type-bubble_heatmap" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="bubble-heatmap-archetypes-type-bubble_heatmap"><span class="header-section-number">8.2</span> Bubble Heatmap Archetypes: <code>type = "bubble_heatmap"</code></h2>
+<p>Bubble heatmaps display two continuous variables across features (rows) and conditions (columns). Point size encodes magnitude, count, or significance; fill colour encodes directional effect size (<span class="math inline">\log_2\text{FC}</span>, NES) or continuous significance (<span class="math inline">-\log_{10}P</span>).</p>
+<p><code>cliomicplot</code> provides five bubble forms: 1. <strong>Diamond Bubble Matrix</strong>: classic diamond glyphs with alternating row bands. 2. <strong>Circular Dot Bubble Matrix with Divergent Palette</strong>: circular dots centered on zero to show positive and negative regulation. 3. <strong>Significance-Glyph Annotated Matrix</strong>: bubbles with significance asterisks (<code>*</code>, <code>**</code>, <code>***</code>) based on adjusted <span class="math inline">P</span>-values. 4. <strong>Square / Tile-Scaled Matrix</strong>: proportional square glyphs in a tile grid. 5. <strong>Directional Triangle Bubble Matrix</strong>: oriented triangles indicating directional modulation across experimental cohorts.</p>
+<section id="form-1-classic-diamond-bubble-matrix" class="level3" data-number="8.2.1">
+<h3 data-number="8.2.1" class="anchored" data-anchor-id="form-1-classic-diamond-bubble-matrix"><span class="header-section-number">8.2.1</span> Form 1: Classic Diamond Bubble Matrix</h3>
+<p>Diamond bubble matrices display effect magnitude as diamond area and statistical significance as fill colour. Values exceeding <code>label_threshold</code> are labelled directly inside the glyphs.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show R code</summary>
@@ -517,11 +528,11 @@ window.Quarto = {
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"cell"</span>)</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>p_bh <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>p_diamond <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  Protein <span class="sc">~</span> Comparison,</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> bh_df,</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">by         =</span> bh_df<span class="sc">$</span>absFC,</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_bubble_heatmap</span>(</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_bubble_diamond</span>(</span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size        =</span> <span class="fl">8.0</span>,</span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_name       =</span> <span class="st">"|log2FC|"</span>,</span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_name       =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span>P),</span>
@@ -530,19 +541,212 @@ window.Quarto = {
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_high       =</span> <span class="st">"#D73027"</span></span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  ),</span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra_data =</span> <span class="fu">list</span>(<span class="at">fill =</span> bh_df<span class="sc">$</span>negLogP),</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Diamond Bubble Heatmap: Top Neurological Biomarkers"</span>,</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Size indicates effect magnitude; fill color denotes significance"</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Diamond Bubble Matrix: Neurodegenerative Biomarkers"</span>,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Point size reflects |log2FC|; colour gradient reflects -log10 P"</span></span>
 <span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>p_bh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>p_diamond</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="08-pathway-enrichment_files/figure-html/bubble-heatmap-demo-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="08-pathway-enrichment_files/figure-html/bubble-heatmap-demo-1.png" class="img-fluid figure-img" width="2550"></a></p>
+<p><a href="08-pathway-enrichment_files/figure-html/bubble-diamond-demo-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="08-pathway-enrichment_files/figure-html/bubble-diamond-demo-1.png" class="img-fluid figure-img" width="2550"></a></p>
 </figure>
 </div>
 </div>
 </div>
+</section>
+<section id="form-2-circular-dot-bubble-matrix-with-divergent-palette" class="level3" data-number="8.2.2">
+<h3 data-number="8.2.2" class="anchored" data-anchor-id="form-2-circular-dot-bubble-matrix-with-divergent-palette"><span class="header-section-number">8.2.2</span> Form 2: Circular Dot Bubble Matrix with Divergent Palette</h3>
+<p>For bidirectional metrics such as Normalized Enrichment Scores (NES) or signed <span class="math inline">\log_2\text{FC}</span>, <code>type_bubble_diverging()</code> applies a diverging colour gradient centered at 0 (e.g.&nbsp;<code>palette = "nature"</code>: navy to white to red). Bubble radius represents <span class="math inline">-\log_{10}q</span>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pathways_circ <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"IL-4 / IL-13 Signaling"</span>, <span class="st">"Th2 Differentiation"</span>, <span class="st">"JAK-STAT Cascade"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"NF-kB Activation"</span>, <span class="st">"Epidermal Barrier"</span>, <span class="st">"Keratinization"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Lipid Metabolism"</span>, <span class="st">"Interferon Gamma Response"</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Acute Lesional"</span>, <span class="st">"Chronic Lesional"</span>, <span class="st">"Non-Lesional"</span>, <span class="st">"Dupilumab W16"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>da_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Pathway =</span> pathways_circ, <span class="at">Stage =</span> stages, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>da_df<span class="sc">$</span>NES <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fl">2.4</span>, <span class="fl">2.8</span>, <span class="fl">0.4</span>, <span class="sc">-</span><span class="fl">1.8</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fl">2.1</span>, <span class="fl">2.5</span>, <span class="fl">0.2</span>, <span class="sc">-</span><span class="fl">1.5</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.8</span>, <span class="fl">2.2</span>, <span class="fl">0.5</span>, <span class="sc">-</span><span class="fl">1.2</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.9</span>, <span class="fl">1.7</span>, <span class="fl">0.3</span>, <span class="sc">-</span><span class="fl">0.9</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">2.2</span>, <span class="sc">-</span><span class="fl">2.6</span>, <span class="sc">-</span><span class="fl">0.3</span>, <span class="fl">1.9</span>,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">2.5</span>, <span class="sc">-</span><span class="fl">3.1</span>, <span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">2.2</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">1.7</span>, <span class="sc">-</span><span class="fl">2.1</span>, <span class="sc">-</span><span class="fl">0.2</span>, <span class="fl">1.4</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">0.1</span>, <span class="sc">-</span><span class="fl">0.4</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>da_df<span class="sc">$</span>negLogQ <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(da_df), <span class="fl">1.5</span>, <span class="fl">12.0</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>p_circ <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  Pathway <span class="sc">~</span> Stage,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> da_df,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">by         =</span> da_df<span class="sc">$</span>negLogQ,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_bubble_diverging</span>(</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette      =</span> <span class="st">"nature"</span>,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">midpoint     =</span> <span class="dv">0</span>,</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size     =</span> <span class="fl">7.5</span>,</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_col   =</span> <span class="st">"grey30"</span>,</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_width =</span> <span class="fl">0.35</span>,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_name    =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="fu">italic</span>(q)),</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_name    =</span> <span class="st">"NES"</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra_data =</span> <span class="fu">list</span>(<span class="at">fill =</span> da_df<span class="sc">$</span>NES),</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Inflammatory Pathway Modulation Across Disease Stages"</span>,</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Circle size encodes -log10 q; diverging fill encodes Normalized Enrichment Score"</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>p_circ</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="08-pathway-enrichment_files/figure-html/bubble-circle-diverging-demo-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="08-pathway-enrichment_files/figure-html/bubble-circle-diverging-demo-1.png" class="img-fluid figure-img" width="2550"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="form-3-significance-glyph-overlaid-matrix" class="level3" data-number="8.2.3">
+<h3 data-number="8.2.3" class="anchored" data-anchor-id="form-3-significance-glyph-overlaid-matrix"><span class="header-section-number">8.2.3</span> Form 3: Significance-Glyph Overlaid Matrix</h3>
+<p>When statistical significance requires explicit discrete thresholds (<span class="math inline">* p &lt; 0.05</span>, <span class="math inline">** p &lt; 0.01</span>, <span class="math inline">*** p &lt; 0.001</span>), <code>label_metric = "signif"</code> prints asterisks directly onto the bubbles.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>cytokines <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"IL4"</span>, <span class="st">"IL13"</span>, <span class="st">"IL22"</span>, <span class="st">"IL31"</span>, <span class="st">"CCL17"</span>, <span class="st">"CCL18"</span>, <span class="st">"CCL26"</span>, <span class="st">"CXCL10"</span>, <span class="st">"IFNG"</span>, <span class="st">"IL1B"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>timepoints <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Baseline"</span>, <span class="st">"Week 4"</span>, <span class="st">"Week 16"</span>, <span class="st">"Week 52"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>cyt_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Cytokine =</span> cytokines, <span class="at">Timepoint =</span> timepoints, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>cyt_df<span class="sc">$</span>log2FC <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(cyt_df), <span class="fl">0.2</span>, <span class="fl">4.0</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>cyt_df<span class="sc">$</span>negLogP <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(cyt_df), <span class="fl">0.5</span>, <span class="fl">8.0</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"science"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>p_signif <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  Cytokine <span class="sc">~</span> Timepoint,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> cyt_df,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">by         =</span> cyt_df<span class="sc">$</span>log2FC,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_bubble_heatmap</span>(</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape          =</span> <span class="st">"circle"</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette        =</span> <span class="st">"viridis"</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_metric   =</span> <span class="st">"signif"</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">signif_cutoffs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.01</span>, <span class="fl">0.001</span>),</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_size     =</span> <span class="fl">3.2</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_col      =</span> <span class="st">"white"</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_col     =</span> <span class="st">"grey35"</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_width   =</span> <span class="fl">0.4</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_name      =</span> <span class="fu">expression</span>(log[<span class="dv">2</span>]<span class="sc">~</span><span class="st">"FC"</span>),</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_name      =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span>P)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra_data =</span> <span class="fu">list</span>(<span class="at">fill =</span> cyt_df<span class="sc">$</span>negLogP),</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Cutaneous Biomarker Response Kinetics"</span>,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Asterisks denote significance tiers (* p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001)"</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>p_signif</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="08-pathway-enrichment_files/figure-html/bubble-signif-demo-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="08-pathway-enrichment_files/figure-html/bubble-signif-demo-1.png" class="img-fluid figure-img" width="2550"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="form-4-square-tile-scaled-matrix" class="level3" data-number="8.2.4">
+<h3 data-number="8.2.4" class="anchored" data-anchor-id="form-4-square-tile-scaled-matrix"><span class="header-section-number">8.2.4</span> Form 4: Square / Tile-Scaled Matrix</h3>
+<p>Proportional squares in a tile grid display cell density, taxon abundance, or cross-cohort concordance.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">303</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>taxa <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. aureus"</span>, <span class="st">"S. epidermidis"</span>, <span class="st">"C. acnes"</span>, <span class="st">"M. restricta"</span>, <span class="st">"P. melaninogenica"</span>, <span class="st">"C. striatum"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Volar Forearm"</span>, <span class="st">"Antecubital Fossa"</span>, <span class="st">"Forehead"</span>, <span class="st">"Cheek"</span>, <span class="st">"Retroauricular"</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>taxa_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Taxon =</span> taxa, <span class="at">Site =</span> sites, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>taxa_df<span class="sc">$</span>Abundance <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(taxa_df), <span class="fl">1.0</span>, <span class="fl">30.0</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>taxa_df<span class="sc">$</span>Prevalence <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(taxa_df), <span class="fl">20.0</span>, <span class="fl">95.0</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nejm"</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>p_square <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  Taxon <span class="sc">~</span> Site,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> taxa_df,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">by         =</span> taxa_df<span class="sc">$</span>Abundance,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_bubble_square</span>(</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette      =</span> <span class="st">"mako"</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size     =</span> <span class="fl">8.0</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_col   =</span> <span class="st">"white"</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_width =</span> <span class="fl">0.5</span>,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_name    =</span> <span class="st">"Rel. Abund (%)"</span>,</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_name    =</span> <span class="st">"Prevalence (%)"</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra_data =</span> <span class="fu">list</span>(<span class="at">fill =</span> taxa_df<span class="sc">$</span>Prevalence),</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Microbial Colonization Density Across Skin Microenvironments"</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Square area reflects relative abundance; fill intensity reflects cohort prevalence"</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>p_square</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="08-pathway-enrichment_files/figure-html/bubble-square-demo-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="08-pathway-enrichment_files/figure-html/bubble-square-demo-1.png" class="img-fluid figure-img" width="2550"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="form-5-directional-triangle-bubble-matrix" class="level3" data-number="8.2.5">
+<h3 data-number="8.2.5" class="anchored" data-anchor-id="form-5-directional-triangle-bubble-matrix"><span class="header-section-number">8.2.5</span> Form 5: Directional Triangle Bubble Matrix</h3>
+<p>Directional triangles (<code>shape = "triangle_up"</code> or <code>"triangle_down"</code>) emphasize activation or repression across experimental screens.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show R code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">404</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>genes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"STAT3"</span>, <span class="st">"STAT6"</span>, <span class="st">"GATA3"</span>, <span class="st">"TBX21"</span>, <span class="st">"RORC"</span>, <span class="st">"FOXP3"</span>, <span class="st">"NFKB1"</span>, <span class="st">"RELA"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>treatments <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Vehicle"</span>, <span class="st">"IL-4 Stim"</span>, <span class="st">"JAKi (Baricitinib)"</span>, <span class="st">"Biologic (Dupilumab)"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>tri_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Gene =</span> genes, <span class="at">Treatment =</span> treatments, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>tri_df<span class="sc">$</span>Score <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(tri_df), <span class="fl">0.5</span>, <span class="fl">5.0</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>tri_df<span class="sc">$</span>Activity <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(tri_df), <span class="fl">1.0</span>, <span class="fl">10.0</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>p_tri <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  Gene <span class="sc">~</span> Treatment,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> tri_df,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">by         =</span> tri_df<span class="sc">$</span>Score,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_bubble_heatmap</span>(</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape        =</span> <span class="st">"triangle_up"</span>,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette      =</span> <span class="st">"rocket"</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">grid_style   =</span> <span class="st">"banded"</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size     =</span> <span class="fl">8.0</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_col   =</span> <span class="st">"white"</span>,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_width =</span> <span class="fl">0.6</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_name    =</span> <span class="st">"TF Score"</span>,</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_name    =</span> <span class="st">"Activity Index"</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra_data =</span> <span class="fu">list</span>(<span class="at">fill =</span> tri_df<span class="sc">$</span>Activity),</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Transcription Factor Activity Profile"</span>,</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Triangle area encodes binding score; fill denotes computed activity index"</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>p_tri</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="08-pathway-enrichment_files/figure-html/bubble-triangle-demo-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="08-pathway-enrichment_files/figure-html/bubble-triangle-demo-1.png" class="img-fluid figure-img" width="2550"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section id="rank-abundance-dynamic-range-curves-type-rankabundance" class="level2" data-number="8.3">
 <h2 data-number="8.3" class="anchored" data-anchor-id="rank-abundance-dynamic-range-curves-type-rankabundance"><span class="header-section-number">8.3</span> Rank-Abundance Dynamic Range Curves: <code>type = "rankabundance"</code></h2>
@@ -550,41 +754,41 @@ window.Quarto = {
 <div class="cell">
 <details class="code-fold">
 <summary>Show R code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>n_prot <span class="ot">&lt;-</span> <span class="dv">800</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>intensities <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="dv">10</span><span class="sc">^</span><span class="fu">rnorm</span>(n_prot, <span class="at">mean =</span> <span class="fl">6.5</span>, <span class="at">sd =</span> <span class="fl">1.1</span>), <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>ranks <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(n_prot)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>rank_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Rank      =</span> ranks,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Intensity =</span> intensities,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Protein   =</span> <span class="fu">paste0</span>(<span class="st">"Prot_"</span>, ranks)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"science"</span>)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>p_rank <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  Intensity <span class="sc">~</span> Rank,</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> rank_df,</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_rankabundance</span>(</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_scale     =</span> <span class="st">"10"</span>,</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_color   =</span> <span class="st">"#4DBBD5"</span>,</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">marginal_type =</span> <span class="st">"density"</span>,</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_genes   =</span> <span class="fu">c</span>(<span class="st">"Prot_1"</span>, <span class="st">"Prot_10"</span>, <span class="st">"Prot_50"</span>, <span class="st">"Prot_200"</span>),</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_color   =</span> <span class="st">"#E64B35"</span>,</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_size    =</span> <span class="fl">3.0</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Dynamic Range of Proteome Detection"</span>,</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Protein abundance spanning ~5 orders of magnitude with marginal density"</span>,</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Abundance Rank"</span>,</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="st">"LFQ Intensity"</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>p_rank</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>n_prot <span class="ot">&lt;-</span> <span class="dv">800</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>intensities <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="dv">10</span><span class="sc">^</span><span class="fu">rnorm</span>(n_prot, <span class="at">mean =</span> <span class="fl">6.5</span>, <span class="at">sd =</span> <span class="fl">1.1</span>), <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>ranks <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(n_prot)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>rank_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Rank      =</span> ranks,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Intensity =</span> intensities,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Protein   =</span> <span class="fu">paste0</span>(<span class="st">"Prot_"</span>, ranks)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"science"</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>p_rank <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  Intensity <span class="sc">~</span> Rank,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> rank_df,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_rankabundance</span>(</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_scale     =</span> <span class="st">"10"</span>,</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_color   =</span> <span class="st">"#4DBBD5"</span>,</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">marginal_type =</span> <span class="st">"density"</span>,</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_genes   =</span> <span class="fu">c</span>(<span class="st">"Prot_1"</span>, <span class="st">"Prot_10"</span>, <span class="st">"Prot_50"</span>, <span class="st">"Prot_200"</span>),</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_color   =</span> <span class="st">"#E64B35"</span>,</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_size    =</span> <span class="fl">3.0</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Dynamic Range of Proteome Detection"</span>,</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Protein abundance spanning ~5 orders of magnitude with marginal density"</span>,</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Abundance Rank"</span>,</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="st">"LFQ Intensity"</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>p_rank</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="08-pathway-enrichment_files/figure-html/rank-abundance-demo-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="08-pathway-enrichment_files/figure-html/rank-abundance-demo-1.png" class="img-fluid figure-img" width="2400"></a></p>
+<p><a href="08-pathway-enrichment_files/figure-html/rank-abundance-demo-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="08-pathway-enrichment_files/figure-html/rank-abundance-demo-1.png" class="img-fluid figure-img" width="2400"></a></p>
 </figure>
 </div>
 </div>
@@ -1104,121 +1308,288 @@ document.addEventListener('DOMContentLoaded', function () {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Pathway Enrichment and Multi-Omics Abundance Profiles</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>Pathway enrichment and multi-omics profiling aggregate molecular alterations into functional signatures. This chapter covers Gene Set Enrichment Analysis (GSEA), diamond bubble heatmaps, rank-abundance curves, and longitudinal expression pattern clustering.</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Gene Set Enrichment Analysis: `type = "gsea"`</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>Gene Set Enrichment Analysis (Subramanian et al., *PNAS* 2005) evaluates whether an a priori defined gene set $S$ shows cumulative enrichment at the extremes of a ranked gene list $L$:</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>$$P_{\text{hit}}(S, i) = \sum_{g_j \in S, j \le i} \frac{|r_j|^p}{N_R}, \quad N_R = \sum_{g_j \in S} |r_j|^p$$</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>$$P_{\text{miss}}(S, i) = \sum_{g_j \notin S, j \le i} \frac{1}{N - N_H}$$</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>$$ES(S) = \arg\max_{i} |P_{\text{hit}}(S, i) - P_{\text{miss}}(S, i)|$$</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{r gsea-demo, fig.width=8.0, fig.height=5.2}</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>pathways <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Cytokine-Cytokine Receptor Interaction"</span>, <span class="st">"JAK-STAT Signaling Pathway"</span>,</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Toll-like Receptor Signaling"</span>, <span class="st">"Th1 and Th2 Cell Differentiation"</span>,</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Chemokine Signaling Pathway"</span>, <span class="st">"NF-kappa B Signaling"</span>,</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">"IL-17 Signaling Pathway"</span>, <span class="st">"Antigen Processing and Presentation"</span>,</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">"T Cell Receptor Signaling"</span>, <span class="st">"B Cell Receptor Signaling"</span>,</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Natural Killer Cell Mediated Cytotoxicity"</span>, <span class="st">"Apoptosis"</span>,</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Fatty Acid Metabolism"</span>, <span class="st">"Steroid Biosynthesis"</span>, <span class="st">"Keratinization"</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>gsea_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">Term =</span> pathways,</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">NES  =</span> <span class="fu">c</span>(<span class="fl">2.65</span>, <span class="fl">2.38</span>, <span class="fl">2.15</span>, <span class="fl">2.08</span>, <span class="fl">1.95</span>, <span class="fl">1.88</span>, <span class="fl">1.72</span>, <span class="fl">1.65</span>, <span class="fl">1.45</span>, <span class="fl">1.25</span>, <span class="fl">0.95</span>, <span class="fl">0.82</span>, <span class="sc">-</span><span class="fl">1.65</span>, <span class="sc">-</span><span class="fl">1.98</span>, <span class="sc">-</span><span class="fl">2.45</span>),</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">FDR  =</span> <span class="fu">c</span>(<span class="fl">1e-5</span>, <span class="fl">2e-5</span>, <span class="fl">8e-5</span>, <span class="fl">1e-4</span>, <span class="fl">3e-4</span>, <span class="fl">5e-4</span>, <span class="fl">1e-3</span>, <span class="fl">2e-3</span>, <span class="fl">5e-3</span>, <span class="fl">0.015</span>, <span class="fl">0.045</span>, <span class="fl">0.082</span>, <span class="fl">0.002</span>, <span class="fl">0.0005</span>, <span class="fl">0.0001</span>)</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>p_gsea <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>  gsea_df,</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">type     =</span> <span class="st">"gsea"</span>,</span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">top_term =</span> <span class="dv">15</span>,</span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Normalized Enrichment Scores Across Inflammatory Cascades"</span></span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>p_gsea</span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Diamond Bubble Heatmap: `type = "bubble_heatmap"`</span></span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>Diamond bubble heatmaps display two continuous metrics simultaneously across features and experimental contrasts: diamond size encodes effect magnitude ($|\log_2\text{FC}|$), and fill color encodes statistical significance ($-\log_{10}P$):</span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bubble-heatmap-demo, fig.width=8.5, fig.height=6.5}</span></span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>proteins <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"APOE"</span>, <span class="st">"MAPT"</span>, <span class="st">"APP"</span>, <span class="st">"SNCA"</span>, <span class="st">"GFAP"</span>, <span class="st">"NEFL"</span>, <span class="st">"VIM"</span>, <span class="st">"SYN1"</span>, <span class="st">"GAP43"</span>, <span class="st">"UCHL1"</span>)</span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>contrasts <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"AD vs Control"</span>, <span class="st">"PD vs Control"</span>, <span class="st">"AD vs PD"</span>, <span class="st">"Severe vs Mild"</span>)</span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>bh_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Protein =</span> proteins, <span class="at">Comparison =</span> contrasts, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>bh_df<span class="sc">$</span>absFC <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(bh_df), <span class="fl">0.2</span>, <span class="fl">3.5</span>)</span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>bh_df<span class="sc">$</span>negLogP <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(bh_df), <span class="fl">1.0</span>, <span class="fl">15.0</span>)</span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"cell"</span>)</span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>p_bh <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>  Protein <span class="sc">~</span> Comparison,</span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> bh_df,</span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>  <span class="at">by         =</span> bh_df<span class="sc">$</span>absFC,</span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_bubble_heatmap</span>(</span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size        =</span> <span class="fl">8.0</span>,</span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_name       =</span> <span class="st">"|log2FC|"</span>,</span>
-<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_name       =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span>P),</span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_low        =</span> <span class="st">"#4575B4"</span>,</span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_mid        =</span> <span class="st">"#FFFFBF"</span>,</span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_high       =</span> <span class="st">"#D73027"</span></span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra_data =</span> <span class="fu">list</span>(<span class="at">fill =</span> bh_df<span class="sc">$</span>negLogP),</span>
-<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Diamond Bubble Heatmap: Top Neurological Biomarkers"</span>,</span>
-<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Size indicates effect magnitude; fill color denotes significance"</span></span>
-<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>p_bh</span>
-<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rank-Abundance Dynamic Range Curves: `type = "rankabundance"`</span></span>
-<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>In quantitative proteomics, rank-abundance curves visualize the dynamic range of protein detection across orders of magnitude:</span>
-<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rank-abundance-demo, fig.width=8.0, fig.height=5.0}</span></span>
-<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>n_prot <span class="ot">&lt;-</span> <span class="dv">800</span></span>
-<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>intensities <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="dv">10</span><span class="sc">^</span><span class="fu">rnorm</span>(n_prot, <span class="at">mean =</span> <span class="fl">6.5</span>, <span class="at">sd =</span> <span class="fl">1.1</span>), <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>ranks <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(n_prot)</span>
-<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>rank_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>  <span class="at">Rank      =</span> ranks,</span>
-<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>  <span class="at">Intensity =</span> intensities,</span>
-<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>  <span class="at">Protein   =</span> <span class="fu">paste0</span>(<span class="st">"Prot_"</span>, ranks)</span>
-<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"science"</span>)</span>
-<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>p_rank <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
-<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>  Intensity <span class="sc">~</span> Rank,</span>
-<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> rank_df,</span>
-<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_rankabundance</span>(</span>
-<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_scale     =</span> <span class="st">"10"</span>,</span>
-<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_color   =</span> <span class="st">"#4DBBD5"</span>,</span>
-<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>    <span class="at">marginal_type =</span> <span class="st">"density"</span>,</span>
-<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_genes   =</span> <span class="fu">c</span>(<span class="st">"Prot_1"</span>, <span class="st">"Prot_10"</span>, <span class="st">"Prot_50"</span>, <span class="st">"Prot_200"</span>),</span>
-<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_color   =</span> <span class="st">"#E64B35"</span>,</span>
-<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_size    =</span> <span class="fl">3.0</span></span>
-<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Dynamic Range of Proteome Detection"</span>,</span>
-<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Protein abundance spanning ~5 orders of magnitude with marginal density"</span>,</span>
-<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Abundance Rank"</span>,</span>
-<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="st">"LFQ Intensity"</span></span>
-<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>p_rank</span>
-<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Pathway Enrichment and Multi-Omics Abundance Profiles</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Pathway enrichment and multi-omics profiling aggregate molecular alterations into functional signatures. This chapter covers Gene Set Enrichment Analysis (GSEA), bubble heatmap archetypes across glyph shapes and color regimes, and rank-abundance dynamic range curves.</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Gene Set Enrichment Analysis: `type = "gsea"`</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>Gene Set Enrichment Analysis (Subramanian et al., *PNAS* 2005) evaluates whether an a priori defined gene set $S$ shows cumulative enrichment at the extremes of a ranked gene list $L$:</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>$$P_{\text{hit}}(S, i) = \sum_{g_j \in S, j \le i} \frac{|r_j|^p}{N_R}, \quad N_R = \sum_{g_j \in S} |r_j|^p$$</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>$$P_{\text{miss}}(S, i) = \sum_{g_j \notin S, j \le i} \frac{1}{N - N_H}$$</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>$$ES(S) = \arg\max_{i} |P_{\text{hit}}(S, i) - P_{\text{miss}}(S, i)|$$</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{r gsea-demo, fig.width=8.0, fig.height=5.2}</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cliomicplot)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>pathways <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Cytokine-Cytokine Receptor Interaction"</span>, <span class="st">"JAK-STAT Signaling Pathway"</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Toll-like Receptor Signaling"</span>, <span class="st">"Th1 and Th2 Cell Differentiation"</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Chemokine Signaling Pathway"</span>, <span class="st">"NF-kappa B Signaling"</span>,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">"IL-17 Signaling Pathway"</span>, <span class="st">"Antigen Processing and Presentation"</span>,</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">"T Cell Receptor Signaling"</span>, <span class="st">"B Cell Receptor Signaling"</span>,</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Natural Killer Cell Mediated Cytotoxicity"</span>, <span class="st">"Apoptosis"</span>,</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Fatty Acid Metabolism"</span>, <span class="st">"Steroid Biosynthesis"</span>, <span class="st">"Keratinization"</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>gsea_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">Term =</span> pathways,</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">NES  =</span> <span class="fu">c</span>(<span class="fl">2.65</span>, <span class="fl">2.38</span>, <span class="fl">2.15</span>, <span class="fl">2.08</span>, <span class="fl">1.95</span>, <span class="fl">1.88</span>, <span class="fl">1.72</span>, <span class="fl">1.65</span>, <span class="fl">1.45</span>, <span class="fl">1.25</span>, <span class="fl">0.95</span>, <span class="fl">0.82</span>, <span class="sc">-</span><span class="fl">1.65</span>, <span class="sc">-</span><span class="fl">1.98</span>, <span class="sc">-</span><span class="fl">2.45</span>),</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">FDR  =</span> <span class="fu">c</span>(<span class="fl">1e-5</span>, <span class="fl">2e-5</span>, <span class="fl">8e-5</span>, <span class="fl">1e-4</span>, <span class="fl">3e-4</span>, <span class="fl">5e-4</span>, <span class="fl">1e-3</span>, <span class="fl">2e-3</span>, <span class="fl">5e-3</span>, <span class="fl">0.015</span>, <span class="fl">0.045</span>, <span class="fl">0.082</span>, <span class="fl">0.002</span>, <span class="fl">0.0005</span>, <span class="fl">0.0001</span>)</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>p_gsea <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>  gsea_df,</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">type     =</span> <span class="st">"gsea"</span>,</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">top_term =</span> <span class="dv">15</span>,</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Normalized Enrichment Scores Across Inflammatory Cascades"</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>p_gsea</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bubble Heatmap Archetypes: `type = "bubble_heatmap"`</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>Bubble heatmaps display two continuous variables across features (rows) and conditions (columns). Point size encodes magnitude, count, or significance; fill colour encodes directional effect size ($\log_2\text{FC}$, NES) or continuous significance ($-\log_{10}P$).</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="in">`cliomicplot`</span> provides five bubble forms:</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Diamond Bubble Matrix**: classic diamond glyphs with alternating row bands.</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Circular Dot Bubble Matrix with Divergent Palette**: circular dots centered on zero to show positive and negative regulation.</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Significance-Glyph Annotated Matrix**: bubbles with significance asterisks (`*`, `**`, `***`) based on adjusted $P$-values.</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Square / Tile-Scaled Matrix**: proportional square glyphs in a tile grid.</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Directional Triangle Bubble Matrix**: oriented triangles indicating directional modulation across experimental cohorts.</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a><span class="fu">### Form 1: Classic Diamond Bubble Matrix</span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>Diamond bubble matrices display effect magnitude as diamond area and statistical significance as fill colour. Values exceeding <span class="in">`label_threshold`</span> are labelled directly inside the glyphs.</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bubble-diamond-demo, fig.width=8.5, fig.height=6.2}</span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>proteins <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"APOE"</span>, <span class="st">"MAPT"</span>, <span class="st">"APP"</span>, <span class="st">"SNCA"</span>, <span class="st">"GFAP"</span>, <span class="st">"NEFL"</span>, <span class="st">"VIM"</span>, <span class="st">"SYN1"</span>, <span class="st">"GAP43"</span>, <span class="st">"UCHL1"</span>)</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>contrasts <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"AD vs Control"</span>, <span class="st">"PD vs Control"</span>, <span class="st">"AD vs PD"</span>, <span class="st">"Severe vs Mild"</span>)</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>bh_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Protein =</span> proteins, <span class="at">Comparison =</span> contrasts, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>bh_df<span class="sc">$</span>absFC <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(bh_df), <span class="fl">0.2</span>, <span class="fl">3.5</span>)</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>bh_df<span class="sc">$</span>negLogP <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(bh_df), <span class="fl">1.0</span>, <span class="fl">15.0</span>)</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"cell"</span>)</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>p_diamond <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>  Protein <span class="sc">~</span> Comparison,</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> bh_df,</span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">by         =</span> bh_df<span class="sc">$</span>absFC,</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_bubble_diamond</span>(</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size        =</span> <span class="fl">8.0</span>,</span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_name       =</span> <span class="st">"|log2FC|"</span>,</span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_name       =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span>P),</span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_low        =</span> <span class="st">"#4575B4"</span>,</span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_mid        =</span> <span class="st">"#FFFFBF"</span>,</span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_high       =</span> <span class="st">"#D73027"</span></span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra_data =</span> <span class="fu">list</span>(<span class="at">fill =</span> bh_df<span class="sc">$</span>negLogP),</span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Diamond Bubble Matrix: Neurodegenerative Biomarkers"</span>,</span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Point size reflects |log2FC|; colour gradient reflects -log10 P"</span></span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>p_diamond</span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a><span class="fu">### Form 2: Circular Dot Bubble Matrix with Divergent Palette</span></span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>For bidirectional metrics such as Normalized Enrichment Scores (NES) or signed $\log_2\text{FC}$, <span class="in">`type_bubble_diverging()`</span> applies a diverging colour gradient centered at 0 (e.g. <span class="in">`palette = "nature"`</span>: navy to white to red). Bubble radius represents $-\log_{10}q$.</span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bubble-circle-diverging-demo, fig.width=8.5, fig.height=6.2}</span></span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>pathways_circ <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>  <span class="st">"IL-4 / IL-13 Signaling"</span>, <span class="st">"Th2 Differentiation"</span>, <span class="st">"JAK-STAT Cascade"</span>,</span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>  <span class="st">"NF-kB Activation"</span>, <span class="st">"Epidermal Barrier"</span>, <span class="st">"Keratinization"</span>,</span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Lipid Metabolism"</span>, <span class="st">"Interferon Gamma Response"</span></span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>stages <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Acute Lesional"</span>, <span class="st">"Chronic Lesional"</span>, <span class="st">"Non-Lesional"</span>, <span class="st">"Dupilumab W16"</span>)</span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>da_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Pathway =</span> pathways_circ, <span class="at">Stage =</span> stages, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>da_df<span class="sc">$</span>NES <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>  <span class="fl">2.4</span>, <span class="fl">2.8</span>, <span class="fl">0.4</span>, <span class="sc">-</span><span class="fl">1.8</span>,</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>  <span class="fl">2.1</span>, <span class="fl">2.5</span>, <span class="fl">0.2</span>, <span class="sc">-</span><span class="fl">1.5</span>,</span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.8</span>, <span class="fl">2.2</span>, <span class="fl">0.5</span>, <span class="sc">-</span><span class="fl">1.2</span>,</span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>  <span class="fl">1.9</span>, <span class="fl">1.7</span>, <span class="fl">0.3</span>, <span class="sc">-</span><span class="fl">0.9</span>,</span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">2.2</span>, <span class="sc">-</span><span class="fl">2.6</span>, <span class="sc">-</span><span class="fl">0.3</span>, <span class="fl">1.9</span>,</span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">2.5</span>, <span class="sc">-</span><span class="fl">3.1</span>, <span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">2.2</span>,</span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">1.7</span>, <span class="sc">-</span><span class="fl">2.1</span>, <span class="sc">-</span><span class="fl">0.2</span>, <span class="fl">1.4</span>,</span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">0.1</span>, <span class="sc">-</span><span class="fl">0.4</span></span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>da_df<span class="sc">$</span>negLogQ <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(da_df), <span class="fl">1.5</span>, <span class="fl">12.0</span>)</span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>p_circ <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>  Pathway <span class="sc">~</span> Stage,</span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> da_df,</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>  <span class="at">by         =</span> da_df<span class="sc">$</span>negLogQ,</span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_bubble_diverging</span>(</span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette      =</span> <span class="st">"nature"</span>,</span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">midpoint     =</span> <span class="dv">0</span>,</span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size     =</span> <span class="fl">7.5</span>,</span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_col   =</span> <span class="st">"grey30"</span>,</span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_width =</span> <span class="fl">0.35</span>,</span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_name    =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="fu">italic</span>(q)),</span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_name    =</span> <span class="st">"NES"</span></span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra_data =</span> <span class="fu">list</span>(<span class="at">fill =</span> da_df<span class="sc">$</span>NES),</span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Inflammatory Pathway Modulation Across Disease Stages"</span>,</span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Circle size encodes -log10 q; diverging fill encodes Normalized Enrichment Score"</span></span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>p_circ</span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a><span class="fu">### Form 3: Significance-Glyph Overlaid Matrix</span></span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a>When statistical significance requires explicit discrete thresholds ($* p &lt; 0.05$, $** p &lt; 0.01$, $*** p &lt; 0.001$), <span class="in">`label_metric = "signif"`</span> prints asterisks directly onto the bubbles.</span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bubble-signif-demo, fig.width=8.5, fig.height=6.2}</span></span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>cytokines <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"IL4"</span>, <span class="st">"IL13"</span>, <span class="st">"IL22"</span>, <span class="st">"IL31"</span>, <span class="st">"CCL17"</span>, <span class="st">"CCL18"</span>, <span class="st">"CCL26"</span>, <span class="st">"CXCL10"</span>, <span class="st">"IFNG"</span>, <span class="st">"IL1B"</span>)</span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>timepoints <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Baseline"</span>, <span class="st">"Week 4"</span>, <span class="st">"Week 16"</span>, <span class="st">"Week 52"</span>)</span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>cyt_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Cytokine =</span> cytokines, <span class="at">Timepoint =</span> timepoints, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a>cyt_df<span class="sc">$</span>log2FC <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(cyt_df), <span class="fl">0.2</span>, <span class="fl">4.0</span>)</span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>cyt_df<span class="sc">$</span>negLogP <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(cyt_df), <span class="fl">0.5</span>, <span class="fl">8.0</span>)</span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"science"</span>)</span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a>p_signif <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a>  Cytokine <span class="sc">~</span> Timepoint,</span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> cyt_df,</span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>  <span class="at">by         =</span> cyt_df<span class="sc">$</span>log2FC,</span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_bubble_heatmap</span>(</span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape          =</span> <span class="st">"circle"</span>,</span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette        =</span> <span class="st">"viridis"</span>,</span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_metric   =</span> <span class="st">"signif"</span>,</span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a>    <span class="at">signif_cutoffs =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.01</span>, <span class="fl">0.001</span>),</span>
+<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_size     =</span> <span class="fl">3.2</span>,</span>
+<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_col      =</span> <span class="st">"white"</span>,</span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_col     =</span> <span class="st">"grey35"</span>,</span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_width   =</span> <span class="fl">0.4</span>,</span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_name      =</span> <span class="fu">expression</span>(log[<span class="dv">2</span>]<span class="sc">~</span><span class="st">"FC"</span>),</span>
+<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_name      =</span> <span class="fu">expression</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span>P)</span>
+<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra_data =</span> <span class="fu">list</span>(<span class="at">fill =</span> cyt_df<span class="sc">$</span>negLogP),</span>
+<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Cutaneous Biomarker Response Kinetics"</span>,</span>
+<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Asterisks denote significance tiers (* p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001)"</span></span>
+<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a>p_signif</span>
+<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a><span class="fu">### Form 4: Square / Tile-Scaled Matrix</span></span>
+<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a>Proportional squares in a tile grid display cell density, taxon abundance, or cross-cohort concordance.</span>
+<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bubble-square-demo, fig.width=8.5, fig.height=6.0}</span></span>
+<span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">303</span>)</span>
+<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a>taxa <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S. aureus"</span>, <span class="st">"S. epidermidis"</span>, <span class="st">"C. acnes"</span>, <span class="st">"M. restricta"</span>, <span class="st">"P. melaninogenica"</span>, <span class="st">"C. striatum"</span>)</span>
+<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Volar Forearm"</span>, <span class="st">"Antecubital Fossa"</span>, <span class="st">"Forehead"</span>, <span class="st">"Cheek"</span>, <span class="st">"Retroauricular"</span>)</span>
+<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a>taxa_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Taxon =</span> taxa, <span class="at">Site =</span> sites, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a>taxa_df<span class="sc">$</span>Abundance <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(taxa_df), <span class="fl">1.0</span>, <span class="fl">30.0</span>)</span>
+<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a>taxa_df<span class="sc">$</span>Prevalence <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(taxa_df), <span class="fl">20.0</span>, <span class="fl">95.0</span>)</span>
+<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nejm"</span>)</span>
+<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a>p_square <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>  Taxon <span class="sc">~</span> Site,</span>
+<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> taxa_df,</span>
+<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a>  <span class="at">by         =</span> taxa_df<span class="sc">$</span>Abundance,</span>
+<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_bubble_square</span>(</span>
+<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette      =</span> <span class="st">"mako"</span>,</span>
+<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size     =</span> <span class="fl">8.0</span>,</span>
+<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_col   =</span> <span class="st">"white"</span>,</span>
+<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_width =</span> <span class="fl">0.5</span>,</span>
+<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_name    =</span> <span class="st">"Rel. Abund (%)"</span>,</span>
+<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_name    =</span> <span class="st">"Prevalence (%)"</span></span>
+<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra_data =</span> <span class="fu">list</span>(<span class="at">fill =</span> taxa_df<span class="sc">$</span>Prevalence),</span>
+<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Microbial Colonization Density Across Skin Microenvironments"</span>,</span>
+<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Square area reflects relative abundance; fill intensity reflects cohort prevalence"</span></span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a>p_square</span>
+<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a><span class="fu">### Form 5: Directional Triangle Bubble Matrix</span></span>
+<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a>Directional triangles (<span class="in">`shape = "triangle_up"`</span> or <span class="in">`"triangle_down"`</span>) emphasize activation or repression across experimental screens.</span>
+<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a><span class="in">```{r bubble-triangle-demo, fig.width=8.5, fig.height=6.0}</span></span>
+<span id="cb8-216"><a href="#cb8-216" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">404</span>)</span>
+<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a>genes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"STAT3"</span>, <span class="st">"STAT6"</span>, <span class="st">"GATA3"</span>, <span class="st">"TBX21"</span>, <span class="st">"RORC"</span>, <span class="st">"FOXP3"</span>, <span class="st">"NFKB1"</span>, <span class="st">"RELA"</span>)</span>
+<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a>treatments <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Vehicle"</span>, <span class="st">"IL-4 Stim"</span>, <span class="st">"JAKi (Baricitinib)"</span>, <span class="st">"Biologic (Dupilumab)"</span>)</span>
+<span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a>tri_df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">Gene =</span> genes, <span class="at">Treatment =</span> treatments, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a>tri_df<span class="sc">$</span>Score <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(tri_df), <span class="fl">0.5</span>, <span class="fl">5.0</span>)</span>
+<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a>tri_df<span class="sc">$</span>Activity <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="fu">nrow</span>(tri_df), <span class="fl">1.0</span>, <span class="fl">10.0</span>)</span>
+<span id="cb8-223"><a href="#cb8-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-224"><a href="#cb8-224" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"nature"</span>)</span>
+<span id="cb8-225"><a href="#cb8-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-226"><a href="#cb8-226" aria-hidden="true" tabindex="-1"></a>p_tri <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb8-227"><a href="#cb8-227" aria-hidden="true" tabindex="-1"></a>  Gene <span class="sc">~</span> Treatment,</span>
+<span id="cb8-228"><a href="#cb8-228" aria-hidden="true" tabindex="-1"></a>  <span class="at">data       =</span> tri_df,</span>
+<span id="cb8-229"><a href="#cb8-229" aria-hidden="true" tabindex="-1"></a>  <span class="at">by         =</span> tri_df<span class="sc">$</span>Score,</span>
+<span id="cb8-230"><a href="#cb8-230" aria-hidden="true" tabindex="-1"></a>  <span class="at">type       =</span> <span class="fu">type_bubble_heatmap</span>(</span>
+<span id="cb8-231"><a href="#cb8-231" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape        =</span> <span class="st">"triangle_up"</span>,</span>
+<span id="cb8-232"><a href="#cb8-232" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette      =</span> <span class="st">"rocket"</span>,</span>
+<span id="cb8-233"><a href="#cb8-233" aria-hidden="true" tabindex="-1"></a>    <span class="at">grid_style   =</span> <span class="st">"banded"</span>,</span>
+<span id="cb8-234"><a href="#cb8-234" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_size     =</span> <span class="fl">8.0</span>,</span>
+<span id="cb8-235"><a href="#cb8-235" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_col   =</span> <span class="st">"white"</span>,</span>
+<span id="cb8-236"><a href="#cb8-236" aria-hidden="true" tabindex="-1"></a>    <span class="at">stroke_width =</span> <span class="fl">0.6</span>,</span>
+<span id="cb8-237"><a href="#cb8-237" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_name    =</span> <span class="st">"TF Score"</span>,</span>
+<span id="cb8-238"><a href="#cb8-238" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill_name    =</span> <span class="st">"Activity Index"</span></span>
+<span id="cb8-239"><a href="#cb8-239" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb8-240"><a href="#cb8-240" aria-hidden="true" tabindex="-1"></a>  <span class="at">extra_data =</span> <span class="fu">list</span>(<span class="at">fill =</span> tri_df<span class="sc">$</span>Activity),</span>
+<span id="cb8-241"><a href="#cb8-241" aria-hidden="true" tabindex="-1"></a>  <span class="at">title      =</span> <span class="st">"Transcription Factor Activity Profile"</span>,</span>
+<span id="cb8-242"><a href="#cb8-242" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle   =</span> <span class="st">"Triangle area encodes binding score; fill denotes computed activity index"</span></span>
+<span id="cb8-243"><a href="#cb8-243" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-244"><a href="#cb8-244" aria-hidden="true" tabindex="-1"></a>p_tri</span>
+<span id="cb8-245"><a href="#cb8-245" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-246"><a href="#cb8-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-247"><a href="#cb8-247" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rank-Abundance Dynamic Range Curves: `type = "rankabundance"`</span></span>
+<span id="cb8-248"><a href="#cb8-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-249"><a href="#cb8-249" aria-hidden="true" tabindex="-1"></a>In quantitative proteomics, rank-abundance curves visualize the dynamic range of protein detection across orders of magnitude:</span>
+<span id="cb8-250"><a href="#cb8-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-251"><a href="#cb8-251" aria-hidden="true" tabindex="-1"></a><span class="in">```{r rank-abundance-demo, fig.width=8.0, fig.height=5.0}</span></span>
+<span id="cb8-252"><a href="#cb8-252" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb8-253"><a href="#cb8-253" aria-hidden="true" tabindex="-1"></a>n_prot <span class="ot">&lt;-</span> <span class="dv">800</span></span>
+<span id="cb8-254"><a href="#cb8-254" aria-hidden="true" tabindex="-1"></a>intensities <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="dv">10</span><span class="sc">^</span><span class="fu">rnorm</span>(n_prot, <span class="at">mean =</span> <span class="fl">6.5</span>, <span class="at">sd =</span> <span class="fl">1.1</span>), <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-255"><a href="#cb8-255" aria-hidden="true" tabindex="-1"></a>ranks <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(n_prot)</span>
+<span id="cb8-256"><a href="#cb8-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-257"><a href="#cb8-257" aria-hidden="true" tabindex="-1"></a>rank_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb8-258"><a href="#cb8-258" aria-hidden="true" tabindex="-1"></a>  <span class="at">Rank      =</span> ranks,</span>
+<span id="cb8-259"><a href="#cb8-259" aria-hidden="true" tabindex="-1"></a>  <span class="at">Intensity =</span> intensities,</span>
+<span id="cb8-260"><a href="#cb8-260" aria-hidden="true" tabindex="-1"></a>  <span class="at">Protein   =</span> <span class="fu">paste0</span>(<span class="st">"Prot_"</span>, ranks)</span>
+<span id="cb8-261"><a href="#cb8-261" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-262"><a href="#cb8-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-263"><a href="#cb8-263" aria-hidden="true" tabindex="-1"></a><span class="fu">clitheme</span>(<span class="st">"science"</span>)</span>
+<span id="cb8-264"><a href="#cb8-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-265"><a href="#cb8-265" aria-hidden="true" tabindex="-1"></a>p_rank <span class="ot">&lt;-</span> <span class="fu">cliplot</span>(</span>
+<span id="cb8-266"><a href="#cb8-266" aria-hidden="true" tabindex="-1"></a>  Intensity <span class="sc">~</span> Rank,</span>
+<span id="cb8-267"><a href="#cb8-267" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> rank_df,</span>
+<span id="cb8-268"><a href="#cb8-268" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="fu">type_rankabundance</span>(</span>
+<span id="cb8-269"><a href="#cb8-269" aria-hidden="true" tabindex="-1"></a>    <span class="at">log_scale     =</span> <span class="st">"10"</span>,</span>
+<span id="cb8-270"><a href="#cb8-270" aria-hidden="true" tabindex="-1"></a>    <span class="at">point_color   =</span> <span class="st">"#4DBBD5"</span>,</span>
+<span id="cb8-271"><a href="#cb8-271" aria-hidden="true" tabindex="-1"></a>    <span class="at">marginal_type =</span> <span class="st">"density"</span>,</span>
+<span id="cb8-272"><a href="#cb8-272" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_genes   =</span> <span class="fu">c</span>(<span class="st">"Prot_1"</span>, <span class="st">"Prot_10"</span>, <span class="st">"Prot_50"</span>, <span class="st">"Prot_200"</span>),</span>
+<span id="cb8-273"><a href="#cb8-273" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_color   =</span> <span class="st">"#E64B35"</span>,</span>
+<span id="cb8-274"><a href="#cb8-274" aria-hidden="true" tabindex="-1"></a>    <span class="at">label_size    =</span> <span class="fl">3.0</span></span>
+<span id="cb8-275"><a href="#cb8-275" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb8-276"><a href="#cb8-276" aria-hidden="true" tabindex="-1"></a>  <span class="at">title    =</span> <span class="st">"Dynamic Range of Proteome Detection"</span>,</span>
+<span id="cb8-277"><a href="#cb8-277" aria-hidden="true" tabindex="-1"></a>  <span class="at">subtitle =</span> <span class="st">"Protein abundance spanning ~5 orders of magnitude with marginal density"</span>,</span>
+<span id="cb8-278"><a href="#cb8-278" aria-hidden="true" tabindex="-1"></a>  <span class="at">xlab     =</span> <span class="st">"Abundance Rank"</span>,</span>
+<span id="cb8-279"><a href="#cb8-279" aria-hidden="true" tabindex="-1"></a>  <span class="at">ylab     =</span> <span class="st">"LFQ Intensity"</span></span>
+<span id="cb8-280"><a href="#cb8-280" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-281"><a href="#cb8-281" aria-hidden="true" tabindex="-1"></a>p_rank</span>
+<span id="cb8-282"><a href="#cb8-282" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/vanhungtran/cliomicplot_book/edit/main/08-pathway-enrichment.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/vanhungtran/cliomicplot_book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
