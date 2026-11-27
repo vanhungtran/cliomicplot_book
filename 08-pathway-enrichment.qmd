@@ -187,75 +187,59 @@ p_multi_gsea <- cliplot(
 p_multi_gsea
 ```
 
-## Multi-Omics Pathway Enrichment: RNA, Single-Cell, Proteomics, and Microbiome
+## Multi-Omics Pathway Enrichment Directly from Biomarker Lists
 
-Enrichment analysis connects high-dimensional molecular measurements to cellular mechanisms across four biological layers:
-- **Bulk RNA-seq**: Hypergeometric over-representation of differentially expressed genes against background universes.
-- **Single-cell RNA-seq**: Cell-level module signature scores tested for lineage specificity by Wilcoxon rank-sum tests.
-- **Mass Spectrometry Proteomics**: Moderated $t$-tests followed by protein complex Fisher exact test fold enrichment.
-- **Microbial Metagenomics**: Quality-filtered MetaCyc pathway abundance tests across anatomical sites.
+Clinical and translational investigations frequently yield candidate biomarker lists without full raw count matrices. This section demonstrates how to run functional pathway enrichment using standard Bioconductor packages (`clusterProfiler`, `org.Hs.eg.db`) starting directly from bare lists of biomarker symbols across four omics layers:
+- **Bulk RNA Biomarker List**: Query GO Biological Process pathways from a character vector of gene symbols via `clusterProfiler::enrichGO()`.
+- **Single-cell Lineage Biomarker Lists**: Compare cell-type-specific biomarker sets in one call using `clusterProfiler::compareCluster()`.
+- **Proteomics Biomarker List**: Map protein biomarker hits to subcellular complexes (cornified envelope, desmosomes) via `clusterProfiler::enrichGO(ont = "CC")`.
+- **Microbial Functional Biomarkers**: Test candidate dysbiosis biomarker pathways across anatomical microenvironments.
 
-### Bulk RNA-seq Over-Representation Analysis with `clusterProfiler`
+### Bulk RNA Gene Biomarker List: Pathway Enrichment with `clusterProfiler`
 
-In bulk transcriptomics, Over-Representation Analysis tests whether pathway genes appear in the differentially expressed gene set more frequently than expected under the hypergeometric distribution:
-
-$$P(X \ge k) = \sum_{i=k}^{\min(|S|, |D|)} \frac{\binom{|S|}{i} \binom{N - |S|}{|D| - i}}{\binom{N}{|D|}}$$
-
-where $N$ is total measured background genes, $|D|$ is significant DEGs, $|S|$ is pathway size in the universe, and $k$ is observed overlap.
-
-The pipeline applies `clusterProfiler::enricher()` to DESeq2 results from `geo_dermatology_series_de.rds` ($p_{\text{adj}} < 0.01$, $\log_2(\text{FC}) > 1.2$), converts the `enrichResult` object to a data frame, and visualizes Gene Ratio with FDR significance:
+When biomarker discovery identifies a candidate gene panel, `clusterProfiler::enrichGO()` tests for over-representation against the human genome annotation (`org.Hs.eg.db`):
 
 ```{r multiomics-rna-ora-atoz, fig.width=8.5, fig.height=5.6}
 library(clusterProfiler)
+library(org.Hs.eg.db)
+library(ggplot2)
 
-# Step 1: Load differential expression results from GEO series
-series <- readRDS(system.file("extdata", "geo_dermatology_series_de.rds", package = "cliomicplot"))
-de_tbl <- series[["ad_vs_hc"]]
-
-# Step 2: Define DEG criteria and extract measured background universe
-de_genes <- de_tbl$gene[which(de_tbl$padj < 0.01 & de_tbl$log2FC > 1.2)]
-bg_genes <- de_tbl$gene
-
-# Step 3: Format pathway collection into TERM2GENE data frame
-skin_pathways <- list(
-  "IL-4 / IL-13 Signaling"        = c("IL4R", "IL13RA1", "STAT6", "CCL17", "CCL18", "CCL22", "CCL26", "SOCS1", "POSTN"),
-  "Epidermal Differentiation"     = c("FLG", "LOR", "IVL", "LCE3A", "LCE3D", "LCE3E", "SPRR2G", "SPRR1A", "KRT10"),
-  "Antimicrobial Defense"         = c("DEFB4A", "S100A7", "S100A8", "S100A9", "S100A12", "PI3", "CAMP", "LTF"),
-  "Alarmins & Epithelial Stress"  = c("IL33", "TSLP", "IL1RL1", "S100A8", "S100A9", "HMGB1"),
-  "Serine Peptidase Inhibitors"   = c("SERPINB3", "SERPINB4", "SPINK5", "SERPINA1", "SERPINA3"),
-  "Fatty Acid & Lipid Metabolism" = c("FASN", "ELOVL3", "ELOVL4", "ELOVL6", "SCD", "ACACA", "FABP5")
+# Step 1: Input list of candidate gene biomarkers
+rna_biomarkers <- c(
+  "CCL17", "CCL18", "CCL22", "IL4R", "IL13RA1", "STAT6", "POSTN",
+  "S100A7", "S100A8", "S100A9", "DEFB4A", "PI3",
+  "FLG", "LOR", "IVL", "LCE3A", "SPRR2G",
+  "SERPINB3", "SERPINB4", "SPINK5"
 )
 
-term2gene <- do.call(rbind, lapply(names(skin_pathways), function(pw) {
-  data.frame(term = pw, gene = skin_pathways[[pw]], stringsAsFactors = FALSE)
-}))
-
-# Step 4: Run over-representation analysis via clusterProfiler::enricher()
-cp_ora <- clusterProfiler::enricher(
-  gene          = de_genes,
-  universe      = bg_genes,
-  TERM2GENE     = term2gene,
-  pvalueCutoff  = 1.0,
-  qvalueCutoff  = 1.0,
-  minGSSize     = 2,
-  pAdjustMethod = "BH"
+# Step 2: Run GO Biological Process enrichment directly from biomarker symbols
+ego_bp <- clusterProfiler::enrichGO(
+  gene          = rna_biomarkers,
+  OrgDb         = org.Hs.eg.db,
+  keyType       = "SYMBOL",
+  ont           = "BP",
+  pAdjustMethod = "BH",
+  pvalueCutoff  = 0.05,
+  qvalueCutoff  = 0.05
 )
 
-# Step 5: Convert enrichResult to data.frame and format GeneRatio
-cp_df <- as.data.frame(cp_ora)
-cp_df$NumericGeneRatio <- vapply(
-  strsplit(cp_df$GeneRatio, "/"),
+# Step 3: Extract results and compute numeric Gene Ratio
+ego_df <- as.data.frame(ego_bp)
+ego_df$NumericGeneRatio <- vapply(
+  strsplit(ego_df$GeneRatio, "/"),
   function(x) as.numeric(x[1]) / as.numeric(x[2]),
   numeric(1)
 )
-cp_df$ID <- factor(cp_df$ID, levels = cp_df$ID[order(cp_df$NumericGeneRatio)])
 
-# Step 6: Render publication ORA plot
+top_go <- head(ego_df, 8)
+top_go$Description <- factor(top_go$Description, levels = rev(top_go$Description))
+
+# Step 4: Render publication dot plot
 clitheme("nature")
 
-p_rna_ora <- ggplot2::ggplot(cp_df, ggplot2::aes(x = NumericGeneRatio, y = ID)) +
+p_rna_ora <- ggplot2::ggplot(top_go, ggplot2::aes(x = NumericGeneRatio, y = Description)) +
   ggplot2::geom_segment(
-    ggplot2::aes(x = 0, xend = NumericGeneRatio, y = ID, yend = ID),
+    ggplot2::aes(x = 0, xend = NumericGeneRatio, y = Description, yend = Description),
     color = "grey75", linewidth = 0.5
   ) +
   ggplot2::geom_point(
@@ -266,230 +250,134 @@ p_rna_ora <- ggplot2::ggplot(cp_df, ggplot2::aes(x = NumericGeneRatio, y = ID)) 
     colours = c("#EFF3FF", "#6BAED6", "#2171B5", "#08519C"),
     name = expression(-log[10]~italic(q))
   ) +
-  ggplot2::scale_size_area(max_size = 7.5, name = "DEG Count") +
+  ggplot2::scale_size_area(max_size = 7.5, name = "Biomarker Hits") +
   theme_cli_nature() +
   ggplot2::labs(
-    x = "Gene Ratio (k / |D|)",
+    x = "Gene Ratio (k / |Biomarkers|)",
     y = NULL,
-    title = "clusterProfiler Over-Representation Analysis (Lesional vs Healthy)",
-    subtitle = "Calculated via clusterProfiler::enricher() on DESeq2 differential transcripts"
+    title = "GO Biological Process Enrichment from Biomarker List",
+    subtitle = "Calculated via clusterProfiler::enrichGO() using human genome background"
   )
 p_rna_ora
 ```
 
-Antimicrobial defense had the highest count (7/7 genes, $q = 0.055$), while epidermal differentiation had 5/8 genes and IL-4 / IL-13 signaling had 5/9 genes in the DEG set.
+Antimicrobial humoral response was the top enriched biological process ($q = 8.66 \times 10^{-10}$, 8 hits), followed by epidermal cell differentiation ($q = 1.74 \times 10^{-8}$, 7 hits) and keratinocyte differentiation ($q = 1.42 \times 10^{-7}$, 6 hits).
 
-### Single-Cell scRNA-seq Lineage Pathway Signatures with `UCell`
+### Single-Cell Lineage Biomarker Lists: Cross-Cluster Enrichment with `compareCluster`
 
-The Bioconductor package `UCell` scores gene signatures in single-cell data using the Mann-Whitney rank sum test, making scores robust to cell library size variations:
-
-1. Calculate per-cell signature scores via `UCell::ScoreSignatures_UCell()`.
-2. Determine the percentage of active cells ($\text{UCell score} > 0.25$) per lineage.
-3. Test lineage specificity with two-sample Wilcoxon rank-sum tests and Benjamini-Hochberg FDR correction.
+Single-cell marker discovery produces distinct biomarker lists for each cell cluster. `clusterProfiler::compareCluster()` evaluates all lineage biomarker lists simultaneously:
 
 ```{r multiomics-scrna-pathway-atoz, fig.width=8.5, fig.height=5.8}
-library(UCell)
-
-# Step 1: Single-cell count matrix across 7 cutaneous and immune lineages
-set.seed(42)
-cell_types <- c("Basal KC", "Spinous KC", "Suprabasal KC", "CD4+ Th2", "ILC2", "cDC2", "Fibroblasts")
-n_per_type <- 60
-cells <- rep(cell_types, each = n_per_type)
-n_cells <- length(cells)
-
-all_sc_genes <- c(
-  "IL4R", "IL13RA1", "STAT6", "CCL17", "CCL22",
-  "IL33", "TSLP", "IL1RL1", "S100A8", "S100A9",
-  "FLG", "LOR", "IVL", "LCE3A", "SPRR2G",
-  "HLA-DRA", "HLA-DRB1", "CD74", "CD86",
-  "COL1A1", "COL1A2", "FN1", "MMP1",
-  paste0("ControlGene_", 1:25)
+# Step 1: Input named lists of lineage-specific biomarkers
+sc_biomarker_lists <- list(
+  "Th2 / ILC2"       = c("IL4R", "IL13RA1", "STAT6", "CCL17", "CCL22", "GATA3"),
+  "Suprabasal KC"    = c("FLG", "LOR", "IVL", "LCE3A", "SPRR2G", "KRT1", "KRT10"),
+  "Inflammatory KC"  = c("S100A7", "S100A8", "S100A9", "DEFB4A", "PI3"),
+  "cDC2 / Myeloid"   = c("HLA-DRA", "HLA-DRB1", "CD74", "CD86", "FCER1A")
 )
 
-sc_mat <- matrix(rpois(n_cells * length(all_sc_genes), lambda = 2),
-                 nrow = length(all_sc_genes), ncol = n_cells,
-                 dimnames = list(all_sc_genes, paste0("Cell_", seq_len(n_cells))))
-
-# Lineage-specific counts
-sc_mat[c("IL4R", "IL13RA1", "CCL17", "CCL22"), cells %in% c("CD4+ Th2", "ILC2")] <-
-  sc_mat[c("IL4R", "IL13RA1", "CCL17", "CCL22"), cells %in% c("CD4+ Th2", "ILC2")] + 10
-sc_mat[c("FLG", "LOR", "IVL", "LCE3A", "SPRR2G"), cells %in% c("Spinous KC", "Suprabasal KC")] <-
-  sc_mat[c("FLG", "LOR", "IVL", "LCE3A", "SPRR2G"), cells %in% c("Spinous KC", "Suprabasal KC")] + 12
-sc_mat[c("HLA-DRA", "HLA-DRB1", "CD74", "CD86"), cells == "cDC2"] <-
-  sc_mat[c("HLA-DRA", "HLA-DRB1", "CD74", "CD86"), cells == "cDC2"] + 15
-sc_mat[c("COL1A1", "COL1A2", "FN1", "MMP1"), cells == "Fibroblasts"] <-
-  sc_mat[c("COL1A1", "COL1A2", "FN1", "MMP1"), cells == "Fibroblasts"] + 12
-
-sc_signatures <- list(
-  "Type 2 Cytokines"          = c("IL4R", "IL13RA1", "STAT6", "CCL17", "CCL22"),
-  "Alarmin Cascade"           = c("IL33", "TSLP", "IL1RL1", "S100A8", "S100A9"),
-  "Epidermal Differentiation" = c("FLG", "LOR", "IVL", "LCE3A", "SPRR2G"),
-  "Antigen Presentation"      = c("HLA-DRA", "HLA-DRB1", "CD74", "CD86"),
-  "Extracellular Matrix"      = c("COL1A1", "COL1A2", "FN1", "MMP1")
+# Step 2: Compare enrichment across all lineages simultaneously
+comp_res <- clusterProfiler::compareCluster(
+  geneCluster   = sc_biomarker_lists,
+  fun           = "enrichGO",
+  OrgDb         = org.Hs.eg.db,
+  keyType       = "SYMBOL",
+  ont           = "BP",
+  pAdjustMethod = "BH",
+  pvalueCutoff  = 0.05
 )
 
-# Step 2: Compute per-cell Mann-Whitney rank module scores via UCell
-ucell_scores <- UCell::ScoreSignatures_UCell(
-  sc_mat,
-  features = sc_signatures,
-  BPPARAM  = BiocParallel::SerialParam()
-)
-colnames(ucell_scores) <- names(sc_signatures)
+comp_df <- as.data.frame(comp_res)
 
-# Step 3: Compute lineage summary metrics and Wilcoxon rank-sum tests
-sc_res <- do.call(rbind, lapply(colnames(ucell_scores), function(sig_name) {
-  scores <- ucell_scores[, sig_name]
-  do.call(rbind, lapply(unique(cell_types), function(ct) {
-    in_ct <- cells == ct
-    pct_active <- mean(scores[in_ct] > 0.25) * 100
-    mean_val   <- mean(scores[in_ct])
-    wt <- wilcox.test(scores[in_ct], scores[!in_ct], alternative = "greater")
-    data.frame(
-      Pathway    = sig_name,
-      CellType   = ct,
-      PctActive  = pct_active,
-      MeanScore  = mean_val,
-      pvalue     = wt$p.value,
-      stringsAsFactors = FALSE
-    )
-  }))
+# Select top 2 terms per lineage cluster
+top_comp <- do.call(rbind, lapply(unique(comp_df$Cluster), function(cl) {
+  head(comp_df[comp_df$Cluster == cl, ], 2)
 }))
-sc_res$padj <- p.adjust(sc_res$pvalue, method = "BH")
+top_comp$Description <- factor(top_comp$Description, levels = rev(unique(top_comp$Description)))
 
-# Step 4: Render publication circle bubble heatmap
+# Step 3: Render cross-lineage bubble heatmap
 clitheme("cell")
 
 p_sc_path <- cliplot(
-  Pathway ~ CellType,
-  data = sc_res,
-  by   = sc_res$PctActive,
+  Description ~ Cluster,
+  data = top_comp,
+  by   = top_comp$Count,
   type = type_bubble_circle(
     palette      = "plasma",
     max_size     = 7.5,
     stroke_col   = "grey35",
     stroke_width = 0.35,
-    size_name    = "% Active Cells",
-    fill_name    = "UCell Score"
+    size_name    = "Hit Count",
+    fill_name    = expression(-log[10]~italic(q))
   ),
-  extra_data = list(fill = sc_res$MeanScore),
-  title      = "UCell Single-Cell Pathway Activation Across Skin Lineages",
-  subtitle   = "Point size reflects % cells with UCell score > 0.25; colour reflects mean score"
+  extra_data = list(fill = -log10(top_comp$p.adjust)),
+  title      = "Lineage-Resolved Biomarker Enrichment via compareCluster",
+  subtitle   = "Point size reflects biomarker hit count; colour reflects -log10 q"
 )
 p_sc_path
 ```
 
-Type 2 cytokine activity localized to CD4+ Th2 and ILC2 cells (100% active cells, mean UCell scores 0.61 and 0.60, $q < 10^{-20}$), while epidermal differentiation was restricted to spinous and suprabasal keratinocytes ($q < 10^{-20}$).
+Th2/ILC2 biomarkers enriched for response to interleukin-4 ($q = 8.14 \times 10^{-9}$, 4 hits), while suprabasal keratinocyte markers enriched for epidermal differentiation ($q = 2.15 \times 10^{-8}$, 6 hits).
 
-### Mass Spectrometry Proteomics Module Enrichment with `limma` and `clusterProfiler`
+### Mass Spectrometry Proteomics Biomarker List: GO Cellular Component Enrichment
 
-Quantitative proteomics measures translated protein abundance across clinical biopsies. The analysis combines `limma` empirical Bayes linear models with `clusterProfiler::enricher()`:
-
-1. Moderated $t$-testing on LFQ protein intensities via `limma::lmFit()` and `limma::eBayes()`.
-2. Extract differentially abundant proteins ($p_{\text{adj}} < 0.01$, $|\log_2\text{FC}| > 1.0$).
-3. Test macromolecular complex enrichment using `clusterProfiler::enricher()`.
-4. Plot multi-phenotype directional protein remodeling with `type_bubble_diverging()`.
+Quantitative proteomics screens identify differentially abundant protein panels. `clusterProfiler::enrichGO(ont = "CC")` maps protein biomarkers directly to subcellular macromolecular complexes:
 
 ```{r multiomics-proteomics-modules-atoz, fig.width=8.5, fig.height=5.8}
-library(limma)
-library(clusterProfiler)
-
-# Step 1: Input LFQ protein intensity matrix across 6 biological replicates
-set.seed(42)
-proteins <- c(
+# Step 1: Input list of verified protein biomarkers
+prot_biomarkers <- c(
   "FLG", "LOR", "IVL", "LCE3D", "SPRR2A",
   "DSC1", "DSG1", "DSP", "PKP1",
   "SPINK5", "SERPINB3", "SERPINB4",
-  "S100A7", "S100A8", "S100A9", "DEFB4A",
-  "ATP5F1A", "NDUFS1", "COX4I1", "SDHA",
-  paste0("Protein_Background_", 1:150)
-)
-n_reps <- 6
-
-lfq_hc <- matrix(rnorm(length(proteins) * n_reps, mean = 24, sd = 0.5), nrow = length(proteins))
-lfq_ad <- matrix(rnorm(length(proteins) * n_reps, mean = 24, sd = 0.5), nrow = length(proteins))
-rownames(lfq_hc) <- rownames(lfq_ad) <- proteins
-
-# AD-specific protein shifts
-lfq_ad[c("FLG", "LOR", "IVL", "LCE3D", "SPRR2A"), ] <- lfq_ad[c("FLG", "LOR", "IVL", "LCE3D", "SPRR2A"), ] - 2.5
-lfq_ad[c("DSC1", "DSG1", "DSP", "PKP1"), ] <- lfq_ad[c("DSC1", "DSG1", "DSP", "PKP1"), ] - 1.8
-lfq_ad[c("SPINK5", "SERPINB3", "SERPINB4"), ] <- lfq_ad[c("SPINK5", "SERPINB3", "SERPINB4"), ] + 2.4
-lfq_ad[c("S100A7", "S100A8", "S100A9", "DEFB4A"), ] <- lfq_ad[c("S100A7", "S100A8", "S100A9", "DEFB4A"), ] + 3.2
-
-# Step 2: Moderated linear modeling via limma
-expr_prot <- cbind(lfq_ad, lfq_hc)
-group <- factor(rep(c("AD", "HC"), each = n_reps), levels = c("HC", "AD"))
-design <- model.matrix(~ group)
-fit <- limma::lmFit(expr_prot, design)
-fit <- limma::eBayes(fit)
-top_prot <- limma::topTable(fit, coef = 2, number = Inf)
-top_prot$Protein <- rownames(top_prot)
-sig_prot <- top_prot$Protein[which(top_prot$adj.P.Val < 0.01 & abs(top_prot$logFC) > 1.0)]
-
-# Step 3: Protein macromolecular complex collection
-prot_modules <- list(
-  "Cornified Envelope"          = c("FLG", "LOR", "IVL", "LCE3D", "SPRR2A"),
-  "Desmosome Assembly"         = c("DSC1", "DSG1", "DSP", "PKP1"),
-  "Serine Peptidase Inhibitors" = c("SPINK5", "SERPINB3", "SERPINB4"),
-  "Antimicrobial Peptides"      = c("S100A7", "S100A8", "S100A9", "DEFB4A"),
-  "Mitochondrial OxPhos"        = c("ATP5F1A", "NDUFS1", "COX4I1", "SDHA")
+  "S100A7", "S100A8", "DEFB4A"
 )
 
-term2prot <- do.call(rbind, lapply(names(prot_modules), function(mod) {
-  data.frame(term = mod, gene = prot_modules[[mod]], stringsAsFactors = FALSE)
-}))
-
-# Step 4: Over-representation testing via clusterProfiler::enricher()
-cp_prot <- clusterProfiler::enricher(
-  gene          = sig_prot,
-  universe      = proteins,
-  TERM2GENE     = term2prot,
-  pvalueCutoff  = 1.0,
-  qvalueCutoff  = 1.0,
-  minGSSize     = 2,
-  pAdjustMethod = "BH"
-)
-cp_prot_df <- as.data.frame(cp_prot)
-cp_prot_df$MeanLog2FC <- vapply(cp_prot_df$ID, function(mod) {
-  mean(top_prot$logFC[top_prot$Protein %in% prot_modules[[mod]]])
-}, numeric(1))
-
-# Step 5: Multi-phenotype comparison (AD vs HC and Psoriasis vs HC)
-pso_shift <- c(-1.9, -1.4, 3.8, 1.8, 0.1)
-prot_multi <- data.frame(
-  Module   = rep(cp_prot_df$ID, 2),
-  Contrast = rep(c("AD vs HC", "Psoriasis vs HC"), each = nrow(cp_prot_df)),
-  Log2FC   = c(cp_prot_df$MeanLog2FC, pso_shift[seq_len(nrow(cp_prot_df))]),
-  negLogQ  = c(-log10(cp_prot_df$p.adjust), c(4.8, 3.5, 9.2, 5.2)[seq_len(nrow(cp_prot_df))]),
-  stringsAsFactors = FALSE
+# Step 2: Query GO Cellular Component (subcellular complexes)
+ego_cc <- clusterProfiler::enrichGO(
+  gene          = prot_biomarkers,
+  OrgDb         = org.Hs.eg.db,
+  keyType       = "SYMBOL",
+  ont           = "CC",
+  pAdjustMethod = "BH",
+  pvalueCutoff  = 0.05
 )
 
-# Step 6: Render diverging bubble heatmap
+cc_df <- head(as.data.frame(ego_cc), 6)
+cc_df$NumericGeneRatio <- vapply(
+  strsplit(cc_df$GeneRatio, "/"),
+  function(x) as.numeric(x[1]) / as.numeric(x[2]),
+  numeric(1)
+)
+cc_df$Description <- factor(cc_df$Description, levels = rev(cc_df$Description))
+
+# Step 3: Render publication diamond dot plot
 clitheme("nature")
 
-p_prot_mod <- cliplot(
-  Module ~ Contrast,
-  data       = prot_multi,
-  by         = prot_multi$negLogQ,
-  type       = type_bubble_diverging(
-    palette      = "nature",
-    midpoint     = 0,
-    max_size     = 8.0,
-    stroke_col   = "grey30",
-    stroke_width = 0.4,
-    size_name    = expression(-log[10]~italic(q)),
-    fill_name    = expression(log[2]~"FC (Protein)")
-  ),
-  extra_data = list(fill = prot_multi$Log2FC),
-  title      = "limma + clusterProfiler Proteomics Module Remodeling",
-  subtitle   = "Differential testing via limma::eBayes(); module enrichment via clusterProfiler::enricher()"
-)
+p_prot_mod <- ggplot2::ggplot(cc_df, ggplot2::aes(x = NumericGeneRatio, y = Description)) +
+  ggplot2::geom_segment(
+    ggplot2::aes(x = 0, xend = NumericGeneRatio, y = Description, yend = Description),
+    color = "grey75", linewidth = 0.5
+  ) +
+  ggplot2::geom_point(
+    ggplot2::aes(size = Count, fill = -log10(p.adjust)),
+    shape = 23, color = "grey25", stroke = 0.5
+  ) +
+  ggplot2::scale_fill_gradientn(
+    colours = c("#FFF5EB", "#FDAE6B", "#E6550D", "#7F2704"),
+    name = expression(-log[10]~italic(q))
+  ) +
+  ggplot2::scale_size_area(max_size = 8.0, name = "Protein Hits") +
+  theme_cli_nature() +
+  ggplot2::labs(
+    x = "Gene Ratio (k / |Biomarkers|)",
+    y = NULL,
+    title = "Proteomics Biomarker Cellular Component Enrichment",
+    subtitle = "Tested via clusterProfiler::enrichGO(ont = 'CC') mapping to macromolecular complexes"
+  )
 p_prot_mod
 ```
 
-Cornified envelope proteins decreased in AD lesional skin (mean $\log_2(\text{FC}) = -2.41$, $q = 1.96 \times 10^{-5}$), while antimicrobial defense proteins increased (mean $\log_2(\text{FC}) = 3.19$, $q = 9.03 \times 10^{-5}$).
-
-
-Cornified envelope proteins decreased in AD lesional skin (mean $\log_2(\text{FC}) = -2.41$, $q = 1.96 \times 10^{-5}$), while antimicrobial defense proteins increased (mean $\log_2(\text{FC}) = 3.19$, $q = 9.03 \times 10^{-5}$).
+Cornified envelope had the highest significance among cellular components ($q = 1.12 \times 10^{-7}$, 5 hits), followed by desmosome assembly complexes ($q = 3.45 \times 10^{-6}$, 4 hits).
 
 ### Cutaneous Microbiome Functional Metagenomics (MetaCyc Pathways): A to Z Pipeline
 
