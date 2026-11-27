@@ -379,7 +379,7 @@ p_prot_mod
 
 Cornified envelope had the highest significance among cellular components ($q = 1.12 \times 10^{-7}$, 5 hits), followed by desmosome assembly complexes ($q = 3.45 \times 10^{-6}$, 4 hits).
 
-### Cutaneous Microbiome Functional Metagenomics (MetaCyc Pathways): A to Z Pipeline
+### Cutaneous Microbiome Functional Biomarkers (MetaCyc Pathways)
 
 Shotgun metagenomics profiles metabolic pathway abundance across skin microenvironments. The pipeline:
 
