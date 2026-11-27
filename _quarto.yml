@@ -79,7 +79,7 @@ format:
       effect: zoom
       desc-position: bottom
       loop: false
-    include-after-body: custom.js
+    include-after-body: custom.html
     toc: true
     toc-depth: 3
     toc-expand: 2
