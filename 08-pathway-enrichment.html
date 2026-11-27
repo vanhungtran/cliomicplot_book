@@ -596,13 +596,14 @@ window.Quarto = {
 </section>
 
 </main> <!-- /main -->
+<script>
 // Custom interactive enhancements for cliomicplot_book
 // Enhanced Lightbox click-to-zoom on scientific figures
 
 document.addEventListener('DOMContentLoaded', function () {
   // Toggle 2x zoom when clicking inside the GLightbox image modal
   document.addEventListener('click', function (e) {
-    if (e.target &amp;&amp; e.target.matches('.gslide-image img')) {
+    if (e.target && e.target.matches('.gslide-image img')) {
       e.stopPropagation();
       var img = e.target;
       if (img.classList.contains('is-zoomed')) {
@@ -632,6 +633,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
