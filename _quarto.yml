@@ -5,7 +5,7 @@ project:
 book:
   title: "Clinical and Omics Data Visualization in R"
   subtitle: "A Practical Handbook for Publication-Ready Figures with cliomicplot"
-  author: "Van Hung Tran"
+  author: "Van Hung Huynh-Tran"
   date: today
   site-url: https://vanhungtran.github.io/cliomicplot_book/
   repo-url: https://github.com/vanhungtran/cliomicplot_book
